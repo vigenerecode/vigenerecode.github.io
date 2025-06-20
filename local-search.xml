@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>test</title>
+    <link href="/2025/06/20/test/"/>
+    <url>/2025/06/20/test/</url>
+    
+    <content type="html"><![CDATA[<p>printf(“helloworld”)</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>helloworld</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hello World</title>
     <link href="/2025/06/19/hello-world/"/>
     <url>/2025/06/19/hello-world/</url>
