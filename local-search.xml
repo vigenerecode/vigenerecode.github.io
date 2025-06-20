@@ -4,6 +4,44 @@
   
   
   <entry>
+    <title>6.20记录</title>
+    <link href="/2025/06/20/6-20/"/>
+    <url>/2025/06/20/6-20/</url>
+    
+    <content type="html"><![CDATA[<p>必胜客真好吃吧，感觉是最好吃的西餐了，虽然也没吃过更贵的就是了，生活中的小幸福啊</p><p><img src="F:\MyBlog_hexo\source\img\必胜客.jpg" alt="必胜客"></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>日常生活</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>hexo部署之netlify</title>
+    <link href="/2025/06/20/netlify%E6%9B%B4%E6%96%B0/"/>
+    <url>/2025/06/20/netlify%E6%9B%B4%E6%96%B0/</url>
+    
+    <content type="html"><![CDATA[<h1 id="部署后Netlify上未显示最新更改"><a href="#部署后Netlify上未显示最新更改" class="headerlink" title="部署后Netlify上未显示最新更改"></a>部署后Netlify上未显示最新更改</h1><p>关联问题</p><p>[ 为什么Netlify上没有显示最新的更改？](<a href="https://copilot.tencent.com/chat?s=">https://copilot.tencent.com/chat?s=</a> 为什么Netlify上没有显示最新的更改？&amp;fromSource&#x3D;gwzcw.9271037.9271037.9271037&amp;utm_medium&#x3D;cpc&amp;utm_id&#x3D;gwzcw.9271037.9271037.9271037)</p><p>[ Netlify部署后内容未更新怎么办？](<a href="https://copilot.tencent.com/chat?s=">https://copilot.tencent.com/chat?s=</a> Netlify部署后内容未更新怎么办？&amp;fromSource&#x3D;gwzcw.9271037.9271037.9271037&amp;utm_medium&#x3D;cpc&amp;utm_id&#x3D;gwzcw.9271037.9271037.9271037)</p><p>[ 如何确保Netlify显示最新的部署内容？](<a href="https://copilot.tencent.com/chat?s=">https://copilot.tencent.com/chat?s=</a> 如何确保Netlify显示最新的部署内容？&amp;fromSource&#x3D;gwzcw.9271037.9271037.9271037&amp;utm_medium&#x3D;cpc&amp;utm_id&#x3D;gwzcw.9271037.9271037.9271037)</p><p>是因为缓存或者静态文件未正确刷新导致的。下面是解决该问题的一些步骤和技巧：</p><ol><li>清除浏览器缓存：浏览器会缓存静态文件，以提高网页加载速度。但是有时候这会导致最新更改无法及时显示。你可以尝试按下Ctrl + F5（Windows）或者Command + Shift + R（Mac）来强制刷新页面。</li><li>清除Netlify缓存：Netlify也会缓存文件以提高访问速度。你可以进入Netlify的项目设置页面，找到“Build &amp; Deploy”选项，然后点击“Clear cache and deploy site”来清除缓存并重新部署站点。</li><li>检查版本控制：确保你将最新的更改提交到了版本控制系统（如Git）并推送到了Netlify。如果你只是本地修改了文件而没有将其推送到版本控制系统，Netlify将无法检测到更改并进行部署。</li><li>查看部署日志：在Netlify的项目设置页面中，你可以找到“Deploys”选项，并查看最近的部署日志。检查日志中是否有错误或警告信息，以帮助你找出问题所在。</li><li>检查构建设置：如果你使用了构建工具（如Webpack或Gulp），请确保你的构建设置正确。检查构建配置文件，例如webpack.config.js或gulpfile.js，以确保正确设置了文件路径和构建规则。</li><li>强制重新部署：在Netlify的项目设置页面中，你可以手动触发重新部署。这将强制Netlify重新构建和部署站点，以确保最新更改被正确显示。</li></ol><p>总结起来，当部署后Netlify上未显示最新更改时，可以考虑清除浏览器缓存、清除Netlify缓存、检查版本控制、查看部署日志、检查构建设置以及强制重新部署等操作来解决问题。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>hexo部署</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>test</title>
     <link href="/2025/06/20/test/"/>
     <url>/2025/06/20/test/</url>
