@@ -23,6 +23,25 @@
   
   
   <entry>
+    <title>Linux的三个问题</title>
+    <link href="/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/"/>
+    <url>/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/</url>
+    
+    <content type="html"><![CDATA[<h1 id="三个问题"><a href="#三个问题" class="headerlink" title="三个问题"></a>三个问题</h1><h1 id="1三个问题"><a href="#1三个问题" class="headerlink" title="1三个问题"></a>1三个问题</h1><p>1.Linux怎么样部署测试环境，部署完了之后怎么样知道是否启动成功了这个项目</p><p>2.部署出现问题，用什么命令去查找相关的logo日志</p><p>3.当某个可执行文件的权限不足时候，怎么做</p><p>基本回答如下</p><p>测试环境用容器来部署。这样可以保证所有开发人员环境统一。可以选择docker或者podman，选择对应compose编写部署文件。使用dockerfile编译与打包程序，可以减少自动化测试时环境造成的编译打包问题。</p><p>出现错误可以有多种选择。一，当应用有使用统一的日志管理中间件时可以直接后台查看日志；二，当使用容器部署测试时，可使用exec命令参数进入shell，查看日志目录与日志文件；三，当dockerfile导出日志数据卷时，可直接查看对应的导出目录；四，在shell中可以使用vim，cat，等命令查看日志文件。</p><p>当可执行文件权限不足时，可使用“ls -la 文件名”查看文件是否有执行权限以及文件属于的用户与用户组。若文件属于当前环境使用的用户，则使用chmod命令添加执行权限；若文件不属于当前用户，且当前用户不存在与文件所有者组中时，应人为判断是否可以修改文件所有者或组，亦或是将当前环境使用的用户加入所有者组中，使用chown进行修改。</p><h1 id="2-进阶"><a href="#2-进阶" class="headerlink" title="2 进阶"></a>2 进阶</h1><p>1、如果项目不用docker容器等部署方式你又怎么查？直接ps -ef grep java 或者ps -ef | grep jdk<br>2、vim本质是编辑本文，需要一下加载文本所有数据的，你这样只会卡死， 监听用tail 粗略看用more 详细看用less ，more和less都可以跳行和搜索，cat一下全部加载也不好<br>3、文件权限不足就改文件权限，你真不怕改出事？ 正确方法就是ls -lrt 看文件的权限，看他属于那个用户，再su切换有权限的用户去操作才是正确的</p><h1 id="3综合可得最佳答案为"><a href="#3综合可得最佳答案为" class="headerlink" title="3综合可得最佳答案为"></a>3综合可得最佳答案为</h1><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul><li><strong>部署测试环境</strong>：优先使用容器化（Docker&#x2F;Podman），通过进程、日志、网络检测确认启动。</li><li><strong>查找日志</strong>：容器化使用 <code>docker logs</code>，非容器化使用 <code>tail</code>&#x2F;<code>grep</code>&#x2F;<code>journalctl</code>。</li><li><strong>权限不足</strong>：优先 <code>chmod +x</code>，必要时修改所有者或用户组，避免过度开放权限。</li></ul>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>6-21</title>
     <link href="/2025/06/21/6-21/"/>
     <url>/2025/06/21/6-21/</url>
@@ -34,6 +53,25 @@
     <tags>
       
       <tag>日常生活</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Leetcode03：无重复字符的最长子串</title>
+    <link href="/2025/06/21/Leetcode03%EF%BC%9A%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/"/>
+    <url>/2025/06/21/Leetcode03%EF%BC%9A%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/</url>
+    
+    <content type="html"><![CDATA[<p><a href="https://leetcode.cn/problems/longest-substring-without-repeating-characters/">3. 无重复字符的最长子串</a></p><p>提示</p><p>给定一个字符串 <code>s</code> ，请你找出其中不含有重复字符的 <strong>最长 子串</strong> 的长度。</p><p><strong>示例 1:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;abcabcbb&quot;</span><br><span class="hljs-section">输出: 3 </span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。</span><br></code></pre></td></tr></table></figure><p><strong>示例 2:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;bbbbb&quot;</span><br><span class="hljs-section">输出: 1</span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长度为 1。</span><br></code></pre></td></tr></table></figure><p><strong>示例 3:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;pwwkew&quot;</span><br><span class="hljs-section">输出: 3</span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;wke&quot;，所以其长度为 3。</span><br>     请注意，你的答案必须是 子串 的长度，<span class="hljs-string">&quot;pwke&quot;</span> 是一个子序列，不是子串。<br></code></pre></td></tr></table></figure> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">lengthOfLongestSubstring</span><span class="hljs-params">(String s)</span> &#123;<br>        <span class="hljs-comment">// 记录字符上一次出现的位置</span><br>        <span class="hljs-type">int</span>[] last = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[<span class="hljs-number">128</span>];<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">128</span>; i++) &#123;<br>            last[i] = -<span class="hljs-number">1</span>;<br>        &#125;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> s.length();<br><br>        <span class="hljs-type">int</span> <span class="hljs-variable">res</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 窗口开始位置</span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> s.charAt(i);<br>            start = Math.max(start, last[index] + <span class="hljs-number">1</span>);<br>            res   = Math.max(res, i - start + <span class="hljs-number">1</span>);<br>            last[index] = i;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> res;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><p>尝试着解释了一下，希望对大家有所帮助~</p><p>以这个字符串为例：abcabcbb，</p><p>当i等于3时，也就是指向了第二个a, 此时我就需要查之前有没有出现过a, 如果出现了是在哪一个位置出现的。</p><p>然后通过last[index] 查到等于1, 也就是说，如果start 依然等于0的话，那么当前窗口就有两个a了，也就是字符串重复了，所以我们需要移动当前窗口的start指针，移动到什么地方呢？</p><p>移动到什么地方，窗口内就没有重复元素了呢？<br>对了，就是a上一次出现的位置的下一个位置，就是1 + 1 &#x3D; 2。</p><p>当start &#x3D;&#x3D; 2, 当前窗口就没有了重复元素，那么以当前字符为结尾的最长无重复子串就是bca,然后再和之前的res取最大值。</p><p>然后i指向后面的位置，按照同样思路计算。</p><p>start用于标记重复的</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>leetcode</tag>
       
     </tags>
     
