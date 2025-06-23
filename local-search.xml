@@ -4,6 +4,44 @@
   
   
   <entry>
+    <title>PDF-test</title>
+    <link href="/2025/06/23/PDF-test/"/>
+    <url>/2025/06/23/PDF-test/</url>
+    
+    <content type="html"><![CDATA[<div class="pdf-container">  <iframe src="https://noflowcloud.netlify.app/pdfjs/web/viewer.html?file=/PDF/7小时速通SpringCloud.pdf" width="100%" height="500px"></iframe> </div>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>PDF</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Leetcode189：轮转数组</title>
+    <link href="/2025/06/23/Leetcode189%EF%BC%9A%E8%BD%AE%E8%BD%AC%E6%95%B0%E7%BB%84/"/>
+    <url>/2025/06/23/Leetcode189%EF%BC%9A%E8%BD%AE%E8%BD%AC%E6%95%B0%E7%BB%84/</url>
+    
+    <content type="html"><![CDATA[<p>方法三：数组翻转<br>该方法基于如下的事实：当我们将数组的元素向右移动 k 次后，尾部 kmodn 个元素会移动至数组头部，其余元素向后移动 kmodn 个位置。</p><p>该方法为数组的翻转：我们可以先将所有元素翻转，这样尾部的 kmodn 个元素就被移至数组头部，然后我们再翻转 [0,kmodn−1] 区间的元素和 [kmodn,n−1] 区间的元素即能得到最后的答案。</p><p>我们以 n&#x3D;7，k&#x3D;3 为例进行如下展示：</p><pre><code class="hljs">class Solution &#123;    public void rotate(int[] nums, int k) &#123;    k %= nums.length;    reverse(nums, 0, nums.length - 1);    reverse(nums, 0, k - 1);    reverse(nums, k, nums.length - 1);    &#125;public void reverse(int[] nums, int start, int end) &#123;    while (start &lt; end) &#123;        int temp = nums[start];        nums[start] = nums[end];        nums[end] = temp;        start += 1;        end -= 1;    &#125;&#125;&#125;</code></pre><p>复杂度分析</p><p>时间复杂度：O(n)，其中 n 为数组的长度。每个元素被翻转两次，一共 n 个元素，因此总时间复杂度为 O(2n)&#x3D;O(n)。</p><p>空间复杂度：O(1)。</p><p>作者：力扣官方题解<br>链接：<a href="https://leetcode.cn/problems/rotate-array/solutions/551039/xuan-zhuan-shu-zu-by-leetcode-solution-nipk/">https://leetcode.cn/problems/rotate-array/solutions/551039/xuan-zhuan-shu-zu-by-leetcode-solution-nipk/</a><br>来源：力扣（LeetCode）</p><p>引用了美服翻转做法下面的评论(第一条) 希望能帮到大家<br>原地址</p><p>nums &#x3D; “—–&gt;–&gt;”; k &#x3D;3<br>result &#x3D; “–&gt;—–&gt;”;</p><p>reverse “—–&gt;–&gt;” we can get “&lt;–&lt;—–”<br>reverse “&lt;–” we can get “–&gt;&lt;—–”<br>reverse “&lt;—–” we can get “–&gt;—–&gt;”<br>this visualization help me figure it out :)</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>leetcode</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>chmod读文件之755</title>
     <link href="/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/"/>
     <url>/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/</url>
