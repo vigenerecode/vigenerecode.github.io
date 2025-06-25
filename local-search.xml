@@ -4,6 +4,63 @@
   
   
   <entry>
+    <title>螺旋矩阵</title>
+    <link href="/2025/06/25/%E8%9E%BA%E6%97%8B%E7%9F%A9%E9%98%B5/"/>
+    <url>/2025/06/25/%E8%9E%BA%E6%97%8B%E7%9F%A9%E9%98%B5/</url>
+    
+    <content type="html"><![CDATA[<p>哎呦我靠，怎么螺旋矩阵怎么难，感觉接雨水都没这么难，<br>明天开启高三模式了，好累啊</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>leetcode</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>redis安装</title>
+    <link href="/2025/06/24/redis%E5%AE%89%E8%A3%85/"/>
+    <url>/2025/06/24/redis%E5%AE%89%E8%A3%85/</url>
+    
+    <content type="html"><![CDATA[<p>运行下面的命令下载（后面的链接替换为你复制的版本链接）：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget http://download.redis.io/releases/redis-6.2.9.tar.gz<br></code></pre></td></tr></table></figure><p>解压压缩包：</p><p>tar xzf redis-6.2.9.tar.gz<br>bash</p><p>安装Redis</p><p>将解压后的目录移动到usr&#x2F;local⽬录下：</p><p>sudo mv .&#x2F;redis-6.2.9 &#x2F;usr&#x2F;local&#x2F;redis&#x2F;<br>bash<br> 进⼊redis⽬录编译和构建 redis：</p><p>cd &#x2F;usr&#x2F;local&#x2F;redis&#x2F; &amp;&amp; sudo make<br>bash<br>安装redis：</p><p>sudo make install<br>bash</p><ol start="4"><li>注册服务</li></ol><p>上面的步骤已经将redis安装完成，你可以使用redis-server命令开启Redis服务了，但是为了更便捷地操作，我们需要让redis在后台运行并设置开机自启。</p><p>移动配置文件</p><p>将redis配置⽂件（配置文件目录：&#x2F;usr&#x2F;local&#x2F;redis&#x2F;redis.conf）移动到&#x2F;etc&#x2F;⽬录下，便于管理：</p><p>sudo mkdir -p &#x2F;etc&#x2F;redis&#x2F; &amp;&amp; sudo cp &#x2F;usr&#x2F;local&#x2F;redis&#x2F;redis.conf &#x2F;etc&#x2F;redis&#x2F;<br>bash<br>注册redis服务</p><p>输入以下命令创建一个新的启动脚本：</p><p>sudo vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;redis.service<br>bash<br>按i进入编辑模式输入以下内容后按:wq保存退出：</p><p>[Unit]<br>Description&#x3D;Redis Server<br>After&#x3D;network.target</p><p>[Service]<br>ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis-server &#x2F;etc&#x2F;redis&#x2F;redis.conf<br>ExecStop&#x3D;&#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis-cli shutdown<br>Restart&#x3D;always</p><p>[Install]<br>WantedBy&#x3D;multi-user.target<br>bash</p><p>设置执行权限</p><p>将启动脚本设置为可执行：</p><p>sudo chmod +x &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;redis.service<br>bash<br>将脚本注册为服务</p><p>使用 systemctl 命令将脚本注册为服务，并启用它以在系统启动时自动启动：</p><p>sudo systemctl daemon-reload &amp;&amp; sudo systemctl enable redis<br>bash<br> 启动服务：</p><p>sudo systemctl start redis<br>bash<br>查看状态</p><p>sudo systemctl status redis<br>bash<br>输出下面的结果，表示Redis服务已经在后台正常运行并启用了开机自启：</p><p>root@ubuntu:&#x2F;etc&#x2F;redis# systemctl status redis<br>● redis.service - Redis Server<br>     Loaded: loaded (&#x2F;etc&#x2F;systemd&#x2F;system&#x2F;redis.service; enabled; vendor preset: enabled)<br>     Active: active (running) since Wed 2024-04-24 17:23:41 CST; 3min 28s ago<br>   Main PID: 28421 (redis-server)<br>      Tasks: 5 (limit: 4568)<br>     Memory: 1.6M<br>        CPU: 854ms<br>     CGroup: &#x2F;system.slice&#x2F;redis.service<br>             └─28421 “&#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis-server 127.0.0.1:6379” “” “” “” “” “” “” “”<br>AI写代码</p><ol start="3"><li>可选操作和配置<br>查看Redis安装版本<br>运行下面的命令查看已安装的Redis版本：</li></ol><p>redis-server -v<br>bash<br>输出结果： </p><p>配置密码登录<br>Redis 默认情况下是没有启用密码登录的。要启用密码登录，需要手动编辑 Redis 配置文件并设置密码，运行下面的命令（将命令中MyPassword123go替换为你需要设置的密码，该命令也适用于之前修改过密码重置密码）：</p><p>new_password&#x3D;”MyPassword123go”;sudo sed -i.bak -E “s&#x2F;^(\s*#)?\s<em>requirepass\s+.</em>&#x2F;requirepass $new_password&#x2F;“ &#x2F;etc&#x2F;redis&#x2F;redis.conf<br>bash<br>重启Redis服务：</p><p>systemctl restart redis<br>bash<br>验证密码</p><p>使用 redis-cli 工具连接到 Redis 服务器： </p><p>redis-cli<br>bash<br>输入auth命令进行身份验证（auth后跟上一步你设置的密码）：</p><p>auth MyPassword123go<br>bash<br>如果输出OK表示设置密码成功： </p><p>127.0.0.1:6379&gt; auth MyPassword123go<br>OK<br>bash<br> 启用远程访问<br>在启用远程访问前请确保已经配置了密码访问，最好还在防火墙限制了IP访问，不然如果你的云服务器没做防火墙限制的话，分分钟会被黑。因为将 Redis 服务器暴露在公网上会大大增加受到攻击的风险。攻击者可以轻松扫描公网 IP 地址，发现开启了 Redis 服务的服务器，并尝试利用漏洞进行攻击。</p><p>运行下面的命令：</p><p>sudo sed -i ‘s&#x2F;^bind .*&#x2F;bind 0.0.0.0&#x2F;‘ &#x2F;etc&#x2F;redis&#x2F;redis.conf<br>bash<br>重启Redis服务： </p><p>systemctl restart redis<br>bash<br>测试连接：</p><p>redis-cli -h 192.168.31.223 -p 6379 -a MyPassword123go<br>bash<br>redis-cli：是 Redis 提供的一个命令行工具，用于与 Redis 服务器进行交互。</p><p>-h 192.168.31.223：指定要连接的 Redis 服务器的 IP 地址。在这里，192.168.31.223 请替换为你要连接的远程 Redis 服务器的 IP 地址。</p><p>-p 6379：指定 Redis 服务器的端口号。默认情况下，Redis 服务器的端口号是 6379。如果你的 Redis 服务器使用了不同的端口，需要修改为相应的端口号。</p><p>-a MyPassword123go：指定连接到 Redis 服务器所需的密码。在这里，MyPassword123go 替换为你设置的密码。如果远程 Redis 服务器未设置密码，则可以省略该参数。</p><p>卸载Redis<br>请确保你在执行卸载之前备份了重要的数据</p><p>卸载软件：</p><p>sudo apt-get remove –purge redis-server -y<br>bash<br>删除 Redis 配置文件和数据文件：</p><p>sudo rm -rf &#x2F;etc&#x2F;redis &#x2F;var&#x2F;lib&#x2F;redis<br>bash<br>如果你是通过make方式安装的指定版本的Redis，请输入下列命令（可全部复制粘贴运行）：</p><p>sudo systemctl stop redis<br>sudo rm -rf &#x2F;usr&#x2F;local&#x2F;bin&#x2F;redis*<br>sudo rm -rf &#x2F;usr&#x2F;local&#x2F;redis*<br>sudo rm -rf &#x2F;etc&#x2F;redis<br>sudo rm -rf &#x2F;var&#x2F;lib&#x2F;redis<br>sudo rm &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;redis.service<br>sudo systemctl disable redis</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>redis</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Leetcode238</title>
+    <link href="/2025/06/24/Leetcode238/"/>
+    <url>/2025/06/24/Leetcode238/</url>
+    
+    <content type="html"><![CDATA[<p>给你一个整数数组 <code>nums</code>，返回 数组 <code>answer</code> ，其中 <code>answer[i]</code> 等于 <code>nums</code> 中除 <code>nums[i]</code> 之外其余各元素的乘积 。</p><p>题目数据 <strong>保证</strong> 数组 <code>nums</code>之中任意元素的全部前缀元素和后缀的乘积都在 <strong>32 位</strong> 整数范围内。</p><p>请 **不要使用除法，**且在 <code>O(n)</code> 时间复杂度内完成此题。</p><p><strong>示例 1:</strong></p><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dns">输入: nums = [<span class="hljs-number">1,2,3,4</span>]<br>输出: [<span class="hljs-number">24,12,8,6</span>]<br></code></pre></td></tr></table></figure><p><strong>示例 2:</strong></p><figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs inform7">输入: nums = <span class="hljs-comment">[-1,1,0,-3,3]</span><br>输出: <span class="hljs-comment">[0,0,9,0,0]</span><br></code></pre></td></tr></table></figure><p><strong>提示：</strong></p><ul><li><code>2 &lt;= nums.length &lt;= 105</code></li><li><code>-30 &lt;= nums[i] &lt;= 30</code></li><li>输入 <strong>保证</strong> 数组 <code>answer[i]</code> 在 <strong>32 位</strong> 整数范围内</li></ul><p>**进阶：**你可以在 <code>O(1)</code> 的额外空间复杂度内完成这个题目吗？（ 出于对空间复杂度分析的目的，输出数组 <strong>不被视为</strong> 额外空间。）</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] productExceptSelf(<span class="hljs-type">int</span>[] nums) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">len</span> <span class="hljs-operator">=</span> nums.length;<br>        <span class="hljs-type">int</span> suf[]=<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span> [len];<br>        suf[len-<span class="hljs-number">1</span>]=<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=len-<span class="hljs-number">2</span>;i&gt;=<span class="hljs-number">0</span>;i--)&#123;<br>            suf[i]=suf[i+<span class="hljs-number">1</span>]*nums[i+<span class="hljs-number">1</span>];<br>        &#125;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">pre</span> <span class="hljs-operator">=</span><span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;i&lt;len;i++)&#123;<br>            suf[i] *= pre;<br>            pre *= nums[i];<br>        &#125;<br>        <span class="hljs-keyword">return</span> suf;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><p>answer[i] 等于 nums 中除了 nums[i] 之外其余各元素的乘积。换句话说，如果知道了 i 左边所有数的乘积，以及 i 右边所有数的乘积，就可以算出 answer[i]。</p><p>于是：</p><p>定义 pre[i] 表示从 nums[0] 到 nums[i−1] 的乘积。<br>定义 suf[i] 表示从 nums[i+1] 到 nums[n−1] 的乘积。</p><p>我们可以先计算出从 nums[0] 到 nums[i−2] 的乘积 pre[i−1]，再乘上 nums[i−1]，就得到了 pre[i]，即</p><p>pre[i]&#x3D;pre[i−1]⋅nums[i−1]<br>同理有</p><p>suf[i]&#x3D;suf[i+1]⋅nums[i+1]</p><p>以上为基础做法</p><p>给出对的空间复杂度为O1，如何实现？</p><p>答案是将suf顺序直接乘进去，前缀和不断乘即可</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>leetcode</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>PDF-test</title>
     <link href="/2025/06/23/PDF-test/"/>
     <url>/2025/06/23/PDF-test/</url>

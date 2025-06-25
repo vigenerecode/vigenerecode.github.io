@@ -19,22 +19,22 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="部署pdf，有点难度">
+    <meta name="description" content="给你一个整数数组 nums，返回 数组 answer ，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积 。 题目数据 保证 数组 nums之中任意元素的全部前缀元素和后缀的乘积都在 32 位 整数范围内。 请 **不要使用除法，**且在 O(n) 时间复杂度内完成此题。 示例 1: 12输入: nums &#x3D; [1,2,3,4]输出: [24,12,8,6]">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PDF-test">
-<meta property="og:url" content="http://example.com/2025/06/23/PDF-test/index.html">
+<meta property="og:title" content="Leetcode238">
+<meta property="og:url" content="http://example.com/2025/06/24/Leetcode238/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="部署pdf，有点难度">
+<meta property="og:description" content="给你一个整数数组 nums，返回 数组 answer ，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积 。 题目数据 保证 数组 nums之中任意元素的全部前缀元素和后缀的乘积都在 32 位 整数范围内。 请 **不要使用除法，**且在 O(n) 时间复杂度内完成此题。 示例 1: 12输入: nums &#x3D; [1,2,3,4]输出: [24,12,8,6]">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-06-23T11:53:22.000Z">
-<meta property="article:modified_time" content="2025-06-23T12:43:49.279Z">
+<meta property="article:published_time" content="2025-06-24T01:08:38.000Z">
+<meta property="article:modified_time" content="2025-06-24T01:11:59.404Z">
 <meta property="article:author" content="無鎏雲">
-<meta property="article:tag" content="PDF">
+<meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>PDF-test - NoFlowCloud</title>
+  <title>Leetcode238 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="PDF-test"></span>
+            <span id="subtitle" data-typed-text="Leetcode238"></span>
           
         </div>
 
@@ -211,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-23 19:53" pubdate>
-          2025年6月23日 晚上
+        <time datetime="2025-06-24 09:08" pubdate>
+          2025年6月24日 上午
         </time>
       </span>
     
@@ -223,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7 字
+          447 字
         
       </span>
     
@@ -234,7 +234,7 @@
         
         
         
-          1 分钟
+          4 分钟
         
       </span>
     
@@ -271,15 +271,39 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">PDF-test</h1>
+            <h1 id="seo-header">Leetcode238</h1>
             
             
               <div class="markdown-body">
                 
-                <p>部署pdf，有点难度</p>
-<div class="pdf-container">
-  <iframe src="https://noflowcloud.netlify.app//pdfjs/web/viewer.html?file=/PDF/7小时速通SpringCloud.pdf" width="100%" height="500px"></iframe> 
-</div>
+                <p>给你一个整数数组 <code>nums</code>，返回 数组 <code>answer</code> ，其中 <code>answer[i]</code> 等于 <code>nums</code> 中除 <code>nums[i]</code> 之外其余各元素的乘积 。</p>
+<p>题目数据 <strong>保证</strong> 数组 <code>nums</code>之中任意元素的全部前缀元素和后缀的乘积都在 <strong>32 位</strong> 整数范围内。</p>
+<p>请 **不要使用除法，**且在 <code>O(n)</code> 时间复杂度内完成此题。</p>
+<p><strong>示例 1:</strong></p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dns">输入: nums = [<span class="hljs-number">1,2,3,4</span>]<br>输出: [<span class="hljs-number">24,12,8,6</span>]<br></code></pre></td></tr></table></figure>
+
+<p><strong>示例 2:</strong></p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs inform7">输入: nums = <span class="hljs-comment">[-1,1,0,-3,3]</span><br>输出: <span class="hljs-comment">[0,0,9,0,0]</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>2 &lt;= nums.length &lt;= 105</code></li>
+<li><code>-30 &lt;= nums[i] &lt;= 30</code></li>
+<li>输入 <strong>保证</strong> 数组 <code>answer[i]</code> 在 <strong>32 位</strong> 整数范围内</li>
+</ul>
+<p>**进阶：**你可以在 <code>O(1)</code> 的额外空间复杂度内完成这个题目吗？（ 出于对空间复杂度分析的目的，输出数组 <strong>不被视为</strong> 额外空间。）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] productExceptSelf(<span class="hljs-type">int</span>[] nums) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">len</span> <span class="hljs-operator">=</span> nums.length;<br>        <span class="hljs-type">int</span> suf[]=<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span> [len];<br>        suf[len-<span class="hljs-number">1</span>]=<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=len-<span class="hljs-number">2</span>;i&gt;=<span class="hljs-number">0</span>;i--)&#123;<br>            suf[i]=suf[i+<span class="hljs-number">1</span>]*nums[i+<span class="hljs-number">1</span>];<br>        &#125;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">pre</span> <span class="hljs-operator">=</span><span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;i&lt;len;i++)&#123;<br>            suf[i] *= pre;<br>            pre *= nums[i];<br>        &#125;<br>        <span class="hljs-keyword">return</span> suf;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>answer[i] 等于 nums 中除了 nums[i] 之外其余各元素的乘积。换句话说，如果知道了 i 左边所有数的乘积，以及 i 右边所有数的乘积，就可以算出 answer[i]。</p>
+<p>于是：</p>
+<p>定义 pre[i] 表示从 nums[0] 到 nums[i−1] 的乘积。<br>定义 suf[i] 表示从 nums[i+1] 到 nums[n−1] 的乘积。</p>
+<p>我们可以先计算出从 nums[0] 到 nums[i−2] 的乘积 pre[i−1]，再乘上 nums[i−1]，就得到了 pre[i]，即</p>
+<p>pre[i]&#x3D;pre[i−1]⋅nums[i−1]<br>同理有</p>
+<p>suf[i]&#x3D;suf[i+1]⋅nums[i+1]</p>
+<p>以上为基础做法</p>
+<p>给出对的空间复杂度为O1，如何实现？</p>
+<p>答案是将suf顺序直接乘进去，前缀和不断乘即可</p>
+
                 
               </div>
             
@@ -291,7 +315,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/PDF/" class="print-no-link">#PDF</a>
+        <a href="/tags/leetcode/" class="print-no-link">#leetcode</a>
       
     </div>
   
@@ -303,8 +327,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>PDF-test</div>
-      <div>http://example.com/2025/06/23/PDF-test/</div>
+      <div>Leetcode238</div>
+      <div>http://example.com/2025/06/24/Leetcode238/</div>
     </div>
     <div class="license-meta">
       
@@ -316,7 +340,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年6月23日</div>
+          <div>2025年6月24日</div>
         </div>
       
       
@@ -348,9 +372,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/24/Leetcode238/" title="Leetcode238">
+                      <a href="/2025/06/24/redis%E5%AE%89%E8%A3%85/" title="redis安装">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Leetcode238</span>
+                        <span class="hidden-mobile">redis安装</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -358,8 +382,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/06/23/Leetcode189%EF%BC%9A%E8%BD%AE%E8%BD%AC%E6%95%B0%E7%BB%84/" title="Leetcode189：轮转数组">
-                        <span class="hidden-mobile">Leetcode189：轮转数组</span>
+                      <a href="/2025/06/23/PDF-test/" title="PDF-test">
+                        <span class="hidden-mobile">PDF-test</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
