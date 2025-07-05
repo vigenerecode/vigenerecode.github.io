@@ -19,22 +19,21 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="重入锁（ReentrantLock），顾名思义，就是支持重复进入的锁，它表示该锁能够支持同一个线程对一个资源的重复加锁。也就是说，如果某个线程试图获得一个已经由它自己持有的可重入锁，那个这个请求就会成功。 相反，不可重入锁就是指该锁不支持同一个线程对一个资源的重复加锁，由于 Java 中并没有现成的可重入锁可供使用，下面简单实现一个： 123456789101112131415public cla">
+    <meta name="description" content="在 Java 中，原始数据类型（基本数据类型）不能为 null，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：  1. 基本数据类型与引用类型的区别Java 的数据类型分为两类：  基本数据类型（Primitive Types）：包括 int、double、boolean 等，它们是值类型，直接存储具体的数值（如 int 存储整数，boolean 存储 true 或 false）。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="可重入锁的引入：不可重入锁中的死锁问题">
-<meta property="og:url" content="http://example.com/2025/07/05/%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84%E5%BC%95%E5%85%A5%EF%BC%9A%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E4%B8%AD%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="原始数据类型不能为null">
+<meta property="og:url" content="http://example.com/2025/07/05/%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8D%E8%83%BD%E4%B8%BAnull/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="重入锁（ReentrantLock），顾名思义，就是支持重复进入的锁，它表示该锁能够支持同一个线程对一个资源的重复加锁。也就是说，如果某个线程试图获得一个已经由它自己持有的可重入锁，那个这个请求就会成功。 相反，不可重入锁就是指该锁不支持同一个线程对一个资源的重复加锁，由于 Java 中并没有现成的可重入锁可供使用，下面简单实现一个： 123456789101112131415public cla">
+<meta property="og:description" content="在 Java 中，原始数据类型（基本数据类型）不能为 null，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：  1. 基本数据类型与引用类型的区别Java 的数据类型分为两类：  基本数据类型（Primitive Types）：包括 int、double、boolean 等，它们是值类型，直接存储具体的数值（如 int 存储整数，boolean 存储 true 或 false）。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-07-05T08:12:00.000Z">
-<meta property="article:modified_time" content="2025-07-05T08:13:56.430Z">
+<meta property="article:published_time" content="2025-07-05T14:43:51.000Z">
+<meta property="article:modified_time" content="2025-07-05T14:44:10.361Z">
 <meta property="article:author" content="無鎏雲">
-<meta property="article:tag" content="并发编程">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>可重入锁的引入：不可重入锁中的死锁问题 - NoFlowCloud</title>
+  <title>原始数据类型不能为null - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="可重入锁的引入：不可重入锁中的死锁问题"></span>
+            <span id="subtitle" data-typed-text="原始数据类型不能为null"></span>
           
         </div>
 
@@ -211,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-07-05 16:12" pubdate>
-          2025年7月5日 下午
+        <time datetime="2025-07-05 22:43" pubdate>
+          2025年7月5日 晚上
         </time>
       </span>
     
@@ -223,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          631 字
+          1k 字
         
       </span>
     
@@ -234,7 +233,7 @@
         
         
         
-          6 分钟
+          9 分钟
         
       </span>
     
@@ -271,34 +270,101 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">可重入锁的引入：不可重入锁中的死锁问题</h1>
+            <h1 id="seo-header">原始数据类型不能为null</h1>
             
             
               <div class="markdown-body">
                 
-                <p><strong>重入锁（ReentrantLock）</strong>，顾名思义，就是支持重复进入的锁，它表示该锁能够支持同一个线程对一个资源的重复加锁。也就是说，如果某个线程试图获得一个已经由它自己持有的可重入锁，那个这个请求就会成功。</p>
-<p>相反，<strong>不可重入锁</strong>就是指该锁不支持同一个线程对一个资源的重复加锁，由于 Java 中并没有现成的可重入锁可供使用，下面简单实现一个：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NonReentrantLock</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">isLocked</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">lock</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        <span class="hljs-keyword">while</span> (isLocked) &#123;<br>            wait();<br>        &#125;<br>        isLocked = <span class="hljs-literal">true</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unlock</span><span class="hljs-params">()</span> &#123;<br>        isLocked = <span class="hljs-literal">false</span>;<br>        notify();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+                <p>在 Java 中，<strong>原始数据类型（基本数据类型）不能为 <code>null</code></strong>，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：</p>
+<hr>
+<h3 id="1-基本数据类型与引用类型的区别"><a href="#1-基本数据类型与引用类型的区别" class="headerlink" title="1. 基本数据类型与引用类型的区别"></a><strong>1. 基本数据类型与引用类型的区别</strong></h3><p>Java 的数据类型分为两类：</p>
+<ul>
+<li><p><strong>基本数据类型（Primitive Types）</strong>：<br>包括 <code>int</code>、<code>double</code>、<code>boolean</code> 等，它们是值类型，直接存储具体的数值（如 <code>int</code> 存储整数，<code>boolean</code> 存储 <code>true</code> 或 <code>false</code>）。<br><strong>特点</strong>：</p>
+<ul>
+<li>不能为 <code>null</code>，因为它们的存储单元直接包含值。</li>
+<li>默认值是固定的（例如 <code>int</code> 默认为 <code>0</code>，<code>boolean</code> 默认为 <code>false</code>）。</li>
+</ul>
+</li>
+<li><p><strong>引用类型（Reference Types）</strong>：<br>包括类（如 <code>String</code>）、接口、数组等，它们存储的是对象的引用（内存地址）。<br><strong>特点</strong>：</p>
+<ul>
+<li>可以为 <code>null</code>，表示该引用不指向任何对象。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-为什么基本类型不能为-null"><a href="#2-为什么基本类型不能为-null" class="headerlink" title="2. 为什么基本类型不能为 null"></a><strong>2. 为什么基本类型不能为 <code>null</code></strong></h3><h4 id="1-内存模型设计"><a href="#1-内存模型设计" class="headerlink" title="(1) 内存模型设计"></a><strong>(1) 内存模型设计</strong></h4><ul>
+<li><strong>基本类型直接存储值</strong>：<br>例如，<code>int a = 5;</code> 中的 <code>a</code> 是一个 4 字节的内存空间，直接存储整数 <code>5</code>，而不是指向某个对象的地址。因此，它无法表示 “无值” 或 <code>null</code>。</li>
+<li><strong>引用类型存储地址</strong>：<br>例如，<code>Integer b = null;</code> 中的 <code>b</code> 是一个 4 字节（32 位 JVM）或 8 字节（64 位 JVM）的内存空间，存储的是对象的地址。<code>null</code> 表示该地址无效（未指向任何对象）。</li>
+</ul>
+<h4 id="2-类型系统的安全性"><a href="#2-类型系统的安全性" class="headerlink" title="(2) 类型系统的安全性"></a><strong>(2) 类型系统的安全性</strong></h4><ul>
+<li><strong>基本类型的意义明确</strong>：<br><code>int</code> 表示整数，<code>boolean</code> 表示布尔值。它们的取值范围是固定的（如 <code>boolean</code> 只能是 <code>true</code> 或 <code>false</code>），没有 “未定义” 的状态。</li>
+<li><strong>引用类型的灵活性</strong>：<br>引用类型可以通过 <code>null</code> 表示 “未初始化” 或 “无效值”，但这也带来了潜在的 <code>NullPointerException</code> 风险。</li>
+</ul>
+<h4 id="3-性能优化"><a href="#3-性能优化" class="headerlink" title="(3) 性能优化"></a><strong>(3) 性能优化</strong></h4><ul>
+<li><strong>基本类型的高效性</strong>：<br>基本类型直接存储在栈内存中，访问速度更快。如果允许 <code>null</code>，就需要额外的检查和处理，降低性能。</li>
+<li><strong>引用类型的开销</strong>：<br>引用类型需要分配堆内存，并通过地址访问，天然支持 <code>null</code> 的语义。</li>
+</ul>
+<hr>
+<h3 id="3-典型错误示例"><a href="#3-典型错误示例" class="headerlink" title="3. 典型错误示例"></a><strong>3. 典型错误示例</strong></h3><h4 id="1-错误代码"><a href="#1-错误代码" class="headerlink" title="(1) 错误代码"></a><strong>(1) 错误代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 编译错误！</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>原因</strong>：<code>int</code> 是基本类型，不能存储 <code>null</code>（只能存储整数）。</li>
+<li><strong>正确做法</strong>：使用包装类 <code>Integer</code>：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 合法</span><br></code></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-错误比较"><a href="#2-错误比较" class="headerlink" title="(2) 错误比较"></a><strong>(2) 错误比较</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">boolean</span> <span class="hljs-variable">flag</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;<br><span class="hljs-keyword">if</span> (flag == <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 编译错误！</span><br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>原因</strong>：<code>boolean</code> 是基本类型，不能与 <code>null</code> 比较。</li>
+<li><strong>正确做法</strong>：使用包装类 <code>Boolean</code>：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Boolean</span> <span class="hljs-variable">flag</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-keyword">if</span> (flag == <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 合法</span><br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="4-如何处理可能为-null-的数值"><a href="#4-如何处理可能为-null-的数值" class="headerlink" title="4. 如何处理可能为 null 的数值"></a><strong>4. 如何处理可能为 <code>null</code> 的数值</strong></h3><p>如果需要表示一个可能为 <code>null</code> 的数值，必须使用基本类型的包装类（如 <code>Integer</code>、<code>Double</code>、<code>Boolean</code>）。</p>
+<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a><strong>示例</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 从数据库查询可能为 null 的数值</span><br><span class="hljs-type">Integer</span> <span class="hljs-variable">age</span> <span class="hljs-operator">=</span> getAgeFromDatabase(); <span class="hljs-comment">// 可能返回 null</span><br><br><span class="hljs-keyword">if</span> (age == <span class="hljs-literal">null</span>) &#123;<br>    System.out.println(<span class="hljs-string">&quot;年龄未提供&quot;</span>);<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    System.out.println(<span class="hljs-string">&quot;年龄为：&quot;</span> + age);<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>其中，isLocked 变量用于表示锁是否被占用的标志，lock 和 unlock 方法都是同步方法，确保在多线程环境下只有一个线程可以获得&#x2F;释放锁，当锁已经被占用时，线程将通过调用在 while 循环中调用 wait 方法进行等待，直到锁被释放。</p>
-<p><strong>之后，我们再来看一个「不可重入锁中的死锁问题」：</strong></p>
-<p>下面是一个 Parent 类，它包含了一个不可重入锁 nonReentrantLock 和一个 method 方法 。在 method 方法中使用不可重入锁加锁，并且打印一条语句，之后在 finally 块中释放锁。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Parent</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">NonReentrantLock</span> <span class="hljs-variable">nonReentrantLock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NonReentrantLock</span>();<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">method</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        nonReentrantLock.lock();<br>        <span class="hljs-keyword">try</span> &#123;<br>            System.out.println(<span class="hljs-string">&quot;Parent method&quot;</span>);<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            nonReentrantLock.unlock();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<hr>
+<h3 id="5-自动装箱与拆箱的陷阱"><a href="#5-自动装箱与拆箱的陷阱" class="headerlink" title="5. 自动装箱与拆箱的陷阱"></a><strong>5. 自动装箱与拆箱的陷阱</strong></h3><p>Java 提供了<strong>自动装箱（Autoboxing）</strong> 和 <strong>拆箱（Unboxing）</strong> 机制，但需注意以下问题：</p>
+<h4 id="1-自动拆箱可能导致-NullPointerException"><a href="#1-自动拆箱可能导致-NullPointerException" class="headerlink" title="(1) 自动拆箱可能导致 NullPointerException"></a><strong>(1) 自动拆箱可能导致 <code>NullPointerException</code></strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">num</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> num; <span class="hljs-comment">// 自动拆箱：抛出 NullPointerException</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>原因</strong>：<code>num</code> 是 <code>null</code>，无法转换为基本类型 <code>int</code>。</li>
+</ul>
+<h4 id="2-解决方法"><a href="#2-解决方法" class="headerlink" title="(2) 解决方法"></a><strong>(2) 解决方法</strong></h4><p>在拆箱前进行 <code>null</code> 检查：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">num</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> (num != <span class="hljs-literal">null</span>) ? num : <span class="hljs-number">0</span>; <span class="hljs-comment">// 安全处理</span><br></code></pre></td></tr></table></figure>
 
-<p>现在有一个 Child 类，它继承自 Parent ，并覆盖了 method 方法，并且也在其中使用了不可重入锁进行加锁。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Child</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Parent</span> &#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">method</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        nonReentrantLock.lock();<br>        <span class="hljs-keyword">try</span> &#123;<br>            System.out.println(<span class="hljs-string">&quot;Child method&quot;</span>);<br>            <span class="hljs-built_in">super</span>.method();<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            nonReentrantLock.unlock();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>下面编写测试类进行测试：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Main</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;<br>        <span class="hljs-type">Child</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Child</span>();<br>        child.method();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>输出：</p>
-<p>![屏幕截图 2025-07-05 161102](..\img\屏幕截图 2025-07-05 161102.png)</p>
-<p>可以看到，程序只显示了 Child 类的打印语句，并且一直在运行，说明发生了死锁。</p>
-<p><strong>分析：</strong></p>
-<p>由于 Child 和 Parent 类中的 method 方法执行时都需要先加锁，即每个 method 方法在执行前都会获取 Parent 中的 nonReentrantLock 锁。</p>
-<p>当程序运行到 Child 类的 <code>super.method()</code> 时，因为 nonReentrantLock 锁是不可重入锁，且线程在调用 <code>child.method()</code> 时已经持有了这个锁，所以线程会在此时永远停顿下去，等待一个永远也无法获得的锁。进而发生死锁。</p>
-<p><strong>解决：</strong></p>
-<p>想要解决这个问题非常简单：使用可重入锁。例如使用 ReentrantLock ，或者仅使用 synchronized 关键字修饰两个类的 method 方法即可。</p>
+<hr>
+<h3 id="6-为什么-Java-设计如此？"><a href="#6-为什么-Java-设计如此？" class="headerlink" title="6. 为什么 Java 设计如此？"></a><strong>6. 为什么 Java 设计如此？</strong></h3><ul>
+<li><strong>历史原因</strong>：<br>Java 的设计者（如 James Gosling）希望基本类型具有高性能和明确语义，而引用类型通过 <code>null</code> 提供灵活性。</li>
+<li><strong>安全与效率的权衡</strong>：<br>允许基本类型为 <code>null</code> 会增加运行时检查的开销，且违背其设计初衷（存储固定值）。</li>
+<li><strong>现代改进</strong>：<br>Java 8 引入 <code>Optional&lt;T&gt;</code> 类（如 <code>Optional&lt;Integer&gt;</code>）来更安全地处理可能为 <code>null</code> 的值，减少空指针异常。</li>
+</ul>
+<hr>
+<h3 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a><strong>7. 总结</strong></h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>基本类型（如 <code>int</code>）</th>
+<th>引用类型（如 <code>Integer</code>）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是否可以为 <code>null</code></td>
+<td>❌ 不可以</td>
+<td>✅ 可以</td>
+</tr>
+<tr>
+<td>存储方式</td>
+<td>直接存储值</td>
+<td>存储对象引用</td>
+</tr>
+<tr>
+<td>默认值</td>
+<td><code>0</code>（<code>int</code>）、<code>false</code>（<code>boolean</code>）</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>高效计算、确定有值的场景</td>
+<td>可能为 <code>null</code> 的场景</td>
+</tr>
+</tbody></table>
+<p>如果需要处理可能为 <code>null</code> 的数值，<strong>请使用包装类或 <code>Optional&lt;T&gt;</code></strong>，并始终进行 <code>null</code> 检查以避免运行时错误。</p>
 
                 
               </div>
@@ -308,13 +374,6 @@
               <div class="post-metas my-3">
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="print-no-link">#并发编程</a>
-      
-    </div>
-  
 </div>
 
 
@@ -323,8 +382,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>可重入锁的引入：不可重入锁中的死锁问题</div>
-      <div>http://example.com/2025/07/05/可重入锁的引入：不可重入锁中的死锁问题/</div>
+      <div>原始数据类型不能为null</div>
+      <div>http://example.com/2025/07/05/原始数据类型不能为null/</div>
     </div>
     <div class="license-meta">
       
@@ -368,18 +427,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/07/05/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81/" title="为什么使用可重入锁">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">为什么使用可重入锁</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/07/03/leetcode%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9/" title="leetcode：删除链表的倒数第N个节点">
-                        <span class="hidden-mobile">leetcode：删除链表的倒数第N个节点</span>
+                      <a href="/2025/07/05/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81/" title="为什么使用可重入锁">
+                        <span class="hidden-mobile">为什么使用可重入锁</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
