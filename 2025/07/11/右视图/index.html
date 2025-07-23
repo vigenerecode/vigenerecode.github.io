@@ -19,21 +19,26 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="在 Java 中，原始数据类型（基本数据类型）不能为 null，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：  1. 基本数据类型与引用类型的区别Java 的数据类型分为两类：  基本数据类型（Primitive Types）：包括 int、double、boolean 等，它们是值类型，直接存储具体的数值（如 int 存储整数，boolean 存储 true 或 false）。">
+    <meta name="description" content="199. 二叉树的右视图 给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。 示例 1： **输入：**root &#x3D; [1,2,3,null,5,null,4] 输出：[1,3,4] 解释：  示例 2： **输入：**root &#x3D; [1,2,3,4,null,null,null,5] 输出：[1,3,4,5] 解释：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="原始数据类型不能为null">
-<meta property="og:url" content="http://example.com/2025/07/05/%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%8D%E8%83%BD%E4%B8%BAnull/index.html">
+<meta property="og:title" content="右视图">
+<meta property="og:url" content="http://example.com/2025/07/11/%E5%8F%B3%E8%A7%86%E5%9B%BE/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="在 Java 中，原始数据类型（基本数据类型）不能为 null，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：  1. 基本数据类型与引用类型的区别Java 的数据类型分为两类：  基本数据类型（Primitive Types）：包括 int、double、boolean 等，它们是值类型，直接存储具体的数值（如 int 存储整数，boolean 存储 true 或 false）。">
+<meta property="og:description" content="199. 二叉树的右视图 给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。 示例 1： **输入：**root &#x3D; [1,2,3,null,5,null,4] 输出：[1,3,4] 解释：  示例 2： **输入：**root &#x3D; [1,2,3,4,null,null,null,5] 输出：[1,3,4,5] 解释：">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-07-05T14:43:51.000Z">
-<meta property="article:modified_time" content="2025-07-05T14:44:10.361Z">
+<meta property="og:image" content="https://assets.leetcode.com/uploads/2024/11/24/tmpd5jn43fs-1.png">
+<meta property="og:image" content="https://assets.leetcode.com/uploads/2024/11/24/tmpkpe40xeh-1.png">
+<meta property="og:image" content="https://assets.leetcode-cn.com/solution-static/199/fig2.png">
+<meta property="article:published_time" content="2025-07-11T03:05:04.000Z">
+<meta property="article:modified_time" content="2025-07-11T03:07:11.675Z">
 <meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="leetcode">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://assets.leetcode.com/uploads/2024/11/24/tmpd5jn43fs-1.png">
   
   
   
-  <title>原始数据类型不能为null - NoFlowCloud</title>
+  <title>右视图 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +204,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="原始数据类型不能为null"></span>
+            <span id="subtitle" data-typed-text="右视图"></span>
           
         </div>
 
@@ -210,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-07-05 22:43" pubdate>
-          2025年7月5日 晚上
+        <time datetime="2025-07-11 11:05" pubdate>
+          2025年7月11日 上午
         </time>
       </span>
     
@@ -222,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          611 字
         
       </span>
     
@@ -233,7 +238,7 @@
         
         
         
-          9 分钟
+          6 分钟
         
       </span>
     
@@ -270,101 +275,54 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">原始数据类型不能为null</h1>
+            <h1 id="seo-header">右视图</h1>
             
             
               <div class="markdown-body">
                 
-                <p>在 Java 中，<strong>原始数据类型（基本数据类型）不能为 <code>null</code></strong>，这是由 Java 的语言设计和类型系统决定的。以下是详细解释：</p>
-<hr>
-<h3 id="1-基本数据类型与引用类型的区别"><a href="#1-基本数据类型与引用类型的区别" class="headerlink" title="1. 基本数据类型与引用类型的区别"></a><strong>1. 基本数据类型与引用类型的区别</strong></h3><p>Java 的数据类型分为两类：</p>
+                <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-tree-right-side-view/">199. 二叉树的右视图</a></p>
+<p>给定一个二叉树的 <strong>根节点</strong> <code>root</code>，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。</p>
+<p><strong>示例 1：</strong></p>
+<p>**输入：**root &#x3D; [1,2,3,null,5,null,4]</p>
+<p><strong>输出：</strong>[1,3,4]</p>
+<p><strong>解释：</strong></p>
+<p><img src="https://assets.leetcode.com/uploads/2024/11/24/tmpd5jn43fs-1.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>示例 2：</strong></p>
+<p>**输入：**root &#x3D; [1,2,3,4,null,null,null,5]</p>
+<p><strong>输出：</strong>[1,3,4,5]</p>
+<p><strong>解释：</strong></p>
+<p><img src="https://assets.leetcode.com/uploads/2024/11/24/tmpkpe40xeh-1.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>示例 3：</strong></p>
+<p>**输入：**root &#x3D; [1,null,3]</p>
+<p><strong>输出：</strong>[1,3]</p>
+<p><strong>示例 4：</strong></p>
+<p>**输入：**root &#x3D; []</p>
+<p><strong>输出：</strong>[]</p>
+<p><strong>提示:</strong></p>
 <ul>
-<li><p><strong>基本数据类型（Primitive Types）</strong>：<br>包括 <code>int</code>、<code>double</code>、<code>boolean</code> 等，它们是值类型，直接存储具体的数值（如 <code>int</code> 存储整数，<code>boolean</code> 存储 <code>true</code> 或 <code>false</code>）。<br><strong>特点</strong>：</p>
-<ul>
-<li>不能为 <code>null</code>，因为它们的存储单元直接包含值。</li>
-<li>默认值是固定的（例如 <code>int</code> 默认为 <code>0</code>，<code>boolean</code> 默认为 <code>false</code>）。</li>
+<li>二叉树的节点个数的范围是 <code>[0,100]</code></li>
+<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
 </ul>
-</li>
-<li><p><strong>引用类型（Reference Types）</strong>：<br>包括类（如 <code>String</code>）、接口、数组等，它们存储的是对象的引用（内存地址）。<br><strong>特点</strong>：</p>
-<ul>
-<li>可以为 <code>null</code>，表示该引用不指向任何对象。</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h3 id="2-为什么基本类型不能为-null"><a href="#2-为什么基本类型不能为-null" class="headerlink" title="2. 为什么基本类型不能为 null"></a><strong>2. 为什么基本类型不能为 <code>null</code></strong></h3><h4 id="1-内存模型设计"><a href="#1-内存模型设计" class="headerlink" title="(1) 内存模型设计"></a><strong>(1) 内存模型设计</strong></h4><ul>
-<li><strong>基本类型直接存储值</strong>：<br>例如，<code>int a = 5;</code> 中的 <code>a</code> 是一个 4 字节的内存空间，直接存储整数 <code>5</code>，而不是指向某个对象的地址。因此，它无法表示 “无值” 或 <code>null</code>。</li>
-<li><strong>引用类型存储地址</strong>：<br>例如，<code>Integer b = null;</code> 中的 <code>b</code> 是一个 4 字节（32 位 JVM）或 8 字节（64 位 JVM）的内存空间，存储的是对象的地址。<code>null</code> 表示该地址无效（未指向任何对象）。</li>
-</ul>
-<h4 id="2-类型系统的安全性"><a href="#2-类型系统的安全性" class="headerlink" title="(2) 类型系统的安全性"></a><strong>(2) 类型系统的安全性</strong></h4><ul>
-<li><strong>基本类型的意义明确</strong>：<br><code>int</code> 表示整数，<code>boolean</code> 表示布尔值。它们的取值范围是固定的（如 <code>boolean</code> 只能是 <code>true</code> 或 <code>false</code>），没有 “未定义” 的状态。</li>
-<li><strong>引用类型的灵活性</strong>：<br>引用类型可以通过 <code>null</code> 表示 “未初始化” 或 “无效值”，但这也带来了潜在的 <code>NullPointerException</code> 风险。</li>
-</ul>
-<h4 id="3-性能优化"><a href="#3-性能优化" class="headerlink" title="(3) 性能优化"></a><strong>(3) 性能优化</strong></h4><ul>
-<li><strong>基本类型的高效性</strong>：<br>基本类型直接存储在栈内存中，访问速度更快。如果允许 <code>null</code>，就需要额外的检查和处理，降低性能。</li>
-<li><strong>引用类型的开销</strong>：<br>引用类型需要分配堆内存，并通过地址访问，天然支持 <code>null</code> 的语义。</li>
-</ul>
-<hr>
-<h3 id="3-典型错误示例"><a href="#3-典型错误示例" class="headerlink" title="3. 典型错误示例"></a><strong>3. 典型错误示例</strong></h3><h4 id="1-错误代码"><a href="#1-错误代码" class="headerlink" title="(1) 错误代码"></a><strong>(1) 错误代码</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 编译错误！</span><br></code></pre></td></tr></table></figure>
-<ul>
-<li><strong>原因</strong>：<code>int</code> 是基本类型，不能存储 <code>null</code>（只能存储整数）。</li>
-<li><strong>正确做法</strong>：使用包装类 <code>Integer</code>：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 合法</span><br></code></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="2-错误比较"><a href="#2-错误比较" class="headerlink" title="(2) 错误比较"></a><strong>(2) 错误比较</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">boolean</span> <span class="hljs-variable">flag</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;<br><span class="hljs-keyword">if</span> (flag == <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 编译错误！</span><br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<ul>
-<li><strong>原因</strong>：<code>boolean</code> 是基本类型，不能与 <code>null</code> 比较。</li>
-<li><strong>正确做法</strong>：使用包装类 <code>Boolean</code>：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Boolean</span> <span class="hljs-variable">flag</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-keyword">if</span> (flag == <span class="hljs-literal">null</span>) &#123; <span class="hljs-comment">// 合法</span><br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure></li>
-</ul>
-<hr>
-<h3 id="4-如何处理可能为-null-的数值"><a href="#4-如何处理可能为-null-的数值" class="headerlink" title="4. 如何处理可能为 null 的数值"></a><strong>4. 如何处理可能为 <code>null</code> 的数值</strong></h3><p>如果需要表示一个可能为 <code>null</code> 的数值，必须使用基本类型的包装类（如 <code>Integer</code>、<code>Double</code>、<code>Boolean</code>）。</p>
-<h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a><strong>示例</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 从数据库查询可能为 null 的数值</span><br><span class="hljs-type">Integer</span> <span class="hljs-variable">age</span> <span class="hljs-operator">=</span> getAgeFromDatabase(); <span class="hljs-comment">// 可能返回 null</span><br><br><span class="hljs-keyword">if</span> (age == <span class="hljs-literal">null</span>) &#123;<br>    System.out.println(<span class="hljs-string">&quot;年龄未提供&quot;</span>);<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    System.out.println(<span class="hljs-string">&quot;年龄为：&quot;</span> + age);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h1><p>方法一：深度优先搜索<br>思路</p>
+<p>我们对树进行深度优先搜索，在搜索过程中，我们总是先访问右子树。那么对于每一层来说，我们在这层见到的第一个结点一定是最右边的结点。</p>
+<p>算法</p>
+<p>这样一来，我们可以存储在每个深度访问的第一个结点，一旦我们知道了树的层数，就可以得到最终的结果数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">rightSideView</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>        dfs(root, <span class="hljs-number">1</span>, ans);<br>        <span class="hljs-keyword">return</span> ans;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">dfs</span><span class="hljs-params">(TreeNode node, <span class="hljs-type">int</span> i, List&lt;Integer&gt; ans)</span> &#123;<br>        <span class="hljs-keyword">if</span> (node == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (i &gt; ans.size()) &#123;<br>            ans.add(node.val);<br>        &#125;<br>        dfs(node.right, ++i, ans);<br>        dfs(node.left, i, ans);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="5-自动装箱与拆箱的陷阱"><a href="#5-自动装箱与拆箱的陷阱" class="headerlink" title="5. 自动装箱与拆箱的陷阱"></a><strong>5. 自动装箱与拆箱的陷阱</strong></h3><p>Java 提供了<strong>自动装箱（Autoboxing）</strong> 和 <strong>拆箱（Unboxing）</strong> 机制，但需注意以下问题：</p>
-<h4 id="1-自动拆箱可能导致-NullPointerException"><a href="#1-自动拆箱可能导致-NullPointerException" class="headerlink" title="(1) 自动拆箱可能导致 NullPointerException"></a><strong>(1) 自动拆箱可能导致 <code>NullPointerException</code></strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">num</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> num; <span class="hljs-comment">// 自动拆箱：抛出 NullPointerException</span><br></code></pre></td></tr></table></figure>
-<ul>
-<li><strong>原因</strong>：<code>num</code> 是 <code>null</code>，无法转换为基本类型 <code>int</code>。</li>
-</ul>
-<h4 id="2-解决方法"><a href="#2-解决方法" class="headerlink" title="(2) 解决方法"></a><strong>(2) 解决方法</strong></h4><p>在拆箱前进行 <code>null</code> 检查：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Integer</span> <span class="hljs-variable">num</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> (num != <span class="hljs-literal">null</span>) ? num : <span class="hljs-number">0</span>; <span class="hljs-comment">// 安全处理</span><br></code></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="6-为什么-Java-设计如此？"><a href="#6-为什么-Java-设计如此？" class="headerlink" title="6. 为什么 Java 设计如此？"></a><strong>6. 为什么 Java 设计如此？</strong></h3><ul>
-<li><strong>历史原因</strong>：<br>Java 的设计者（如 James Gosling）希望基本类型具有高性能和明确语义，而引用类型通过 <code>null</code> 提供灵活性。</li>
-<li><strong>安全与效率的权衡</strong>：<br>允许基本类型为 <code>null</code> 会增加运行时检查的开销，且违背其设计初衷（存储固定值）。</li>
-<li><strong>现代改进</strong>：<br>Java 8 引入 <code>Optional&lt;T&gt;</code> 类（如 <code>Optional&lt;Integer&gt;</code>）来更安全地处理可能为 <code>null</code> 的值，减少空指针异常。</li>
-</ul>
-<hr>
-<h3 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a><strong>7. 总结</strong></h3><table>
-<thead>
-<tr>
-<th>特性</th>
-<th>基本类型（如 <code>int</code>）</th>
-<th>引用类型（如 <code>Integer</code>）</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>是否可以为 <code>null</code></td>
-<td>❌ 不可以</td>
-<td>✅ 可以</td>
-</tr>
-<tr>
-<td>存储方式</td>
-<td>直接存储值</td>
-<td>存储对象引用</td>
-</tr>
-<tr>
-<td>默认值</td>
-<td><code>0</code>（<code>int</code>）、<code>false</code>（<code>boolean</code>）</td>
-<td><code>null</code></td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>高效计算、确定有值的场景</td>
-<td>可能为 <code>null</code> 的场景</td>
-</tr>
-</tbody></table>
-<p>如果需要处理可能为 <code>null</code> 的数值，<strong>请使用包装类或 <code>Optional&lt;T&gt;</code></strong>，并始终进行 <code>null</code> 检查以避免运行时错误。</p>
+
+
+
+
+
+<h4 id="方法二：广度优先搜索"><a href="#方法二：广度优先搜索" class="headerlink" title="方法二：广度优先搜索"></a>方法二：广度优先搜索</h4><p><strong>思路</strong></p>
+<p>我们可以对二叉树进行层次遍历，那么对于每层来说，最右边的结点一定是最后被遍历到的。二叉树的层次遍历可以用广度优先搜索实现。</p>
+<p><strong>算法</strong></p>
+<p>执行广度优先搜索，左结点排在右结点之前，这样，我们对每一层都从左到右访问。因此，只保留每个深度最后访问的结点，我们就可以在遍历完整棵树后得到每个深度最右的结点。除了将栈改成队列，并去除了 <code>rightmost_value_at_depth</code> 之前的检查外，算法没有别的改动。</p>
+<p><img src="https://assets.leetcode-cn.com/solution-static/199/fig2.png" srcset="/img/loading.gif" lazyload alt="fig2"></p>
+<p>上图表示了同一个示例，红色结点自上而下组成答案，边缘以访问顺序标号。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title function_">rightSideView</span><span class="hljs-params">(TreeNode root)</span> &#123;<br>        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;&gt;();<br>        <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">return</span> ans;<br>        &#125;<br>        Deque&lt;TreeNode&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayDeque</span>&lt;&gt;();<br>        queue.offer(root);<br>        <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> queue.size();<br>            <span class="hljs-type">int</span> <span class="hljs-variable">temp</span> <span class="hljs-operator">=</span> size;<br>            <span class="hljs-keyword">while</span> (size &gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-type">TreeNode</span> <span class="hljs-variable">poll</span> <span class="hljs-operator">=</span> queue.poll();<br>                <span class="hljs-keyword">if</span> (size == temp) &#123;<br>                    ans.add(poll.val);<br>                &#125;<br>                <span class="hljs-keyword">if</span> (poll.right != <span class="hljs-literal">null</span>) &#123;<br>                    queue.offer(poll.right);<br>                &#125;<br>                <span class="hljs-keyword">if</span> (poll.left != <span class="hljs-literal">null</span>) &#123;<br>                    queue.offer(poll.left);<br>                &#125;<br>                size--;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> ans;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -374,6 +332,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/leetcode/" class="print-no-link">#leetcode</a>
+      
+    </div>
+  
 </div>
 
 
@@ -382,8 +347,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>原始数据类型不能为null</div>
-      <div>http://example.com/2025/07/05/原始数据类型不能为null/</div>
+      <div>右视图</div>
+      <div>http://example.com/2025/07/11/右视图/</div>
     </div>
     <div class="license-meta">
       
@@ -395,7 +360,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年7月5日</div>
+          <div>2025年7月11日</div>
         </div>
       
       
@@ -427,9 +392,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/07/10/%E8%AE%B2%E8%A7%A3/" title="讲解#大括号和$大括号">
+                      <a href="/2025/07/20/List%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" title="List一些问题">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">讲解#大括号和$大括号</span>
+                        <span class="hidden-mobile">List一些问题</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -437,8 +402,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/07/05/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81/" title="为什么使用可重入锁">
-                        <span class="hidden-mobile">为什么使用可重入锁</span>
+                      <a href="/2025/07/10/%E8%AE%B2%E8%A7%A3/" title="讲解#大括号和$大括号">
+                        <span class="hidden-mobile">讲解#大括号和$大括号</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
