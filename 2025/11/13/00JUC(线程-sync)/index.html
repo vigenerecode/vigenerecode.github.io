@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://example.com/img/jmm-a610752d-ef73-47f2-b02c-6954eb3d62bf.png">
 <meta property="og:image" content="http://example.com/img/image-20251112220823274.png">
 <meta property="article:published_time" content="2025-11-12T17:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-12T15:59:17.575Z">
+<meta property="article:modified_time" content="2025-11-12T16:32:25.762Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
@@ -229,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.6k 字
+          7.7k 字
         
       </span>
     
@@ -240,7 +240,7 @@
         
         
         
-          64 分钟
+          65 分钟
         
       </span>
     
@@ -664,12 +664,14 @@
 <p>在释放锁时，当前线程会使用 CAS 操作将 Displaced Mark Word 的内容复制回锁的 Mark Word 里面。如果没有发生竞争，那么这个复制的操作会成功。如果有其他线程因为自旋多次导致轻量级锁升级成了重量级锁，那么 CAS 操作会失败，此时会释放锁并唤醒被阻塞的线程。</p>
 <h3 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h3><p>重量级锁依赖于操作系统的互斥锁（mutex，用于保证任何给定时间内，只有一个线程可以执行某一段特定的代码段） 实现，而操作系统中线程间状态的转换需要相对较长的时间，所以重量级锁效率很低，但被阻塞的线程不会消耗 CPU。</p>
 <h2 id="锁的升级流程"><a href="#锁的升级流程" class="headerlink" title="锁的升级流程"></a>锁的升级流程</h2><p>每一个线程在准备获取共享资源时： </p>
+<p>最开始无锁状态，初始状态，对象刚创建时，MarkWord中存储对象的HashCode、分代年龄等信息</p>
 <p>第一步，检查 MarkWord 里面是不是放的自己的 ThreadId ,如果是，表示当前线程是处于 “偏向锁” </p>
-<p>第二步，如果 MarkWord 不是自己的 ThreadId，锁升级，这时候，用 CAS 来执行切换，新的线程根据 MarkWord 里面现有的 ThreadId，通知之前线程暂停，之前线程将 Markword 的内容置为空。</p>
+<p>第二步，如果 MarkWord 不是自己的 ThreadId，锁升级，这时候，用 CAS 来执行切换，新的线程根据 MarkWord 里面现有的 ThreadId，通知之前线程暂停，之前线程将 Markword 的内容置为空。即：偏向锁只有遇到其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁，线程是不会主动释放偏向锁的。关于偏向锁的撤销，需要等待全局安全点，即在某个时间点上没有字节码正在执行时，它会先暂停拥有偏向锁的线程，然后判断锁对象是否处于被锁定状态。如果线程不处于活动状态，则将对象头设置成无锁状态，并撤销偏向锁，恢复到无锁（标志位为01）或轻量级锁（标志位为00）的状态。</p>
 <p>第三步，两个线程都把锁对象的 HashCode 复制到自己新建的用于存储锁的记录空间，接着开始通过 CAS 操作， 把锁对象的 MarKword 的内容修改为自己新建的记录空间的地址的方式竞争 MarkWord。</p>
 <p>第四步，第三步中成功执行 CAS 的获得资源，失败的则进入自旋 。</p>
-<p>第五步，自旋的线程在自旋过程中，成功获得资源(即之前获的资源的线程执行完成并释放了共享资源)，则整个状态依然处于 轻量级锁的状态，如果自旋失败 。</p>
+<p>第五步，自旋的线程在自旋过程中，成功获得资源(即之前获的资源的线程执行完成并释放了共享资源)，则整个状态依然处于 轻量级锁的状态，如果自旋失败则</p>
 <p>第六步，进入重量级锁的状态，这个时候，自旋的线程进行阻塞，等待之前线程执行完成并唤醒自己。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/crazymakercircle/article/details/146029082">深入理解Java锁升级（图解+史上最全）：无锁 → 偏向锁 → 轻量级锁 → 重量级锁-CSDN博客</a></p>
 <h2 id="ReentrantLock-和-synchronized-区别"><a href="#ReentrantLock-和-synchronized-区别" class="headerlink" title="ReentrantLock 和 synchronized 区别"></a>ReentrantLock 和 synchronized 区别</h2><p>（1）synchronized是独占锁，加锁和解锁的过程自动进行，易于操作，但不够灵活。ReentrantLock也是独占锁，加锁和解锁的过程需要手动进行，不易操作，但非常灵活。</p>
 <p>（2）synchronized可重入，因为加锁和解锁自动进行，不必担心最后是否释放锁；ReentrantLock也可重入，但加锁和解锁需要手动进行，且次数需一样，否则其他线程无法获得锁。</p>
 <p>（3）synchronized不可响应中断，一个线程获取不到锁就一直等着；ReentrantLock可以响应中断。</p>
@@ -681,10 +683,6 @@
 <p>lock：两者都可以的。默认是非公平锁。在其构造方法的时候可以传入Boolean值。</p>
 <p>true：公平锁</p>
 <p>false：非公平锁</p>
-<h1 id="显式锁-Lock"><a href="#显式锁-Lock" class="headerlink" title="显式锁(Lock)"></a>显式锁(Lock)</h1><p>相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。</p>
-<blockquote>
-<p>锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。</p>
-</blockquote>
 <p>end?</p>
 
                 
@@ -759,8 +757,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/09/15/leetcode-%E5%9B%9E%E6%BA%AF%E7%9A%84j-%E5%92%8Cj-1%E5%92%8C-j/" title="leetcode:回溯的j--和j-1和--j">
-                        <span class="hidden-mobile">leetcode:回溯的j--和j-1和--j</span>
+                      <a href="/2025/11/13/CAS,AQS,lock/" title="">
+                        <span class="hidden-mobile"></span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
