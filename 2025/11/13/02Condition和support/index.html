@@ -19,28 +19,25 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Git与GitLab的企业实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查">
+    <meta name="description" content="Condition 调用 condition.await 方法后线程依次尾插入到了等待队列中，依次为 Thread-0,Thread-1,Thread-2….Thread-8； 等待队列是一个单向队列。示意图如下：  等待队列的示意图 同时还有一点需要注意：我们可以多次调用newCondition()方法创建多个 Condition 对象，也就是一个 lock 可以持有多个等待队列。 而如果是 O">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NoFlowCloud">
-<meta property="og:url" content="http://example.com/2025/06/27/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:title" content="02Condition和support">
+<meta property="og:url" content="http://example.com/2025/11/13/02Condition%E5%92%8Csupport/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="Git与GitLab的企业实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查">
+<meta property="og:description" content="Condition 调用 condition.await 方法后线程依次尾插入到了等待队列中，依次为 Thread-0,Thread-1,Thread-2….Thread-8； 等待队列是一个单向队列。示意图如下：  等待队列的示意图 同时还有一点需要注意：我们可以多次调用newCondition()方法创建多个 Condition 对象，也就是一个 lock 可以持有多个等待队列。 而如果是 O">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps1.jpg">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps2.jpg">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps3.jpg">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps4.png">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps5.jpg">
-<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps6.jpg">
-<meta property="article:published_time" content="2025-06-27T11:17:34.507Z">
-<meta property="article:modified_time" content="2025-11-12T06:41:32.392Z">
+<meta property="og:image" content="http://example.com/img/condition-02.png">
+<meta property="og:image" content="http://example.com/img/condition-03.png">
+<meta property="article:published_time" content="2025-11-13T05:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-13T16:07:05.294Z">
 <meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/..%5Cimg%5Cwps1.jpg">
+<meta name="twitter:image" content="http://example.com/img/condition-02.png">
   
   
   
-  <title>NoFlowCloud</title>
+  <title>02Condition和support - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="02Condition和support"></span>
           
         </div>
 
@@ -217,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-06-27 19:17" pubdate>
-          2025年6月27日 晚上
+        <time datetime="2025-11-13 13:07" pubdate>
+          2025年11月13日 下午
         </time>
       </span>
     
@@ -229,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          971 字
+          557 字
         
       </span>
     
@@ -240,7 +237,7 @@
         
         
         
-          9 分钟
+          5 分钟
         
       </span>
     
@@ -277,89 +274,25 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">02Condition和support</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Git与GitLab的企业实战"><a href="#Git与GitLab的企业实战" class="headerlink" title="Git与GitLab的企业实战"></a>Git与GitLab的企业实战</h1><h1 id="第1章-Git概述"><a href="#第1章-Git概述" class="headerlink" title="第1章 Git概述"></a>第1章 Git概述</h1><p>Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。</p>
-<p>Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。</p>
-<h2 id="1-何为版本控制"><a href="#1-何为版本控制" class="headerlink" title="1. 何为版本控制"></a>1. 何为版本控制</h2><p>版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的系统。</p>
-<p>版本控制其实最重要的是可以记录文件修改历史记录，从而让用户能够查看历史版本，方便版本切换。</p>
-<p><img src="/..%5Cimg%5Cwps1.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<h2 id="2-为什么需要版本控制"><a href="#2-为什么需要版本控制" class="headerlink" title="2. 为什么需要版本控制"></a>2. 为什么需要版本控制</h2><p>个人开发过渡到团队协作。</p>
-<p><img src="/..%5Cimg%5Cwps2.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<h2 id="3-版本控制工具"><a href="#3-版本控制工具" class="headerlink" title="3. 版本控制工具"></a>3. 版本控制工具</h2><ul>
-<li><strong>集中式版本控制工具</strong></li>
-</ul>
-<p>CVS、SVN(Subversion)、VSS……</p>
-<p>集中化的版本控制系统诸如 CVS、SVN等，都有一个单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。多年以来，这已成为版本控制系统的标准做法。</p>
-<p>这种做法带来了许多好处，每个人都可以在一定程度上看到项目中的其他人正在做些什么。而管理员也可以轻松掌控每个开发者的权限，并且管理一个集中化的版本控制系统，要远比在各个客户端上维护本地数据库来得轻松容易。</p>
-<p>事分两面，有好有坏。这么做显而易见的缺点是中央服务器的单点故障。如果服务器宕机一小时，那么在这一小时内，谁都无法提交更新，也就无法协同工作。</p>
-<p><img src="/..%5Cimg%5Cwps3.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<ul>
-<li><strong>分布式版本控制工具</strong></li>
-</ul>
-<p>Git、Mercurial、Bazaar、Darcs……</p>
-<p>像 Git这种分布式版本控制工具，客户端提取的不是最新版本的文件快照，而是把代码仓库完整地镜像下来（本地库）。这样任何一处协同工作用的文件发生故障，事后都可以用其他客户端的本地仓库进行恢复。因为每个客户端的每一次文件提取操作，实际上都是一次对整个文件仓库的完整备份。</p>
-<p>分布式的版本控制系统出现之后,解决了集中式版本控制系统的缺陷:</p>
-<ol>
-<li><p>服务器断网的情况下也可以进行开发（因为版本控制是在本地进行的）</p>
-</li>
-<li><p>每个客户端保存的也都是整个完整的项目（包含历史记录，更加安全）</p>
-</li>
+                <h1 id="Condition"><a href="#Condition" class="headerlink" title="Condition"></a>Condition</h1><ol>
+<li>调用 condition.await 方法后线程依次尾插入到了等待队列中，依次为 Thread-0,Thread-1,Thread-2….Thread-8；</li>
+<li>等待队列是一个单向队列。示意图如下：</li>
 </ol>
-<p><img src="/..%5Cimg%5Cwps4.png" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<h2 id="4-Git简史"><a href="#4-Git简史" class="headerlink" title="4. Git简史"></a>4. Git简史</h2><p><img src="/..%5Cimg%5Cwps5.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<h2 id="5-Git工作机制"><a href="#5-Git工作机制" class="headerlink" title="5 Git工作机制"></a>5 Git工作机制</h2><p><img src="/..%5Cimg%5Cwps6.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
-<h1 id="第3章-Git常用命令"><a href="#第3章-Git常用命令" class="headerlink" title="第3章 Git常用命令"></a>第3章 Git常用命令</h1><table>
-<thead>
-<tr>
-<th><strong>命令名称</strong></th>
-<th><strong>作用</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>git config –global user.name 用户名</td>
-<td>设置用户签名</td>
-</tr>
-<tr>
-<td>git config –global user.email 邮箱</td>
-<td>设置用户邮箱</td>
-</tr>
-<tr>
-<td>git init</td>
-<td>初始化本地库</td>
-</tr>
-<tr>
-<td>git status</td>
-<td>查看本地库状态</td>
-</tr>
-<tr>
-<td>git add 文件名</td>
-<td>添加到暂存区</td>
-</tr>
-<tr>
-<td>git commit -m “日志信息” 文件名</td>
-<td>提交到本地库</td>
-</tr>
-<tr>
-<td>git reflog</td>
-<td>查看历史记录</td>
-</tr>
-<tr>
-<td>git reset –hard 版本号</td>
-<td>版本穿梭</td>
-</tr>
-</tbody></table>
-<h2 id="1-设置用户签名"><a href="#1-设置用户签名" class="headerlink" title="1 设置用户签名"></a>1 设置用户签名</h2><h3 id="1-1-基本语法"><a href="#1-1-基本语法" class="headerlink" title="1.1 基本语法"></a>1.1 基本语法</h3><p>git config –global user.name 用户名</p>
-<p>git config –global user.email 邮箱</p>
-<h3 id="1-2-案例实操"><a href="#1-2-案例实操" class="headerlink" title="1.2 案例实操"></a>1.2 案例实操</h3><p>全局范围的签名设置：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">git config --global user.name yhm<br>git config --global user.email yaohm7788@163.com<br>git config --list # 查看全局配置<br>cat ~/.gitconfig  # cat linux中查看文本的命令  ~ 家 [你当前用户的家]/ .gitconfig<br></code></pre></td></tr></table></figure>
-
-<p>说明：</p>
-<p>签名的作用是区分不同操作者身份。用户的签名信息在每一个版本的提交信息中能够看到，以此确认本次提交是谁做的。Git首次安装必须设置一下用户签名，否则无法提交代码。</p>
-<p>※注意：这里设置用户签名和将来登录GitHub（或其他代码托管中心）的账号没有任何关系。</p>
+<p><img src="/./../img/condition-02.png" srcset="/img/loading.gif" lazyload alt="等待队列的示意图">等待队列的示意图</p>
+<p>同时还有一点需要注意：我们可以多次调用<code>newCondition()</code>方法创建多个 Condition 对象，也就是一个 lock 可以持有多个等待队列。</p>
+<p>而如果是 Object 方式的话，就只能有一个同步队列和一个等待队列。</p>
+<p>因此，ReentrantLock 等 AQS 是可以持有一个同步队列和多个等待队列的，new 多个 Condition 就行了。示意图如下：</p>
+<p><img src="/./../img/condition-03.png" srcset="/img/loading.gif" lazyload alt="AQS持有多个Condition"></p>
+<h1 id="locksupport"><a href="#locksupport" class="headerlink" title="locksupport"></a>locksupport</h1><p>LockSupprot 用来阻塞和唤醒线程，底层实现依赖于 [Unsafe 类]（后面会细讲）。</p>
+<p>该类包含一组用于阻塞和唤醒线程的静态方法，这些方法主要是围绕 park 和 unpark 展开，</p>
+<h2 id="阻塞线程"><a href="#阻塞线程" class="headerlink" title="阻塞线程"></a>阻塞线程</h2><p>void park()：阻塞当前线程，如果调用 unpark 方法或线程被中断，则该线程将变得可运行。请注意，park 不会抛出 InterruptedException，因此线程必须单独检查其中断状态。<br>void park(Object blocker)：功能同方法 1，入参增加一个 Object 对象，用来记录导致线程阻塞的对象，方便问题排查。<br>void parkNanos(long nanos)：阻塞当前线程一定的纳秒时间，或直到被 unpark 调用，或线程被中断。<br>void parkNanos(Object blocker, long nanos)：功能同方法 3，入参增加一个 Object 对象，用来记录导致线程阻塞的对象，方便问题排查。<br>void parkUntil(long deadline)：阻塞当前线程直到某个指定的截止时间（以毫秒为单位），或直到被 unpark 调用，或线程被中断。<br>void parkUntil(Object blocker, long deadline)：功能同方法 5，入参增加一个 Object 对象，用来记录导致线程阻塞的对象，方便问题排查。</p>
+<h3 id="唤醒线程"><a href="#唤醒线程" class="headerlink" title="唤醒线程"></a>唤醒线程</h3><p>void unpark(Thread thread)：唤醒一个由 park 方法阻塞的线程。如果该线程未被阻塞，那么下一次调用 park 时将立即返回。这允许“先发制人”式的唤醒机制。</p>
+<p>实际上，LockSupport 阻塞和唤醒线程的功能依赖于 sun.misc.Unsafe，这是一个很底层的类，后面这篇文章会细讲，比如 LockSupport 的 park 方法是通过 unsafe.park() 方法实现的。</p>
 
                 
               </div>
@@ -369,6 +302,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
+      
+    </div>
+  
 </div>
 
 
@@ -377,8 +317,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
-      <div>http://example.com/2025/06/27/Git与GitLab的企业实战/</div>
+      <div>02Condition和support</div>
+      <div>http://example.com/2025/11/13/02Condition和support/</div>
     </div>
     <div class="license-meta">
       
@@ -390,7 +330,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年6月27日</div>
+          <div>2025年11月13日</div>
         </div>
       
       
@@ -422,9 +362,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/06/28/leetcode%EF%BC%9A%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" title="leetcode：链表倒转">
+                      <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" title="队列的API">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">leetcode：链表倒转</span>
+                        <span class="hidden-mobile">队列的API</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -432,8 +372,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/06/27/leetcode%EF%BC%9A%E6%97%8B%E8%BD%AC%E5%9B%BE%E5%83%8F/" title="leetcode：旋转图像">
-                        <span class="hidden-mobile">leetcode：旋转图像</span>
+                      <a href="/2025/11/13/01CAS,AQS,lock/" title="01CASAQSLOCK">
+                        <span class="hidden-mobile">01CASAQSLOCK</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

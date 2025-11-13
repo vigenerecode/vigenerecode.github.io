@@ -227,6 +227,166 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/07/05/%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84%E5%BC%95%E5%85%A5%EF%BC%9A%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E4%B8%AD%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/" target="_self">
+          可重入锁的引入：不可重入锁中的死锁问题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/05/%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84%E5%BC%95%E5%85%A5%EF%BC%9A%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E4%B8%AD%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/" target="_self">
+        <div>
+          重入锁（ReentrantLock），顾名思义，就是支持重复进入的锁，它表示该锁能够支持同一个线程对一个资源的重复加锁。也就是说，如果某个线程试图获得一个已经由它自己持有的可重入锁，那个这个请求就会成功。 相反，不可重入锁就是指该锁不支持同一个线程对一个资源的重复加锁，由于 Java 中并没有现成的可重入锁可供使用，下面简单实现一个： 123456789101112131415public cla
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-07-05 16:12" pubdate>
+              2025-07-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/07/03/leetcode%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9/" target="_self">
+          leetcode：删除链表的倒数第N个节点
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/03/leetcode%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9/" target="_self">
+        <div>
+          s双指针想象有一把长度固定的尺子，左端点在链表头部，右端点在正数第 n 个节点。向右移动尺子，当尺子右端点到达链表末尾时，左端点就在倒数第 n 个节点。 由于需要删除节点，我们需要找倒数第 n 个节点的前一个节点（倒数第 n+1 个节点），这样才能做删除操作。 修改：左端点在链表头部，右端点在正数第 n+1 个节点。向右移动尺子，当尺子右端点到达链表末尾时，左端点就在倒数第 n+1 个节点。 细节
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-07-03 10:03" pubdate>
+              2025-07-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/leetcode/">#leetcode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/06/28/leetcode%EF%BC%9Ak%E4%B8%AA%E4%B8%80%E7%BB%84%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" target="_self">
+          leetcode：k个一组链表倒转
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/28/leetcode%EF%BC%9Ak%E4%B8%AA%E4%B8%80%E7%BB%84%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" target="_self">
+        <div>
+          给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。 k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。 示例 1：  12输入：head = [1,2,3,4,5], k = 2输出：[2,1,4,3,5]  示例 2：  12输入：head
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-06-28 09:36" pubdate>
+              2025-06-28
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/leetcode/">#leetcode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/06/28/leetcode%EF%BC%9A%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" target="_self">
+          leetcode：链表倒转
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/28/leetcode%EF%BC%9A%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" target="_self">
+        <div>
+          92.反转链表2给你单链表的头指针 head 和两个整数 left 和 right ，其中 left &lt;= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。 示例 1：  12输入：head = [1,2,3,4,5], left = 2, right = 4输出：[1,4,3,2,5]  示例 2： 12输入：head = [5], left
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-06-28 09:04" pubdate>
+              2025-06-28
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/leetcode/">#leetcode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/06/27/leetcode%EF%BC%9A%E6%97%8B%E8%BD%AC%E5%9B%BE%E5%83%8F/" target="_self">
           leetcode：旋转图像
         </a>
@@ -438,166 +598,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2025-06-23 12:00" pubdate>
               2025-06-23
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/leetcode/">#leetcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/" target="_self">
-          chmod读文件之755
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/" target="_self">
-        <div>
-          755读文件最经典，r的权限只能看一眼有什么文件，还需要执行权限才能进去看文件内容或者里面的文件夹内容 注意，要将（比如MySQL这个大类）文件夹设为755，其余人员才能进去，然后将文件夹里面的设置为754，就能实现不能运行了
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-22 21:33" pubdate>
-              2025-06-22
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" target="_self">
-          Linux的三个问题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" target="_self">
-        <div>
-          三个问题1三个问题1.Linux怎么样部署测试环境，部署完了之后怎么样知道是否启动成功了这个项目 2.部署出现问题，用什么命令去查找相关的logo日志 3.当某个可执行文件的权限不足时候，怎么做 基本回答如下 测试环境用容器来部署。这样可以保证所有开发人员环境统一。可以选择docker或者podman，选择对应compose编写部署文件。使用dockerfile编译与打包程序，可以减少自动化测试时
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-22 12:10" pubdate>
-              2025-06-22
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/21/6-21/" target="_self">
-          6-21
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/21/6-21/" target="_self">
-        <div>
-          1终于学完ssm了真感觉SSM跟SPringboot没有什么重点啊，除了可能要看源码之外，其他直接跟着项目搞就行了 2终于弄完计组的一堆作业了疑似浪费了一天 3打算把leetcode重新捡起来应该关注个人然后偷看ta的进度 TODOLIST：1.博客的run netlify命令仍然有问题 2.天选又开始黑屏休眠了，得关 3.复习（复健）leetcode 4.LSTM的PPT之类的 5.争取考试之前
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-21 23:45" pubdate>
-              2025-06-21
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%97%A5%E5%B8%B8%E7%94%9F%E6%B4%BB/">#日常生活</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/21/Leetcode03%EF%BC%9A%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/" target="_self">
-          Leetcode03：无重复字符的最长子串
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/21/Leetcode03%EF%BC%9A%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2/" target="_self">
-        <div>
-          3. 无重复字符的最长子串 提示 给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。 示例 1: 123输入: s = &quot;abcabcbb&quot;输出: 3 解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。  示例 2: 123输入: s = &quot;bbbbb&quot;输出: 1解释: 因为无重复字符的最长子串是 &
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-21 23:29" pubdate>
-              2025-06-21
             </time>
           </div>
         

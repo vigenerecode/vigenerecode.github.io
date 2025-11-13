@@ -19,24 +19,29 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存">
+    <meta name="description" content="Git实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="并发容器">
-<meta property="og:url" content="http://example.com/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:title" content="Git">
+<meta property="og:url" content="http://example.com/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存">
+<meta property="og:description" content="Git实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png">
-<meta property="article:published_time" content="2025-11-13T08:12:00.000Z">
-<meta property="article:modified_time" content="2025-11-13T16:07:36.968Z">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps1.jpg">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps2.jpg">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps3.jpg">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps4.png">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps5.jpg">
+<meta property="og:image" content="http://example.com/..%5Cimg%5Cwps6.jpg">
+<meta property="article:published_time" content="2025-11-13T15:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-13T16:08:57.489Z">
 <meta property="article:author" content="無鎏雲">
-<meta property="article:tag" content="JUC">
+<meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png">
+<meta name="twitter:image" content="http://example.com/..%5Cimg%5Cwps1.jpg">
   
   
   
-  <title>并发容器 - NoFlowCloud</title>
+  <title>Git - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +207,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="并发容器"></span>
+            <span id="subtitle" data-typed-text="Git"></span>
           
         </div>
 
@@ -213,8 +218,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-13 16:12" pubdate>
-          2025年11月13日 下午
+        <time datetime="2025-11-13 23:07" pubdate>
+          2025年11月13日 晚上
         </time>
       </span>
     
@@ -225,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          967 字
         
       </span>
     
@@ -236,7 +241,7 @@
         
         
         
-          14 分钟
+          9 分钟
         
       </span>
     
@@ -273,97 +278,90 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">并发容器</h1>
+            <h1 id="seo-header">Git</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="a简介"><a href="#a简介" class="headerlink" title="a简介"></a>a简介</h1><p>java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。</p>
-<p>但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。</p>
-<p><img src="/./../img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png" srcset="/img/loading.gif" lazyload alt="img"></p>
-<p>。</p>
-<h2 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97">阻塞队列</a></h2><p>我们假设一种场景，<a target="_blank" rel="noopener" href="https://javabetter.cn/thread/shengchanzhe-xiaofeizhe.html">生产者一直生产资源，消费者一直消费资源</a>（后面会细讲，戳链接直达），资源存储在一个缓冲池中，生产者将生产的资源存进缓冲池中，消费者从缓冲池中拿到资源进行消费，这就是大名鼎鼎的<strong>生产者-消费者模式</strong>。</p>
-<p>该模式能够简化开发过程，一方面消除了生产者类与消费者类之间的代码依赖性，另一方面将生产数据的过程与使用数据的过程解耦简化负载。</p>
-<p>我们自己 coding 实现这个模式的时候，因为需要让<strong>多个线程操作共享变量</strong>（即资源），所以很容易引发<strong>线程安全问题</strong>，造成<strong>重复消费</strong>和<strong>死锁</strong>，尤其是生产者和消费者存在多个的情况。另外，当缓冲池空了，我们需要阻塞消费者，唤醒生产者；当缓冲池满了，我们需要阻塞生产者，唤醒消费者，这些个<strong>等待-唤醒</strong>逻辑都需要自己实现。</p>
-<p>这么容易出错的事情，JDK 当然帮我们做啦，这就是阻塞队列（BlockingQueue），<strong>你只管往里面存、取就行，而不用担心多线程环境下存、取共享变量的线程安全问题。</strong></p>
-<blockquote>
-<p>BlockingQueue 是 Java util.concurrent 包下重要的数据结构，区别于普通的队列，BlockingQueue 提供了<strong>线程安全的队列访问方式</strong>，并发包下很多高级同步类的实现都是基于 BlockingQueue 实现的。</p>
-</blockquote>
-<p>BlockingQueue 一般用于生产者-消费者模式，生产者是往队列里添加元素的线程，消费者是从队列里拿元素的线程。<strong>BlockingQueue 就是存放元素的容器</strong>。</p>
-<h3 id="BlockingQueue-的操作方法"><a href="#BlockingQueue-的操作方法" class="headerlink" title="BlockingQueue 的操作方法"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#blockingqueue-%E7%9A%84%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">BlockingQueue 的操作方法</a></h3><p>阻塞队列提供了四组不同的方法用于插入、移除、检查元素：</p>
-<table>
+                <h1 id="Git实战"><a href="#Git实战" class="headerlink" title="Git实战"></a>Git实战</h1><h1 id="第1章-Git概述"><a href="#第1章-Git概述" class="headerlink" title="第1章 Git概述"></a>第1章 Git概述</h1><p>Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。</p>
+<p>Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。</p>
+<h2 id="1-何为版本控制"><a href="#1-何为版本控制" class="headerlink" title="1. 何为版本控制"></a>1. 何为版本控制</h2><p>版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的系统。</p>
+<p>版本控制其实最重要的是可以记录文件修改历史记录，从而让用户能够查看历史版本，方便版本切换。</p>
+<p><img src="/..%5Cimg%5Cwps1.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<h2 id="2-为什么需要版本控制"><a href="#2-为什么需要版本控制" class="headerlink" title="2. 为什么需要版本控制"></a>2. 为什么需要版本控制</h2><p>个人开发过渡到团队协作。</p>
+<p><img src="/..%5Cimg%5Cwps2.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<h2 id="3-版本控制工具"><a href="#3-版本控制工具" class="headerlink" title="3. 版本控制工具"></a>3. 版本控制工具</h2><ul>
+<li><strong>集中式版本控制工具</strong></li>
+</ul>
+<p>CVS、SVN(Subversion)、VSS……</p>
+<p>集中化的版本控制系统诸如 CVS、SVN等，都有一个单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。多年以来，这已成为版本控制系统的标准做法。</p>
+<p>这种做法带来了许多好处，每个人都可以在一定程度上看到项目中的其他人正在做些什么。而管理员也可以轻松掌控每个开发者的权限，并且管理一个集中化的版本控制系统，要远比在各个客户端上维护本地数据库来得轻松容易。</p>
+<p>事分两面，有好有坏。这么做显而易见的缺点是中央服务器的单点故障。如果服务器宕机一小时，那么在这一小时内，谁都无法提交更新，也就无法协同工作。</p>
+<p><img src="/..%5Cimg%5Cwps3.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<ul>
+<li><strong>分布式版本控制工具</strong></li>
+</ul>
+<p>Git、Mercurial、Bazaar、Darcs……</p>
+<p>像 Git这种分布式版本控制工具，客户端提取的不是最新版本的文件快照，而是把代码仓库完整地镜像下来（本地库）。这样任何一处协同工作用的文件发生故障，事后都可以用其他客户端的本地仓库进行恢复。因为每个客户端的每一次文件提取操作，实际上都是一次对整个文件仓库的完整备份。</p>
+<p>分布式的版本控制系统出现之后,解决了集中式版本控制系统的缺陷:</p>
+<ol>
+<li><p>服务器断网的情况下也可以进行开发（因为版本控制是在本地进行的）</p>
+</li>
+<li><p>每个客户端保存的也都是整个完整的项目（包含历史记录，更加安全）</p>
+</li>
+</ol>
+<p><img src="/..%5Cimg%5Cwps4.png" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<h2 id="4-Git简史"><a href="#4-Git简史" class="headerlink" title="4. Git简史"></a>4. Git简史</h2><p><img src="/..%5Cimg%5Cwps5.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<h2 id="5-Git工作机制"><a href="#5-Git工作机制" class="headerlink" title="5 Git工作机制"></a>5 Git工作机制</h2><p><img src="/..%5Cimg%5Cwps6.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<h1 id="第3章-Git常用命令"><a href="#第3章-Git常用命令" class="headerlink" title="第3章 Git常用命令"></a>第3章 Git常用命令</h1><table>
 <thead>
 <tr>
-<th align="center">方法\处理方式</th>
-<th align="center">抛出异常</th>
-<th align="center">返回特殊值</th>
-<th align="center">一直阻塞</th>
-<th align="center">超时退出</th>
+<th><strong>命令名称</strong></th>
+<th><strong>作用</strong></th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">插入方法</td>
-<td align="center">add(e)</td>
-<td align="center">offer(e)</td>
-<td align="center"><strong>put(e)</strong></td>
-<td align="center">offer(e,time,unit)</td>
+<td>git config –global user.name 用户名</td>
+<td>设置用户签名</td>
 </tr>
 <tr>
-<td align="center">移除方法</td>
-<td align="center">remove()</td>
-<td align="center">poll()</td>
-<td align="center"><strong>take()</strong></td>
-<td align="center">poll(time,unit)</td>
+<td>git config –global user.email 邮箱</td>
+<td>设置用户邮箱</td>
 </tr>
 <tr>
-<td align="center">检查方法</td>
-<td align="center">element()</td>
-<td align="center">peek()</td>
-<td align="center">-</td>
-<td align="center">-</td>
+<td>git init</td>
+<td>初始化本地库</td>
+</tr>
+<tr>
+<td>git status</td>
+<td>查看本地库状态</td>
+</tr>
+<tr>
+<td>git add 文件名</td>
+<td>添加到暂存区</td>
+</tr>
+<tr>
+<td>git commit -m “日志信息” 文件名</td>
+<td>提交到本地库</td>
+</tr>
+<tr>
+<td>git reflog</td>
+<td>查看历史记录</td>
+</tr>
+<tr>
+<td>git reset –hard 版本号</td>
+<td>版本穿梭</td>
 </tr>
 </tbody></table>
-<ul>
-<li>抛出异常：如果操作无法立即执行，会抛异常。当阻塞队列满时候，再往队列里插入元素，会抛出 <code>IllegalStateException(“Queue full”)</code>异常。当队列为空时，从队列里获取元素时会抛出 NoSuchElementException 异常 。</li>
-<li>返回特殊值：如果操作无法立即执行，会返回一个特殊值，通常是 true &#x2F; false。</li>
-<li>一直阻塞：如果操作无法立即执行，则一直阻塞或者响应中断。</li>
-<li>超时退出：如果操作无法立即执行，该方法调用将会发生阻塞，直到能够执行，但等待时间不会超过给定值。返回一个特定值以告知该操作是否成功，通常是 true &#x2F; false。</li>
-</ul>
-<p><strong>注意：</strong></p>
-<ul>
-<li>不能往阻塞队列中插入 null，会抛出空指针异常。</li>
-<li>可以访问阻塞队列中的任意元素，调用 <code>remove(o)</code>可以将队列之中的特定对象移除，但并不高效，尽量避免使用。</li>
-</ul>
-<p>我们会在后面单独开一篇<a target="_blank" rel="noopener" href="https://javabetter.cn/thread/BlockingQueue.html">BlockingQueue</a>来细讲，戳链接直达。</p>
-<h3 id="BlockingQueue-的实现类"><a href="#BlockingQueue-的实现类" class="headerlink" title="BlockingQueue 的实现类"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#blockingqueue-%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB">BlockingQueue 的实现类</a></h3><h4 id="ArrayBlockingQueue"><a href="#ArrayBlockingQueue" class="headerlink" title="ArrayBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#arrayblockingqueue">ArrayBlockingQueue</a></h4><p>由<strong>数组</strong>结构组成的<strong>有界</strong>阻塞队列。内部结构是数组，具有数组的特性。</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ArrayBlockingQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> capacity, <span class="hljs-type">boolean</span> fair)</span></span>&#123;<br> <span class="hljs-comment">//..省略代码</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="1-设置用户签名"><a href="#1-设置用户签名" class="headerlink" title="1 设置用户签名"></a>1 设置用户签名</h2><h3 id="1-1-基本语法"><a href="#1-1-基本语法" class="headerlink" title="1.1 基本语法"></a>1.1 基本语法</h3><p>git config –global user.name 用户名</p>
+<p>git config –global user.email 邮箱</p>
+<h3 id="1-2-案例实操"><a href="#1-2-案例实操" class="headerlink" title="1.2 案例实操"></a>1.2 案例实操</h3><p>全局范围的签名设置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">git config --global user.name yhm<br>git config --global user.email yaohm7788@163.com<br>git config --list # 查看全局配置<br>cat ~/.gitconfig  # cat linux中查看文本的命令  ~ 家 [你当前用户的家]/ .gitconfig<br></code></pre></td></tr></table></figure>
 
-<p>可以初始化队列大小，一旦初始化将不能改变。构造方法中的 fair 表示控制对象的内部锁是否采用公平锁，默认是<strong>非公平锁</strong>。</p>
-<h4 id="LinkedBlockingQueue"><a href="#LinkedBlockingQueue" class="headerlink" title="LinkedBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#linkedblockingqueue">LinkedBlockingQueue</a></h4><p>由<strong>链表</strong>结构组成的<strong>有界</strong>阻塞队列。内部结构是链表，具有链表的特性。默认队列的大小是<code>Integer.MAX_VALUE</code>，也可以指定大小。此队列按照<strong>先进先出</strong>的原则对元素进行排序。</p>
-<h4 id="DelayQueue"><a href="#DelayQueue" class="headerlink" title="DelayQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#delayqueue">DelayQueue</a></h4><p>该队列中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素。注入其中的元素必须实现 <code>java.util.concurrent.Delayed</code> 接口。</p>
-<p>DelayQueue 是一个没有大小限制的队列，因此往队列中插入数据的操作（生产者）永远不会被阻塞，而只有获取数据的操作（消费者）才会被阻塞。</p>
-<h4 id="PriorityBlockingQueue"><a href="#PriorityBlockingQueue" class="headerlink" title="PriorityBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#priorityblockingqueue">PriorityBlockingQueue</a></h4><p>基于优先级的无界阻塞队列（优先级的判断通过构造函数传入的 Compator 对象来决定），内部控制线程同步的锁采用的是非公平锁。</p>
-<blockquote>
-<p>网上大部分博客上<strong>PriorityBlockingQueue</strong>为公平锁，其实是不对的，查阅源码（感谢 github:<strong>ambition0802</strong>同学的指出）：</p>
-</blockquote>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs aspectj"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">PriorityBlockingQueue</span><span class="hljs-params">(<span class="hljs-keyword">int</span> initialCapacity,</span></span><br><span class="hljs-params"><span class="hljs-function">                                 Comparator&lt;? <span class="hljs-keyword">super</span> E&gt; comparator)</span> </span>&#123;<br>    <span class="hljs-keyword">this</span>.lock = <span class="hljs-keyword">new</span> ReentrantLock(); <span class="hljs-comment">//默认构造方法-非公平锁</span><br>    ...<span class="hljs-comment">//其余代码略</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>说明：</p>
+<p>签名的作用是区分不同操作者身份。用户的签名信息在每一个版本的提交信息中能够看到，以此确认本次提交是谁做的。Git首次安装必须设置一下用户签名，否则无法提交代码。</p>
+<p>※注意：这里设置用户签名和将来登录GitHub（或其他代码托管中心）的账号没有任何关系。</p>
 
-<h4 id="SynchronousQueue"><a href="#SynchronousQueue" class="headerlink" title="SynchronousQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#synchronousqueue">SynchronousQueue</a></h4><p>这个队列比较特殊，<strong>没有任何内部容量</strong>，甚至连一个队列的容量都没有。并且每个 put 必须等待一个 take，反之亦然。</p>
-<p>需要区别容量为 1 的 ArrayBlockingQueue、LinkedBlockingQueue。</p>
-<p>以下方法的返回值，可以帮助理解这个队列：</p>
-<ul>
-<li><code>iterator()</code> 永远返回空，因为里面没有东西</li>
-<li><code>peek()</code> 永远返回 null</li>
-<li><code>put()</code> 往 queue 放进去一个 element 以后就一直 wait 直到有其他 thread 进来把这个 element 取走。</li>
-<li><code>offer()</code> 往 queue 里放一个 element 后立即返回，如果碰巧这个 element 被另一个 thread 取走了，offer 方法返回 true，认为 offer 成功；否则返回 false。</li>
-<li><code>take()</code> 取出并且 remove 掉 queue 里的 element，取不到东西他会一直等。</li>
-<li><code>poll()</code> 取出并且 remove 掉 queue 里的 element，只有到碰巧另外一个线程正在往 queue 里 offer 数据或者 put 数据的时候，该方法才会取到东西。否则立即返回 null。</li>
-<li><code>isEmpty()</code> 永远返回 true</li>
-<li><code>remove()&amp;removeAll()</code> 永远返回 false</li>
-</ul>
-<p><strong>注意</strong></p>
-<p><strong>PriorityBlockingQueue</strong>不会阻塞数据生产者（因为队列是无界的），而只会在没有可消费的数据时阻塞数据的消费者。因此使用的时候要特别注意，**生产者生产数据的速度绝对不能快于消费者消费数据的速度，否则时间一长，会最终耗尽所有的可用堆内存空间。**对于使用默认大小的**LinkedBlockingQueue**也是一样的。</p>
-<h1 id="w"><a href="#w" class="headerlink" title="w"></a>w</h1>
                 
               </div>
             
@@ -375,7 +373,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
+        <a href="/tags/Git/" class="print-no-link">#Git</a>
       
     </div>
   
@@ -387,8 +385,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>并发容器</div>
-      <div>http://example.com/2025/11/13/并发容器/</div>
+      <div>Git</div>
+      <div>http://example.com/2025/11/13/Git与GitLab的企业实战/</div>
     </div>
     <div class="license-meta">
       
@@ -432,9 +430,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/13/04Threadlocal%E5%92%8Cpoll/" title="04Threadlocal和poll">
+                      <a href="/2025/11/13/ConcurrentHashMap%20/" title="ConcurrentHashMap">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">04Threadlocal和poll</span>
+                        <span class="hidden-mobile">ConcurrentHashMap</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -442,8 +440,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" title="队列的API">
-                        <span class="hidden-mobile">队列的API</span>
+                      <a href="/2025/11/13/HashMap/" title="HashMap">
+                        <span class="hidden-mobile">HashMap</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Threadlocal是什么是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。 通常，我们会使用 synchronzed 关键字 或者 lock 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。 线程安全问题的核心在于多个线程会对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="04Threadlocal和poll">
+<meta property="og:url" content="http://example.com/2025/11/13/04Threadlocal%E5%92%8Cpoll/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="Threadlocal是什么是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。 通常，我们会使用 synchronzed 关键字 或者 lock 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。 线程安全问题的核心在于多个线程会对">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-13T11:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-13T16:07:20.179Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="JUC">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>04Threadlocal和poll - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="04Threadlocal和poll"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-13 19:07" pubdate>
+          2025年11月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">04Threadlocal和poll</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Threadlocal是什么"><a href="#Threadlocal是什么" class="headerlink" title="Threadlocal是什么"></a>Threadlocal是什么</h1><p>是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。</p>
+<p>通常，我们会使用 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/synchronized-1.html">synchronzed 关键字</a> 或者 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/lock.html">lock</a> 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。</p>
+<p><strong>线程安全问题的核心在于多个线程会对同一个临界区的共享资源进行访问</strong>，那如果每个线程都拥有自己的“共享资源”，各用各的，互不影响，这样就不会出现线程安全的问题了，对吧？</p>
+<p>事实上，这就是一种“<strong>空间换时间</strong>”的思想，每个线程拥有自己的“共享资源”，虽然内存占用变大了，但由于不需要同步，也就减少了线程可能存在的阻塞问题，从而提高时间上的效率。</p>
+<p>不过，ThreadLocal 并不在 java.util.concurrent 并发包下，而是在 java.lang 包下，但我更倾向于把它当作是一种并发容器。</p>
+<p>顾名思义，<strong>ThreadLocal 就是线程的“本地变量”，即每个线程都拥有该变量的一个副本，达到人手一份的目的，这样就可以避免共享资源的竞争</strong>。</p>
+<h2 id="set方法"><a href="#set方法" class="headerlink" title="set方法"></a>set方法</h2><p>set 方法<br>set 方法用于设置当前线程中 ThreadLocal 的变量值，该方法的源码如下：</p>
+<pre><code class="hljs">public void set(T value) &#123;
+	//1. 获取当前线程实例对象
+    Thread t = Thread.currentThread();
+//2. 通过当前线程实例获取到ThreadLocalMap对象
+ThreadLocalMap map = getMap(t);
+
+if (map != null)
+   //3. 如果Map不为null,则以当前ThreadLocal实例为key,值为value进行存入
+   map.set(this, value);
+else
+  //4.map为null,则新建ThreadLocalMap并存入value
+  createMap(t, value);&#125;
+</code></pre>
+<p>通过 Thread.currentThread() 方法获取当前调用此方法的线程实例。<br>每个线程都有自己的 ThreadLocalMap，这个映射表存储了线程的局部变量，其中键是 ThreadLocal 对象，值为特定于线程的对象。<br>如果 Map 不为 null，则以当前 ThreadLocal 实例为 key，值为 value 进行存入；如果 map 为 null，则新建 ThreadLocalMap 并存入 value。<br>通过源码我们知道，value 是存放在 ThreadLocalMap 里的。来看下 ThreadLocalMap 是什么，先有个简单的认识，后面会细讲。</p>
+<p>ThreadLocalMap 是怎样来的呢？通过getMap(t)：</p>
+<figure class="highlight wren"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs wren"><span class="hljs-title class_">ThreadLocalMap</span> <span class="hljs-title function_">getMap</span>(<span class="hljs-params">Thread</span> <span class="hljs-params">t</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-variable">t</span>.<span class="hljs-property">ThreadLocals</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>该方法直接返回当前线程对象 t 的一个成员变量 ThreadLocals：</p>
+<p>以当前 ThreadLocal 实例作为 key，值为 value 存放到 ThreadLocalMap 中，然后将当前线程对象的 ThreadLocals 赋值为 ThreadLocalMap 对象。</p>
+<p>set 方法的重要性在于它确保了每个线程都有自己的变量副本。由于这些变量是存储在与线程关联的映射表中的，所以不同的线程之间的这些变量互不影响。</p>
+<h2 id="ThreadLocalMap"><a href="#ThreadLocalMap" class="headerlink" title="ThreadLocalMap"></a>ThreadLocalMap</h2><p>ThreadLocalMap 是 ThreadLocal 类的静态内部类，它是一个定制的哈希表，专门用于保存每个线程中的线程局部变量。</p>
+<p>和大多数容器一样，ThreadLocalMap 内部维护了一个 Entry 类型的数组 类型的数组 table，长度为 2 的幂次方。</p>
+<p>Entry 继承了弱引用 <code>WeakReference&lt;ThreadLocal&lt;?&gt;&gt;</code>，它的 value 字段用于存储与特定 ThreadLocal 对象关联的值。使用弱引用作为键允许垃圾收集器在不再需要的情况下回收 ThreadLocal 实例。</p>
+<h2 id="存储数据"><a href="#存储数据" class="headerlink" title="存储数据"></a>存储数据</h2><p>哈希表存储</p>
+<p><strong>ThreadLocalMap 是使用开放地址法来处理哈希冲突的</strong>，和 HashMap 不同，之所以采用不同的方式主要是因为：</p>
+<p>ThreadLocalMap 中的哈希值分散的比较均匀，很少会出现冲突。并且 ThreadLocalMap 经常需要清除无用的对象，冲突的概率就更小了。</p>
+<h2 id="插入时"><a href="#插入时" class="headerlink" title="插入时"></a>插入时</h2><p>ThreadLocal 的 hashCode 是通过 <code>nextHashCode()</code> 方法获取的，该方法实际上是用 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/atomic.html">AtomicInteger</a> 加上 0x61c88647 来实现的。</p>
+<p>0x61c88647 是一个魔数，用于 ThreadLocal 的哈希码递增。这个值的选择并不是随机的，它是一个质数，具有以下特性：</p>
+<ul>
+<li>质数：它是一个质数，这意味着它不能被除 1 和它本身之外的任何数字整除。</li>
+<li>黄金比例：这个数字大约等于黄金比例的 32 位浮点表示的一半。黄金比例具有一些有趣的数学特性，其中之一是与斐波那契数列的关系。</li>
+<li>递增分布：在 ThreadLocal 中，这个数字用于在哈希表中分散不同线程的哈希码，从而减少冲突。每当创建新的 ThreadLocal 对象时，都会将此值添加到上一个 ThreadLocal 的哈希码中。这个递增的步长有助于在哈希表中均匀地分配 ThreadLocal 对象。</li>
+<li>性能优化：通过使用这个特定的值，算法能够确保哈希码的均匀分布，从而减少哈希冲突的可能性。这对于哈希表的性能至关重要，因为冲突可能会降低查找的效率。</li>
+</ul>
+<h4 id="02、怎样确定新值插入的位置？"><a href="#02、怎样确定新值插入的位置？" class="headerlink" title="02、怎样确定新值插入的位置？"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/ThreadLocal.html#_02%E3%80%81%E6%80%8E%E6%A0%B7%E7%A1%AE%E5%AE%9A%E6%96%B0%E5%80%BC%E6%8F%92%E5%85%A5%E7%9A%84%E4%BD%8D%E7%BD%AE">02、怎样确定新值插入的位置？</a></h4><p>通过这行代码：<code>key.ThreadLocalHashCode &amp; (len-1)</code>。</p>
+<p>同 <a target="_blank" rel="noopener" href="https://javabetter.cn/collection/hashmap.html">HashMap</a> 一样，通过当前 key 的 hashcode 与哈希表大小相与。原理我们在 HashMap 的时候已经讲过了，不记得的小伙伴可以回去看一遍。</p>
+<h4 id="03、怎样解决-hash-冲突？"><a href="#03、怎样解决-hash-冲突？" class="headerlink" title="03、怎样解决 hash 冲突？"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/ThreadLocal.html#_03%E3%80%81%E6%80%8E%E6%A0%B7%E8%A7%A3%E5%86%B3-hash-%E5%86%B2%E7%AA%81">03、怎样解决 hash 冲突？</a></h4><p>通过 <code>nextIndex(i, len)</code>，该方法中的<code>((i + 1 &lt; len) ? i + 1 : 0);</code> 能不断往后线性探测，当到哈希表末尾的时候再从 0 开始，成环形。</p>
+<h4 id="04、怎样解决“脏”Entry？"><a href="#04、怎样解决“脏”Entry？" class="headerlink" title="04、怎样解决“脏”Entry？"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/ThreadLocal.html#_04%E3%80%81%E6%80%8E%E6%A0%B7%E8%A7%A3%E5%86%B3-%E8%84%8F-entry">04、怎样解决“脏”Entry？</a></h4><p>我们知道，使用 ThreadLocal 有可能存在内存泄漏的问题，针对这种 key 为 null 的 Entry，我们称之为“stale entry”，直译为不新鲜的 entry，我把它理解为“脏 entry”。</p>
+<p>当然了，Josh Bloch 和 Doug Lea 已经替我们考虑了这种情况，源码中提供了这些解决方案：</p>
+<p>在向ThreadLocalMap添加新条目时，可以检查是否有“脏”Entry（键为null的Entry），并用新的条目替换它。这就是源码中的replaceStaleEntry方法所做的事情。</p>
+<h1 id="Key和value"><a href="#Key和value" class="headerlink" title="Key和value"></a>Key和value</h1><p><code>ThreadLocalMap</code> 的 <code>key</code> 和 <code>value</code> 引用机制：</p>
+<ul>
+<li><strong>key 是弱引用</strong>：<code>ThreadLocalMap</code> 中的 key 是 <code>ThreadLocal</code> 的弱引用 (<code>WeakReference&lt;ThreadLocal&lt;?&gt;&gt;</code>)。 这意味着，如果 <code>ThreadLocal</code> 实例不再被任何强引用指向，垃圾回收器会在下次 GC 时回收该实例，导致 <code>ThreadLocalMap</code> 中对应的 key 变为 <code>null</code>。</li>
+<li><strong>value 是强引用</strong>：即使 <code>key</code> 被 GC 回收，<code>value</code> 仍然被 <code>ThreadLocalMap.Entry</code> 强引用存在，无法被 GC 回收。</li>
+</ul>
+<p>当 <code>ThreadLocal</code> 实例失去强引用后，其对应的 value 仍然存在于 <code>ThreadLocalMap</code> 中，因为 <code>Entry</code> 对象强引用了它。如果线程持续存活（例如线程池中的线程），<code>ThreadLocalMap</code> 也会一直存在，导致 key 为 <code>null</code> 的 entry 无法被垃圾回收，即会造成内存泄漏。</p>
+<p>也就是说，内存泄漏的发生需要同时满足两个条件：</p>
+<ol>
+<li><code>ThreadLocal</code> 实例不再被强引用；</li>
+<li>线程持续存活，导致 <code>ThreadLocalMap</code> 长期存在。</li>
+</ol>
+<p>虽然 <code>ThreadLocalMap</code> 在 <code>get()</code>, <code>set()</code> 和 <code>remove()</code> 操作时会尝试清理 key 为 null 的 entry，但这种清理机制是被动的，并不完全可靠。</p>
+<h2 id="如何避免内存泄漏的发生？"><a href="#如何避免内存泄漏的发生？" class="headerlink" title="如何避免内存泄漏的发生？"></a><strong>如何避免内存泄漏的发生？</strong></h2><ol>
+<li>在使用完 <code>ThreadLocal</code> 后，务必调用 <code>remove()</code> 方法。 这是最安全和最推荐的做法。 <code>remove()</code> 方法会从 <code>ThreadLocalMap</code> 中显式地移除对应的 entry，彻底解决内存泄漏的风险。 即使将 <code>ThreadLocal</code> 定义为 <code>static final</code>，也强烈建议在每次使用后调用 <code>remove()</code>。</li>
+<li>在线程池等线程复用的场景下，使用 <code>try-finally</code> 块可以确保即使发生异常，<code>remove()</code> 方法也一定会被执行。</li>
+</ol>
+<h2 id="为什么ThreadLocal的key必须是弱引用？——详细解释"><a href="#为什么ThreadLocal的key必须是弱引用？——详细解释" class="headerlink" title="为什么ThreadLocal的key必须是弱引用？——详细解释"></a>为什么ThreadLocal的key必须是弱引用？——详细解释</h2><p>核心问题：为什么<code>tl = null</code>后ThreadLocal实例无法被回收？</p>
+<p><strong>关键点</strong>：当<code>tl = null</code>后，<strong>ThreadLocalMap仍然持有对ThreadLocal实例的强引用</strong>，导致GC无法回收它。</p>
+<h3 id="场景分析（key是强引用的情况）"><a href="#场景分析（key是强引用的情况）" class="headerlink" title="场景分析（key是强引用的情况）"></a>场景分析（key是强引用的情况）</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dart">ThreadLocal&lt;<span class="hljs-built_in">String</span>&gt; tl = <span class="hljs-keyword">new</span> ThreadLocal&lt;&gt;(); <span class="hljs-comment">// 创建ThreadLocal实例</span><br>tl.<span class="hljs-keyword">set</span>(<span class="hljs-string">&quot;hello&quot;</span>); <span class="hljs-comment">// ThreadLocalMap存储：key = tl（强引用），value = &quot;hello&quot;</span><br>tl = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// 外部引用被置为null</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>初始状态</strong>：<ul>
+<li><code>tl</code>是一个强引用，指向ThreadLocal实例</li>
+<li>ThreadLocalMap（属于当前线程）中存储了一个Entry：<code>key = tl</code>（强引用），<code>value = &quot;hello&quot;</code></li>
+</ul>
+</li>
+<li><strong><code>tl = null</code>后</strong>：<ul>
+<li>外部代码不再持有对ThreadLocal实例的强引用</li>
+<li>但<strong>ThreadLocalMap仍然持有对ThreadLocal实例的强引用</strong></li>
+<li>因为key是强引用，所以ThreadLocalMap对ThreadLocal实例的引用是强引用</li>
+</ul>
+</li>
+<li><strong>GC行为</strong>：<ul>
+<li>GC会检查所有对象的引用</li>
+<li>ThreadLocal实例被ThreadLocalMap强引用，所以不会被回收</li>
+<li>ThreadLocal实例内存泄漏：一直占用内存</li>
+</ul>
+</li>
+</ol>
+<h3 id="为什么这样会导致内存泄漏？"><a href="#为什么这样会导致内存泄漏？" class="headerlink" title="为什么这样会导致内存泄漏？"></a>为什么这样会导致内存泄漏？</h3><p>想象一下：</p>
+<ul>
+<li>你创建了一个ThreadLocal实例，然后将其设置为null</li>
+<li>但ThreadLocalMap（属于线程）仍然”抓着”这个实例不放</li>
+<li>线程可能长期存活（如线程池中的线程）</li>
+<li>这个ThreadLocal实例会一直占用内存，直到线程结束</li>
+</ul>
+<h3 id="对比：key是弱引用的情况"><a href="#对比：key是弱引用的情况" class="headerlink" title="对比：key是弱引用的情况"></a>对比：key是弱引用的情况</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dart">ThreadLocal&lt;<span class="hljs-built_in">String</span>&gt; tl = <span class="hljs-keyword">new</span> ThreadLocal&lt;&gt;(); <span class="hljs-comment">// 创建ThreadLocal实例</span><br>tl.<span class="hljs-keyword">set</span>(<span class="hljs-string">&quot;hello&quot;</span>); <span class="hljs-comment">// ThreadLocalMap存储：key = tl（弱引用），value = &quot;hello&quot;</span><br>tl = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// 外部引用被置为null</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong><code>tl = null</code>后</strong>：<ul>
+<li>外部代码不再持有对ThreadLocal实例的强引用</li>
+<li>ThreadLocalMap中key是弱引用，所以ThreadLocalMap对ThreadLocal实例的引用是弱引用</li>
+</ul>
+</li>
+<li><strong>GC行为</strong>：<ul>
+<li>GC会回收ThreadLocal实例（因为没有强引用）</li>
+<li>ThreadLocalMap中的key会变成null</li>
+<li>为后续清理提供机会</li>
+</ul>
+</li>
+</ol>
+<h3 id="为什么”ThreadLocalMap仍然持有对tl的强引用”会导致问题？"><a href="#为什么”ThreadLocalMap仍然持有对tl的强引用”会导致问题？" class="headerlink" title="为什么”ThreadLocalMap仍然持有对tl的强引用”会导致问题？"></a>为什么”ThreadLocalMap仍然持有对tl的强引用”会导致问题？</h3><p>这是理解的关键：</p>
+<ul>
+<li><strong>ThreadLocalMap是Thread的一部分</strong>，而Thread通常不会很快结束（特别是线程池中的线程）</li>
+<li><strong>ThreadLocalMap的生命周期与Thread相同</strong>，线程存活，ThreadLocalMap就存活</li>
+<li><strong>当key是强引用时，ThreadLocalMap对ThreadLocal实例的引用阻止了GC回收</strong></li>
+</ul>
+<h3 id="为什么不能让ThreadLocalMap的key是弱引用，value是弱引用？"><a href="#为什么不能让ThreadLocalMap的key是弱引用，value是弱引用？" class="headerlink" title="为什么不能让ThreadLocalMap的key是弱引用，value是弱引用？"></a>为什么不能让ThreadLocalMap的key是弱引用，value是弱引用？</h3><ul>
+<li>如果value也是弱引用，那么即使ThreadLocal实例还在，value也可能被GC提前回收</li>
+<li>这违背了ThreadLocal的设计目标：<strong>只要线程还活着，就应该能获取到存储的值</strong></li>
+<li>例如：<code>String value = tl.get()</code> 可能返回null，即使之前set过</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>核心原因</strong>：ThreadLocal的key必须是弱引用，是为了确保当外部代码不再需要ThreadLocal实例时，ThreadLocal实例可以被GC回收，避免内存泄漏。</p>
+<p><strong>为什么”tl无法被GC回收”</strong>：因为ThreadLocalMap（属于线程）对ThreadLocal实例的引用是强引用，阻止了GC回收。</p>
+<blockquote>
+<p>💡 <strong>重要提示</strong>：即使key是弱引用，ThreadLocal的value仍然是强引用，如果忘记调用<code>remove()</code>，value仍然会泄漏。所以，<strong>正确使用ThreadLocal的关键是：使用完后调用<code>remove()</code></strong>。</p>
+</blockquote>
+<p>end</p>
+<p>?</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>04Threadlocal和poll</div>
+      <div>http://example.com/2025/11/13/04Threadlocal和poll/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/13/03%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%EF%BC%88%E6%97%A0hashmap%EF%BC%89/" title="03并发容器（无hashmap）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">03并发容器（无hashmap）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" title="并发容器">
+                        <span class="hidden-mobile">并发容器</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -21,14 +21,14 @@
   
     <meta name="description" content="a一对儿比如“添加”操作可以用的方法有：add&#x2F;offer&#x2F;push&#x2F;offerFirst&#x2F;offerLast，“删除”操作可以用的方法有：remove&#x2F;pop&#x2F;poll&#x2F;pollFirst&#x2F;pollLast。 经过一番学习和测试以后，得出以下结论：这些方法从设计之初，分别来自于集合Collections，队列Queue，栈Stack，双端队列Deque，因此它们是有语义的，不建议笼统归为添加&amp;#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="可重入锁的引入：不可重入锁中的死锁问题">
+<meta property="og:title" content="队列的API">
 <meta property="og:url" content="http://example.com/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="a一对儿比如“添加”操作可以用的方法有：add&#x2F;offer&#x2F;push&#x2F;offerFirst&#x2F;offerLast，“删除”操作可以用的方法有：remove&#x2F;pop&#x2F;poll&#x2F;pollFirst&#x2F;pollLast。 经过一番学习和测试以后，得出以下结论：这些方法从设计之初，分别来自于集合Collections，队列Queue，栈Stack，双端队列Deque，因此它们是有语义的，不建议笼统归为添加&amp;#">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/webp.webp">
 <meta property="article:published_time" content="2025-11-13T08:12:00.000Z">
-<meta property="article:modified_time" content="2025-11-13T03:02:26.051Z">
+<meta property="article:modified_time" content="2025-11-13T16:07:48.329Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="API">
 <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,7 @@
   
   
   
-  <title>可重入锁的引入：不可重入锁中的死锁问题 - NoFlowCloud</title>
+  <title>队列的API - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="可重入锁的引入：不可重入锁中的死锁问题"></span>
+            <span id="subtitle" data-typed-text="队列的API"></span>
           
         </div>
 
@@ -273,7 +273,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">可重入锁的引入：不可重入锁中的死锁问题</h1>
+            <h1 id="seo-header">队列的API</h1>
             
             
               <div class="markdown-body">
@@ -325,7 +325,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>可重入锁的引入：不可重入锁中的死锁问题</div>
+      <div>队列的API</div>
       <div>http://example.com/2025/11/13/极其重要API/</div>
     </div>
     <div class="license-meta">
@@ -370,9 +370,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" title="可重入锁的引入：不可重入锁中的死锁问题">
+                      <a href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" title="并发容器">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">可重入锁的引入：不可重入锁中的死锁问题</span>
+                        <span class="hidden-mobile">并发容器</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -380,8 +380,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-sync)/" title="JUC入门">
-                        <span class="hidden-mobile">JUC入门</span>
+                      <a href="/2025/11/13/02Condition%E5%92%8Csupport/" title="02Condition和support">
+                        <span class="hidden-mobile">02Condition和support</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
