@@ -21,7 +21,7 @@
   
     <meta name="description" content="x线程入门多线程的很多概念听起来就很难理解。比方说：  进程，是对运行时程序的封装，是系统进行资源调度和分配的基本单位，实现了操作系统的并发。 线程，是进程的子任务，是 CPU 调度和分派的基本单位，实现了进程内部的并发。  总结来说，进程和线程都是操作系统用于并发执行的方式，但是它们在资源管理、独立性、开销以及影响范围等方面有所不同。  进程是操作系统分配资源的基本单位，线程是操作系统调度的基本">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JUC">
+<meta property="og:title" content="JUC入门">
 <meta property="og:url" content="http://example.com/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-sync)/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="x线程入门多线程的很多概念听起来就很难理解。比方说：  进程，是对运行时程序的封装，是系统进行资源调度和分配的基本单位，实现了操作系统的并发。 线程，是进程的子任务，是 CPU 调度和分派的基本单位，实现了进程内部的并发。  总结来说，进程和线程都是操作系统用于并发执行的方式，但是它们在资源管理、独立性、开销以及影响范围等方面有所不同。  进程是操作系统分配资源的基本单位，线程是操作系统调度的基本">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://example.com/img/jmm-a610752d-ef73-47f2-b02c-6954eb3d62bf.png">
 <meta property="og:image" content="http://example.com/img/image-20251112220823274.png">
 <meta property="article:published_time" content="2025-11-12T17:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-12T16:32:25.762Z">
+<meta property="article:modified_time" content="2025-11-13T01:40:41.504Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
@@ -40,7 +40,7 @@
   
   
   
-  <title>JUC - NoFlowCloud</title>
+  <title>JUC入门 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="JUC"></span>
+            <span id="subtitle" data-typed-text="JUC入门"></span>
           
         </div>
 
@@ -229,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.7k 字
+          7.9k 字
         
       </span>
     
@@ -240,7 +240,7 @@
         
         
         
-          65 分钟
+          67 分钟
         
       </span>
     
@@ -277,7 +277,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">JUC</h1>
+            <h1 id="seo-header">JUC入门</h1>
             
             
               <div class="markdown-body">
@@ -667,10 +667,11 @@
 <p>最开始无锁状态，初始状态，对象刚创建时，MarkWord中存储对象的HashCode、分代年龄等信息</p>
 <p>第一步，检查 MarkWord 里面是不是放的自己的 ThreadId ,如果是，表示当前线程是处于 “偏向锁” </p>
 <p>第二步，如果 MarkWord 不是自己的 ThreadId，锁升级，这时候，用 CAS 来执行切换，新的线程根据 MarkWord 里面现有的 ThreadId，通知之前线程暂停，之前线程将 Markword 的内容置为空。即：偏向锁只有遇到其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁，线程是不会主动释放偏向锁的。关于偏向锁的撤销，需要等待全局安全点，即在某个时间点上没有字节码正在执行时，它会先暂停拥有偏向锁的线程，然后判断锁对象是否处于被锁定状态。如果线程不处于活动状态，则将对象头设置成无锁状态，并撤销偏向锁，恢复到无锁（标志位为01）或轻量级锁（标志位为00）的状态。</p>
-<p>第三步，两个线程都把锁对象的 HashCode 复制到自己新建的用于存储锁的记录空间，接着开始通过 CAS 操作， 把锁对象的 MarKword 的内容修改为自己新建的记录空间的地址的方式竞争 MarkWord。</p>
+<p>第三步，在代码进入同步块的时候，如果同步对象锁状态为无锁状态（锁标志位为“01”状态，是否为偏向锁为“0”），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝，然后拷贝对象头中的Mark Word复制到锁记录中。拷贝成功后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock Record里的owner指针指向对象的Mark Word。如果这个更新动作成功了，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位设置为“00”，表示此对象处于轻量级锁定状态。</p>
 <p>第四步，第三步中成功执行 CAS 的获得资源，失败的则进入自旋 。</p>
 <p>第五步，自旋的线程在自旋过程中，成功获得资源(即之前获的资源的线程执行完成并释放了共享资源)，则整个状态依然处于 轻量级锁的状态，如果自旋失败则</p>
 <p>第六步，进入重量级锁的状态，这个时候，自旋的线程进行阻塞，等待之前线程执行完成并唤醒自己。</p>
+<p>综上，偏向锁通过对比Mark Word解决加锁问题，避免执行CAS操作。而轻量级锁是通过用CAS操作和自旋来解决加锁问题，避免线程阻塞和唤醒而影响性能。重量级锁是将除了拥有锁的线程以外的线程都阻塞。</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/crazymakercircle/article/details/146029082">深入理解Java锁升级（图解+史上最全）：无锁 → 偏向锁 → 轻量级锁 → 重量级锁-CSDN博客</a></p>
 <h2 id="ReentrantLock-和-synchronized-区别"><a href="#ReentrantLock-和-synchronized-区别" class="headerlink" title="ReentrantLock 和 synchronized 区别"></a>ReentrantLock 和 synchronized 区别</h2><p>（1）synchronized是独占锁，加锁和解锁的过程自动进行，易于操作，但不够灵活。ReentrantLock也是独占锁，加锁和解锁的过程需要手动进行，不易操作，但非常灵活。</p>
 <p>（2）synchronized可重入，因为加锁和解锁自动进行，不必担心最后是否释放锁；ReentrantLock也可重入，但加锁和解锁需要手动进行，且次数需一样，否则其他线程无法获得锁。</p>
@@ -708,7 +709,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>JUC</div>
+      <div>JUC入门</div>
       <div>http://example.com/2025/11/13/00JUC(线程-sync)/</div>
     </div>
     <div class="license-meta">
@@ -753,12 +754,18 @@
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" title="可重入锁的引入：不可重入锁中的死锁问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">可重入锁的引入：不可重入锁中的死锁问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/13/CAS,AQS,lock/" title="">
-                        <span class="hidden-mobile"></span>
+                      <a href="/2025/09/15/leetcode-%E5%9B%9E%E6%BA%AF%E7%9A%84j-%E5%92%8Cj-1%E5%92%8C-j/" title="leetcode:回溯的j--和j-1和--j">
+                        <span class="hidden-mobile">leetcode:回溯的j--和j-1和--j</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

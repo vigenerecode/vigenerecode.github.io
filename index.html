@@ -227,8 +227,168 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/11/13/01CAS,AQS,lock/" target="_self">
+          CASAQSLOCK
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/01CAS,AQS,lock/" target="_self">
+        <div>
+          CAS乐观锁和悲观锁悲观锁 对于悲观锁来说，它总是认为每次访问共享资源时会发生冲突，所以必须对每次数据操作加上锁，以保证临界区的程序同一时间只能有一个线程在执行。 乐观锁 乐观锁，顾名思义，它是乐观派。乐观锁总是假设对共享资源的访问没有冲突，线程可以不停地执行，无需加锁也无需等待。一旦多个线程发生冲突，乐观锁通常使用一种称为 CAS 的技术来保证线程执行的安全性。 由于乐观锁假想操作中没有锁的存在
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 23:07" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/13/HashMap/" target="_self">
+          HashMap
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/HashMap/" target="_self">
+        <div>
+          1.HashMap集合简介​	HashMap基于哈希表的Map接口实现，是以key-value存储形式存在，即主要用来存放键值对。HashMap 的实现不是同步的，这意味着它不是线程安全的。它的key（一个）、value（多个）（HashTable不允许）都可以为null。此外，HashMap中的映射不是有序的。 ​	JDK1.8 之前 HashMap 由 数组+链表 组成的，数组是 HashMa
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 23:07" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" target="_self">
+          可重入锁的引入：不可重入锁中的死锁问题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" target="_self">
+        <div>
+          a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 16:12" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" target="_self">
+          可重入锁的引入：不可重入锁中的死锁问题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" target="_self">
+        <div>
+          a一对儿比如“添加”操作可以用的方法有：add/offer/push/offerFirst/offerLast，“删除”操作可以用的方法有：remove/pop/poll/pollFirst/pollLast。 经过一番学习和测试以后，得出以下结论：这些方法从设计之初，分别来自于集合Collections，队列Queue，栈Stack，双端队列Deque，因此它们是有语义的，不建议笼统归为添加&#
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 16:12" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/API/">#API</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-sync)/" target="_self">
-          JUC
+          JUC入门
         </a>
       </h2>
 
@@ -256,39 +416,6 @@
               <a href="/tags/JUC/">#JUC</a>
             
           </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/13/CAS,AQS,lock/" target="_self">
-          
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/CAS,AQS,lock/" target="_self">
-        <div>
-          显式锁(Lock)相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。  锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-13 00:32" pubdate>
-              2025-11-13
-            </time>
-          </div>
-        
-        
         
       </div>
     </article>
@@ -487,131 +614,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/07/20/List%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" target="_self">
-          List一些问题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/20/List%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" target="_self">
-        <div>
-          引言在Java集合中，ArrayList是最常用到的数据结构，无论是在日常开发还是面试中，但是很多人对它的源码并不了解。下面提问几个问题，检验一下大家对ArrayList的了解程度。  ArrayList的初始容量是多少？（90%的人都会答错） ArrayList的扩容机制 并发修改ArrayList元素会有什么问题 如何快速安全的删除ArrayList中的元素  接下来一块分析一下ArrayLi
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-07-20 15:52" pubdate>
-              2025-07-20
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">#Java</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/07/11/%E5%8F%B3%E8%A7%86%E5%9B%BE/" target="_self">
-          右视图
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/11/%E5%8F%B3%E8%A7%86%E5%9B%BE/" target="_self">
-        <div>
-          199. 二叉树的右视图 给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。 示例 1： **输入：**root &#x3D; [1,2,3,null,5,null,4] 输出：[1,3,4] 解释：  示例 2： **输入：**root &#x3D; [1,2,3,4,null,null,null,5] 输出：[1,3,4,5] 解释：
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-07-11 11:05" pubdate>
-              2025-07-11
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/leetcode/">#leetcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/07/10/Mybatis#%7B%7D%20%E5%92%8C%20$%7B%7D/" target="_self">
-          讲解#大括号和$大括号
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/10/Mybatis#%7B%7D%20%E5%92%8C%20$%7B%7D/" target="_self">
-        <div>
-          Mybatis的Mapper映射文件中，有两种方式可以引用形参变量进行取值: #{} 和 ${}。本文将简述两种方式的区别和适用场景 取值引用#{} 方式#{}: 解析为SQL时，会将形参变量的值取出，并自动给其添加引号。 例如：当实参username&#x3D;”Amy”时，传入下Mapper映射文件后 12345......    &lt;select id=&quot;findByName&
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-07-10 15:48" pubdate>
-              2025-07-10
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">#Java</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><a class="page-number" href="/page/4/#board">4</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

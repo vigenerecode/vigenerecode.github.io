@@ -1,0 +1,803 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CAS乐观锁和悲观锁悲观锁 对于悲观锁来说，它总是认为每次访问共享资源时会发生冲突，所以必须对每次数据操作加上锁，以保证临界区的程序同一时间只能有一个线程在执行。 乐观锁 乐观锁，顾名思义，它是乐观派。乐观锁总是假设对共享资源的访问没有冲突，线程可以不停地执行，无需加锁也无需等待。一旦多个线程发生冲突，乐观锁通常使用一种称为 CAS 的技术来保证线程执行的安全性。 由于乐观锁假想操作中没有锁的存在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CASAQSLOCK">
+<meta property="og:url" content="http://example.com/2025/11/13/01CAS,AQS,lock/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="CAS乐观锁和悲观锁悲观锁 对于悲观锁来说，它总是认为每次访问共享资源时会发生冲突，所以必须对每次数据操作加上锁，以保证临界区的程序同一时间只能有一个线程在执行。 乐观锁 乐观锁，顾名思义，它是乐观派。乐观锁总是假设对共享资源的访问没有冲突，线程可以不停地执行，无需加锁也无需等待。一旦多个线程发生冲突，乐观锁通常使用一种称为 CAS 的技术来保证线程执行的安全性。 由于乐观锁假想操作中没有锁的存在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/other-bukfsdjavassmtjstd-b2ded433-defd-4535-b767-fd2e5be0b5b9.png">
+<meta property="article:published_time" content="2025-11-13T15:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-13T01:40:32.142Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="JUC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/other-bukfsdjavassmtjstd-b2ded433-defd-4535-b767-fd2e5be0b5b9.png">
+  
+  
+  
+  <title>CASAQSLOCK - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CASAQSLOCK"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-13 23:07" pubdate>
+          2025年11月13日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          49 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CASAQSLOCK</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h1><h2 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h2><p>悲观锁</p>
+<p>对于悲观锁来说，它总是认为每次访问共享资源时会发生冲突，所以必须对每次数据操作加上锁，以保证临界区的程序同一时间只能有一个线程在执行。</p>
+<p>乐观锁</p>
+<p>乐观锁，顾名思义，它是乐观派。乐观锁总是假设对共享资源的访问没有冲突，线程可以不停地执行，无需加锁也无需等待。一旦多个线程发生冲突，乐观锁通常使用一种称为 CAS 的技术来保证线程执行的安全性。</p>
+<p>由于乐观锁假想操作中没有锁的存在，因此不太可能出现死锁的情况，换句话说，<strong>乐观锁天生免疫死锁</strong>。</p>
+<ul>
+<li>乐观锁多用于“读多写少“的环境，避免频繁加锁影响性能；</li>
+<li>悲观锁多用于”写多读少“的环境，避免频繁失败和重试影响性能。</li>
+</ul>
+<h2 id="什么是-CAS"><a href="#什么是-CAS" class="headerlink" title="什么是 CAS"></a>什么是 CAS</h2><h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><ul>
+<li>V：要更新的变量(var)</li>
+<li>E：预期值(expected)</li>
+<li>N：新值(new)</li>
+</ul>
+<p>比较并交换的过程如下：</p>
+<p>判断 V 是否等于 E，如果等于，将 V 的值设置为 N；如果不等，说明已经有其它线程更新了 V，于是当前线程放弃更新，什么都不做。</p>
+<h3 id="话术"><a href="#话术" class="headerlink" title="话术"></a>话术</h3><p><strong>CAS是解决多线程并发安全问题的一种乐观锁算法。</strong> 因为它在对共享变量更新之前，会先比较当前值是否与更新前的值一致，如果一致则更新，如果不一致则循环执行（称为自旋锁），直到当前值与更新前的值一致为止，才执行更新。</p>
+<p>Unsafe类是CAS的核心类，提供<strong>硬件级别的原子操作</strong>（目前所有CPU基本都支持硬件级别的CAS操作）。</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p><strong>开销大</strong>：在并发量比较高的情况下，如果反复尝试更新某个变量，却又一直更新不成功，会给CPU带来较大的压力（自旋）</p>
+<p><strong>ABA问题</strong>：当变量从A修改为B再修改回A时，变量值等于期望值A，但是无法判断是否修改，CAS操作在ABA修改后依然成功。（ABA 问题的解决思路是在变量前面追加上<strong>版本号或者时间戳</strong>。从 JDK 1.5 开始，JDK 的 atomic 包里提供了一个类<code>AtomicStampedReference</code>类来解决 ABA 问题。）</p>
+<p><strong>不能保证代码块的原子性</strong>：CAS机制所保证的只是一个变量的原子性操作，而不能保证整个代码块（多个共享变量）的原子性。</p>
+<h1 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h1><h3 id="1-AQS-的作用是什么？"><a href="#1-AQS-的作用是什么？" class="headerlink" title="1. AQS 的作用是什么？"></a>1. AQS 的作用是什么？</h3><p>AQS 是一个用于构建锁和同步器的框架，它通过 <strong>FIFO 双向队列</strong> 管理等待线程，并通过 <strong><code>volatile int state</code></strong> 变量实现资源状态的原子操作。开发者只需重写少量方法，即可自定义同步工具。</p>
+<h3 id="2-AQS-的底层结构"><a href="#2-AQS-的底层结构" class="headerlink" title="2. AQS 的底层结构"></a>2. AQS 的底层结构</h3><h4 id="1-资源状态（state）"><a href="#1-资源状态（state）" class="headerlink" title="(1) 资源状态（state）"></a>(1) 资源状态（<code>state</code>）</h4><ul>
+<li><strong>操作方式</strong>：<ul>
+<li><code>getState()</code>：获取当前状态值。</li>
+<li><code>setState(int newState)</code>：直接设置状态值。</li>
+<li><code>compareAndSetState(int expect, int update)</code>：通过 CAS 原子更新状态。</li>
+</ul>
+</li>
+<li><strong>实际应用</strong>：<ul>
+<li><code>ReentrantLock</code>：<code>state</code> 表示锁的重入次数（0&#x3D;未锁定，1&#x3D;已锁定，&gt;1&#x3D;重入）。</li>
+<li><code>Semaphore</code>：<code>state</code> 表示剩余的许可证数量。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-等待队列（CLH-变种）"><a href="#2-等待队列（CLH-变种）" class="headerlink" title="(2) 等待队列（CLH 变种）"></a>(2) 等待队列（CLH 变种）</h4><ul>
+<li>双向链表实现，每个节点（<code>Node</code>）封装一个等待线程。</li>
+<li>节点状态：<ul>
+<li><code>CANCELLED</code>（线程已取消等待）</li>
+<li><code>SIGNAL</code>（后继节点需要被唤醒）</li>
+<li><code>CONDITION</code>（线程在条件队列中等待）</li>
+</ul>
+</li>
+</ul>
+<h2 id="话术-1"><a href="#话术-1" class="headerlink" title="话术"></a>话术</h2><ol>
+<li>经典面试题</li>
+</ol>
+  <figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs pf">AQS 是什么？<br>AQS 的核心原理是什么？<br>AQS 中的同步队列和条件队列有什么区别？<br>ReentrantLock 的公平锁和非公平锁有什么区别？<br>Semaphore 是如何基于 AQS 实现的？<br>CountDownLatch 的实现原理与 AQS 有什么关系？<br>AQS 中独占模式和共享模式的区别是什么？<br>AQS 中的状态变量 <span class="hljs-keyword">state</span> 有什么作用？<br>如何自定义一个基于 AQS 的同步器？<br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>解题思路和答案<br>AQS 是什么？</li>
+</ol>
+<p>解题思路：从 AQS 的定义、作用和在 Java 并发包中的地位进行阐述。<br><strong>答案：AQS 即抽象队列同步器（AbstractQueuedSynchronizer） ，是 Java 并发包中构建锁和同步器的基础框架 。它提供了一种基于 FIFO 队列的机制来管理线程的竞争和等待状态 ，许多重要的同步工具类，如ReentrantLock、CountDownLatch、Semaphore等，都是基于 AQS 实现的 。AQS 就像是 Java 并发编程大厦的基石，为我们实现各种复杂的同步逻辑提供了强大的支持 。</strong></p>
+<ol start="3">
+<li>AQS 的核心原理是什么？<br>解题思路：围绕 AQS 的核心构成（状态变量state和同步队列），以及在独占模式和共享模式下线程获取和释放资源的过程进行分析。<br><strong>答案：AQS 的核心原理基于一个 FIFO 等待队列和一个同步状态（state） 。state是一个volatile修饰的整型变量，用于表示同步状态 ，不同的同步器中state有着不同的含义 ，如在ReentrantLock中表示锁的重入次数，在Semaphore中表示剩余的许可数 。同步队列是一个双向链表，当线程无法获取同步状态时，会被封装成一个节点加入到同步队列中等待 。在独占模式下，同一时刻只有一个线程能获取到同步状态，其他线程获取失败则进入同步队列等待；在共享模式下，允许多个线程同时获取同步状态，只要剩余的共享资源满足线程的需求 。线程通过CAS操作来竞争获取或释放资源，获取失败则进入同步队列等待唤醒 。</strong></li>
+<li>AQS 中的同步队列和条件队列有什么区别？<br>解题思路：分别介绍同步队列和条件队列的结构、作用以及节点状态的含义，对比它们在功能和使用场景上的差异。</li>
+</ol>
+<p>答案：同步队列是 AQS 实现线程同步的关键数据结构，是一个双向链表 ，用于存储等待获取同步状态的线程 。当线程获取同步状态失败时，会被封装成一个节点加入到同步队列的尾部 。节点的状态有CANCELLED（线程已取消等待）、SIGNAL（后继节点的线程需要被唤醒）等 。在独占模式下，持有锁的线程释放锁时，会唤醒同步队列中头节点的后继节点对应的线程 ；在共享模式下，释放共享资源时，会唤醒多个等待的线程 。</p>
+<p>条件队列与Condition接口相关联 ，每个Condition对象都有一个单独的条件队列 。线程调用Condition的await方法时，会从同步队列转移到条件队列并释放锁进入等待状态 ，此时节点的状态会被设置为CONDITION 。当其他线程调用Condition的signal方法时，条件队列中第一个节点被转移回同步队列，等待获取锁 。</p>
+<p>总的来说，同步队列主要用于线程获取同步状态失败时的等待和唤醒，而条件队列用于线程在满足特定条件时的等待和唤醒 ，两者相互配合，共同实现了 AQS 强大的同步功能 。</p>
+<ol start="5">
+<li>ReentrantLock 的公平锁和非公平锁有什么区别？<br>解题思路：从获取锁的过程、是否保证线程获取锁的顺序以及性能等方面进行对比分析。<br>答案：公平锁保证线程按照请求锁的顺序获取锁，即先到先得 。在获取锁时，公平锁会先调用hasQueuedPredecessors方法检查同步队列中是否有前驱节点 ，只有在没有前驱节点时才尝试获取锁 ，以此保证先到的线程先获取锁 。<br>非公平锁则不保证获取顺序，线程可以在锁可用时直接竞争获取，可能会出现后到的线程先获取到锁的情况 。非公平锁在获取锁时，直接尝试通过CAS操作获取锁，不会检查同步队列 ，如果获取失败，才会和公平锁一样，将线程加入同步队列等待 。</li>
+</ol>
+<p>在性能方面，非公平锁由于减少了检查同步队列的开销，在高并发场景下性能通常比公平锁更高 。但同时，由于可能导致一些线程长时间等待，出现线程饥饿的问题 。而公平锁虽然保证了公平性，但由于频繁的线程上下文切换，性能相对较低 。</p>
+<ol start="6">
+<li><p>Semaphore 是如何基于 AQS 实现的？<br>解题思路：分析Semaphore中与 AQS 相关的核心方法，如tryAcquireShared和tryReleaseShared，阐述它们如何利用 AQS 的同步队列和状态变量来实现信号量的功能。<br>答案：Semaphore是基于 AQS 的共享模式实现的 。在Semaphore中，AQS 的状态变量state表示剩余的许可数 。当一个线程调用acquire方法获取许可时，实际上调用的是 AQS 的acquireShared方法 ，tryAcquireShared方法是获取共享资源的核心逻辑 。它会进入一个无限循环，获取当前的state，计算获取acquires个许可后剩余的许可数remaining 。如果remaining小于 0，说明当前剩余许可数不足，返回remaining，表示获取失败 ；否则，通过CAS操作尝试将state从当前值更新为remaining 。如果更新成功，返回remaining，表示获取成功 ；如果更新失败，说明有其他线程同时在修改state，继续循环尝试 。<br>当线程调用release方法释放许可时，实际上调用的是 AQS 的releaseShared方法 ，tryReleaseShared方法会进入一个无限循环，获取当前的state ，计算释放releases个许可后的状态next 。如果next小于当前state，说明释放的许可数超过了最大许可数，抛出Error异常 ；否则，通过CAS操作尝试将state从当前值更新为next 。如果更新成功，返回true，表示释放成功 ；如果更新失败，说明有其他线程同时在修改state，继续循环尝试 。如果释放成功，会调用doReleaseShared方法唤醒同步队列中等待的线程 。</p>
+</li>
+<li><p>CountDownLatch 的实现原理与 AQS 有什么关系？<br>解题思路：说明CountDownLatch如何利用 AQS 的同步队列和状态变量来实现线程的等待和计数功能，重点分析await和countDown方法的实现逻辑。<br>答案：CountDownLatch也是基于 AQS 实现的 。它利用 AQS 的状态变量state来表示计数的初始值 。当一个或多个线程调用await方法时，实际上调用的是 AQS 的acquireSharedInterruptibly方法 ，线程会尝试获取共享资源 。由于CountDownLatch的设计，只有当state减为 0 时，线程才能获取到共享资源，否则线程会被加入到同步队列中等待 。<br>当其他线程调用countDown方法时，实际上调用的是 AQS 的releaseShared方法 ，会将state减 1 。如果state减为 0，说明所有的计数都已完成，会唤醒同步队列中等待的线程 ，让它们继续执行 。</p>
+</li>
+<li><p>AQS 中独占模式和共享模式的区别是什么？<br> 解题思路：从获取资源的方式、同步队列的处理以及应用场景等方面进行详细对比。</p>
+</li>
+</ol>
+<p>  答案：在获取资源的方式上，独占模式下，同一时刻只有一个线程能获取到同步状态，其他线程只能等待 ；共享模式下，允许多个线程同时获取同步状态，只要剩余的共享资源满足线程的需求 。<br>  在同步队列的处理上，独占模式中，获取锁失败的线程会被加入同步队列，当持有锁的线程释放锁时，只会唤醒同步队列中头节点的后继节点对应的线程 ；共享模式中，获取共享资源失败的线程同样会被加入同步队列，当有线程释放共享资源时，会唤醒同步队列中多个等待的线程（只要剩余的共享资源足够） 。</p>
+<p>在应用场景方面，独占模式适用于需要严格控制资源访问，保证同一时刻只有一个线程访问资源的场景，如文件写入操作 ；共享模式适用于读多写少的场景，或者需要多个线程同时访问共享资源的场景，如数据库连接池、信号量控制并发访问数量等 。</p>
+<ol start="9">
+<li>AQS 中的状态变量 state 有什么作用？<br> 解题思路：结合不同的同步器，阐述state在表示同步状态、控制资源访问以及实现锁的重入等方面的作用。</li>
+</ol>
+  <figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pf">答案：AQS 中的状态变量<span class="hljs-keyword">state</span>是实现同步的关键 ，它用一个volatile修饰的整型变量来表示同步状态 。在不同的同步器中，<span class="hljs-keyword">state</span>有着不同的含义和作用 。在ReentrantLock中，<span class="hljs-keyword">state</span>表示锁的重入次数 。当一个线程首次获取到锁时，<span class="hljs-keyword">state</span>会被设置为 <span class="hljs-number">1</span> 。如果该线程再次获取同一把锁，<span class="hljs-keyword">state</span>就会递增，变为 <span class="hljs-number">2</span>，以此类推，表示线程对锁的重入 。而当线程释放锁时，<span class="hljs-keyword">state</span>会相应递减，直到<span class="hljs-keyword">state</span>为 <span class="hljs-number">0</span> 时，锁被完全释放 。在Semaphore中，<span class="hljs-keyword">state</span>表示剩余的许可数 。假设我们创建一个信号量对象并设置许可数为 <span class="hljs-number">5</span>，那么初始时<span class="hljs-keyword">state</span>就是 <span class="hljs-number">5</span> 。当一个线程调用acquire方法获取许可时，如果<span class="hljs-keyword">state</span>大于 <span class="hljs-number">0</span>，该线程就能获取到许可，同时<span class="hljs-keyword">state</span>减 <span class="hljs-number">1</span> ；当<span class="hljs-keyword">state</span>为 <span class="hljs-number">0</span> 时，其他线程再调用acquire方法就会被阻塞，直到有其他线程调用release方法释放许可，<span class="hljs-keyword">state</span>增加后，才有可能获取到许可 。<br></code></pre></td></tr></table></figure>
+<ol start="10">
+<li><p>如何自定义一个基于 AQS 的同步器？<br>解题思路：介绍自定义同步器的步骤，包括继承 AQS 类、重写必要的抽象方法（如tryAcquire、tryRelease等），以及如何使用自定义同步器。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">答案：自定义一个基于 AQS 的同步器，首先需要继承AbstractQueuedSynchronizer类 。然后，根据同步器的类型（独占模式或共享模式），重写相应的抽象方法 。<br></code></pre></td></tr></table></figure></li>
+</ol>
+<p>11.为什么 AQS 使用双向队列而非单向队列？</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs autoit">线程取消的高效处理：当线程因超时或中断取消等待时，需要快速修改前驱和后继节点的指针。<br><br>时间复杂度优化：<br><br>单向队列删除中间节点需遍历，时间复杂度 O(n)。<br><br>双向队列通过 prev 和 <span class="hljs-keyword">next</span> 指针直接操作，时间复杂度 O(<span class="hljs-number">1</span>)。<br></code></pre></td></tr></table></figure>
+
+<p>12.AQS 的 ConditionObject 和 Object.wait() 有什么区别？</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>ConditionObject</th>
+<th>Object.wait()</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>绑定对象</td>
+<td>必须绑定到 AQS 实现的锁（如 ReentrantLock）</td>
+<td>任意 synchronized 对象</td>
+</tr>
+<tr>
+<td>多条件队列</td>
+<td>支持多个条件队列（如生产者-消费者模型分组）</td>
+<td>仅一个等待队列</td>
+</tr>
+<tr>
+<td>唤醒精度</td>
+<td>signal() 精确唤醒指定条件队列的线程</td>
+<td>notify() 随机唤醒一个线程</td>
+</tr>
+<tr>
+<td>中断支持</td>
+<td>提供 awaitUninterruptibly() 方法</td>
+<td>需手动处理中断</td>
+</tr>
+</tbody></table>
+<p>13AQS 如何处理线程中断？</p>
+<ul>
+<li><p>不可中断模式（默认）：*</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">线程调用 acquire() 时被中断，会继续等待直到获取资源，再补上中断标记。<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>可中断模式：*</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">线程调用 acquireInterruptibly() 时被中断，直接抛出 InterruptedException。<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>14共享模式下的唤醒传播是什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs undefined">共享模式（如 Semaphore）释放资源时，会唤醒队列中的第一个等待节点，<br>并由该节点继续唤醒后续共享节点，形成“连锁反应”，直到无可用资源或队列为空。<br><br>优势：减少唤醒次数，提升并发效率。<br></code></pre></td></tr></table></figure>
+
+<p>15AQS 中的同步状态（state）有什么作用？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs undefined">答：同步状态（state）用于表示同步器的状态，不同的同步器对 state 的含义和操作方式不同。<br>例如在 ReentrantLock 中表示锁的重入次数，在 Semaphore 中表示可用的许可证数量。<br></code></pre></td></tr></table></figure>
+
+<p>16AQS 队列的作用是什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs undefined">答：AQS 队列用于存储等待获取同步状态的线程节点，当线程获取同步状态失败时，会被加入到队列中等待唤醒。<br></code></pre></td></tr></table></figure>
+
+<p>17说说 AQS 中 acquire 和 acquireInterruptibly 方法的区别？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs undefined">答：acquire 方法是独占式获取同步状态，如果获取失败则将当前线程加入等待队列并阻塞，且不响应中断；<br>acquireInterruptibly也是独占式获取同步状态，但允许线程被中断，<br>当线程被中断时会抛出 InterruptedException。<br></code></pre></td></tr></table></figure>
+
+<p><img src="/./../img/other-bukfsdjavassmtjstd-b2ded433-defd-4535-b767-fd2e5be0b5b9.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h1 id="显式锁-Lock"><a href="#显式锁-Lock" class="headerlink" title="显式锁(Lock)"></a>显式锁(Lock)</h1><p>相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。</p>
+<blockquote>
+<p>锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。</p>
+</blockquote>
+<h2 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h2><p>ReentrantLock 重入锁，是实现<a target="_blank" rel="noopener" href="https://javabetter.cn/thread/suo.html">Lock 接口</a>的一个类，也是在实际编程中使用频率很高的一个锁，<strong>支持重入性，表示能够对共享资源重复加锁，即当前线程获取该锁后再次获取不会被阻塞</strong>。</p>
+<p>要想支持重入性，就要解决两个问题：</p>
+<ol>
+<li>在线程获取锁的时候，如果已经获取锁的线程是当前线程的话则直接再次获取成功；</li>
+<li>由于锁会被获取 n 次，那么只有锁在被释放同样的 n 次之后，该锁才算是完全释放成功。</li>
+</ol>
+<h3 id="Reen公平锁和非公平锁源码区别"><a href="#Reen公平锁和非公平锁源码区别" class="headerlink" title="Reen公平锁和非公平锁源码区别"></a>Reen公平锁和非公平锁源码区别</h3><p>公平锁代码的逻辑与 nonfairTryAcquire 基本上一致，唯一的不同在于增加了 hasQueuedPredecessors 的逻辑判断，从方法名就可以知道该方法用来判断当前节点在同步队列中是否有前驱节点的，如果有前驱节点，说明有线程比当前线程更早的请求资源，根据公平性，当前线程请求资源失败。如果当前节点没有前驱节点，才有做后面逻辑判断的必要性。</p>
+<h2 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h2><p>ReentrantReadWriteLock 是 Java 的一种读写锁，它允许多个读线程同时访问，但只允许一个写线程访问，或者阻塞所有的读写线程。这种锁的设计可以提高性能，特别是在数据结构中，读操作的数量远远超过写操作的情况下。</p>
+<p>读写锁的实现主要是通过重写 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/aqs.html">AQS</a> 的 tryAcquire 方法和 tryRelease 方法实现的，读锁和写锁的获取和释放都是通过这两个方法实现的。</p>
+<p>读写锁支持锁降级，遵循按照获取写锁，获取读锁再释放写锁的次序，写锁能够降级成为读锁，不支持锁升级。、、</p>
+<h3 id="读写降级"><a href="#读写降级" class="headerlink" title="读写降级"></a>读写降级</h3><p>读写锁支持锁降级，<strong>遵循按照获取写锁，获取读锁再释放写锁的次序，写锁能够降级成为读锁</strong>，不支持锁升级，关于锁降级，</p>
+<p>这里的流程可以解释如下：</p>
+<ul>
+<li>获取读锁：首先尝试获取读锁来检查某个缓存是否有效。</li>
+<li>检查缓存：如果缓存无效，则需要释放读锁，因为在获取写锁之前必须释放读锁。</li>
+<li>获取写锁：获取写锁以便更新缓存。此时，可能还需要重新检查缓存状态，因为在释放读锁和获取写锁之间可能有其他线程修改了状态。</li>
+<li>更新缓存：如果确认缓存无效，更新缓存并将其标记为有效。</li>
+<li>写锁降级为读锁：在释放写锁之前，获取读锁，从而实现写锁到读锁的降级。这样，在释放写锁后，其他线程可以并发读取，但不能写入。</li>
+<li>使用数据：现在可以安全地使用缓存数据了。</li>
+<li>释放读锁：完成操作后释放读锁。</li>
+</ul>
+<h2 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h2><p><code>StampedLock</code> 面试中问的比较少，不是很重要，简单了解即可。</p>
+<h3 id="StampedLock-是什么？"><a href="#StampedLock-是什么？" class="headerlink" title="[StampedLock 是什么？"></a>[StampedLock 是什么？</h3><p><code>StampedLock</code> 是 JDK 1.8 引入的性能更好的读写锁，不可重入且不支持条件变量 <code>Condition</code>。</p>
+<p>不同于一般的 <code>Lock</code> 类，<code>StampedLock</code> 并不是直接实现 <code>Lock</code>或 <code>ReadWriteLock</code>接口，而是基于 <strong>CLH 锁</strong> 独立实现的（AQS 也是基于这玩意）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StampedLock</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">java</span>.io.Serializable &#123;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>StampedLock</code> 提供了三种模式的读写控制模式：读锁、写锁和乐观读。</p>
+<ul>
+<li><strong>写锁</strong>：独占锁，一把锁只能被一个线程获得。当一个线程获取写锁后，其他请求读锁和写锁的线程必须等待。类似于 <code>ReentrantReadWriteLock</code> 的写锁，不过这里的写锁是不可重入的。</li>
+<li><strong>读锁</strong> （悲观读）：共享锁，没有线程获取写锁的情况下，多个线程可以同时持有读锁。如果己经有线程持有写锁，则其他线程请求获取该读锁会被阻塞。类似于 <code>ReentrantReadWriteLock</code> 的读锁，不过这里的读锁是不可重入的。</li>
+<li><strong>乐观读</strong>：允许多个线程获取乐观读以及读锁。同时允许一个写线程获取写锁。</li>
+</ul>
+<p>另外，<code>StampedLock</code> 还支持这三种锁在一定条件下进行相互转换 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">long</span> <span class="hljs-title function_">tryConvertToWriteLock</span><span class="hljs-params">(<span class="hljs-type">long</span> stamp)</span>&#123;&#125;<br><span class="hljs-type">long</span> <span class="hljs-title function_">tryConvertToReadLock</span><span class="hljs-params">(<span class="hljs-type">long</span> stamp)</span>&#123;&#125;<br><span class="hljs-type">long</span> <span class="hljs-title function_">tryConvertToOptimisticRead</span><span class="hljs-params">(<span class="hljs-type">long</span> stamp)</span>&#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>StampedLock</code> 在获取锁的时候会返回一个 long 型的数据戳，该数据戳用于稍后的锁释放参数，如果返回的数据戳为 0 则表示锁获取失败。当前线程持有了锁再次获取锁还是会返回一个新的数据戳，这也是<code>StampedLock</code>不可重入的原因。</p>
+<h3 id="StampedLock-的性能为什么更好？"><a href="#StampedLock-的性能为什么更好？" class="headerlink" title="[StampedLock 的性能为什么更好？"></a>[StampedLock 的性能为什么更好？</h3><p>相比于传统读写锁多出来的乐观读是<code>StampedLock</code>比 <code>ReadWriteLock</code> 性能更好的关键原因。<code>StampedLock</code> 的乐观读允许一个写线程获取写锁，所以不会导致所有写线程阻塞，也就是当读多写少的时候，写线程有机会获取写锁，减少了线程饥饿的问题，吞吐量大大提高。</p>
+<h3 id="StampedLock-适合什么场景？"><a href="#StampedLock-适合什么场景？" class="headerlink" title="[StampedLock 适合什么场景？"></a>[StampedLock 适合什么场景？</h3><p>和 <code>ReentrantReadWriteLock</code> 一样，<code>StampedLock</code> 同样适合读多写少的业务场景，可以作为 <code>ReentrantReadWriteLock</code>的替代品，性能更好。</p>
+<p>不过，需要注意的是<code>StampedLock</code>不可重入，不支持条件变量 <code>Condition</code>，对中断操作支持也不友好（使用不当容易导致 CPU 飙升）。如果你需要用到 <code>ReentrantLock</code> 的一些高级性能，就不太建议使用 <code>StampedLock</code> 了。</p>
+<p>另外，<code>StampedLock</code> 性能虽好，但使用起来相对比较麻烦，一旦使用不当，就会出现生产问题。强烈建议你在使用<code>StampedLock</code> 之前，看看</p>
+<h3 id="StampedLock-的底层原理了解吗？"><a href="#StampedLock-的底层原理了解吗？" class="headerlink" title="StampedLock 的底层原理了解吗？"></a>StampedLock 的底层原理了解吗？</h3><p><code>StampedLock</code> 不是直接实现 <code>Lock</code>或 <code>ReadWriteLock</code>接口，而是基于 <strong>CLH 锁</strong> 实现的（AQS 也是基于这玩意），CLH 锁是对自旋锁的一种改良，是一种隐式的链表队列。<code>StampedLock</code> 通过 CLH 队列进行线程的管理，通过同步状态值 <code>state</code> 来表示锁的状态和类型。</p>
+<p>end？</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CASAQSLOCK</div>
+      <div>http://example.com/2025/11/13/01CAS,AQS,lock/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/13/HashMap/" title="HashMap">
+                        <span class="hidden-mobile">HashMap</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

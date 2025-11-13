@@ -19,21 +19,24 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="显式锁(Lock)相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。  锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。">
+    <meta name="description" content="a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NoFlowCloud">
-<meta property="og:url" content="http://example.com/2025/11/13/CAS,AQS,lock/index.html">
+<meta property="og:title" content="可重入锁的引入：不可重入锁中的死锁问题">
+<meta property="og:url" content="http://example.com/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="显式锁(Lock)相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。  锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。">
+<meta property="og:description" content="a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-11-12T16:32:59.761Z">
-<meta property="article:modified_time" content="2025-11-12T16:33:02.679Z">
+<meta property="og:image" content="http://example.com/img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png">
+<meta property="article:published_time" content="2025-11-13T08:12:00.000Z">
+<meta property="article:modified_time" content="2025-11-13T03:00:49.490Z">
 <meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png">
   
   
   
-  <title>NoFlowCloud</title>
+  <title>可重入锁的引入：不可重入锁中的死锁问题 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="可重入锁的引入：不可重入锁中的死锁问题"></span>
           
         </div>
 
@@ -210,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-13 00:32" pubdate>
-          2025年11月13日 凌晨
+        <time datetime="2025-11-13 16:12" pubdate>
+          2025年11月13日 下午
         </time>
       </span>
     
@@ -222,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          117 字
+          1.6k 字
         
       </span>
     
@@ -233,7 +236,7 @@
         
         
         
-          1 分钟
+          14 分钟
         
       </span>
     
@@ -270,16 +273,97 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">可重入锁的引入：不可重入锁中的死锁问题</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="显式锁-Lock"><a href="#显式锁-Lock" class="headerlink" title="显式锁(Lock)"></a>显式锁(Lock)</h1><p>相比同步锁，JUC包中的Lock锁的功能更加强大，它提供了各种各样的锁（公平锁，非公平锁，共享锁，独占锁……），所以使用起来很灵活。</p>
+                <h1 id="a简介"><a href="#a简介" class="headerlink" title="a简介"></a>a简介</h1><p>java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。</p>
+<p>但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。</p>
+<p><img src="/./../img/map-a6a020a3-4573-4cf8-b5ae-1541ae45801c-1763002801695-3.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>。</p>
+<h2 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97">阻塞队列</a></h2><p>我们假设一种场景，<a target="_blank" rel="noopener" href="https://javabetter.cn/thread/shengchanzhe-xiaofeizhe.html">生产者一直生产资源，消费者一直消费资源</a>（后面会细讲，戳链接直达），资源存储在一个缓冲池中，生产者将生产的资源存进缓冲池中，消费者从缓冲池中拿到资源进行消费，这就是大名鼎鼎的<strong>生产者-消费者模式</strong>。</p>
+<p>该模式能够简化开发过程，一方面消除了生产者类与消费者类之间的代码依赖性，另一方面将生产数据的过程与使用数据的过程解耦简化负载。</p>
+<p>我们自己 coding 实现这个模式的时候，因为需要让<strong>多个线程操作共享变量</strong>（即资源），所以很容易引发<strong>线程安全问题</strong>，造成<strong>重复消费</strong>和<strong>死锁</strong>，尤其是生产者和消费者存在多个的情况。另外，当缓冲池空了，我们需要阻塞消费者，唤醒生产者；当缓冲池满了，我们需要阻塞生产者，唤醒消费者，这些个<strong>等待-唤醒</strong>逻辑都需要自己实现。</p>
+<p>这么容易出错的事情，JDK 当然帮我们做啦，这就是阻塞队列（BlockingQueue），<strong>你只管往里面存、取就行，而不用担心多线程环境下存、取共享变量的线程安全问题。</strong></p>
 <blockquote>
-<p>锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。</p>
+<p>BlockingQueue 是 Java util.concurrent 包下重要的数据结构，区别于普通的队列，BlockingQueue 提供了<strong>线程安全的队列访问方式</strong>，并发包下很多高级同步类的实现都是基于 BlockingQueue 实现的。</p>
 </blockquote>
+<p>BlockingQueue 一般用于生产者-消费者模式，生产者是往队列里添加元素的线程，消费者是从队列里拿元素的线程。<strong>BlockingQueue 就是存放元素的容器</strong>。</p>
+<h3 id="BlockingQueue-的操作方法"><a href="#BlockingQueue-的操作方法" class="headerlink" title="BlockingQueue 的操作方法"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#blockingqueue-%E7%9A%84%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">BlockingQueue 的操作方法</a></h3><p>阻塞队列提供了四组不同的方法用于插入、移除、检查元素：</p>
+<table>
+<thead>
+<tr>
+<th align="center">方法\处理方式</th>
+<th align="center">抛出异常</th>
+<th align="center">返回特殊值</th>
+<th align="center">一直阻塞</th>
+<th align="center">超时退出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">插入方法</td>
+<td align="center">add(e)</td>
+<td align="center">offer(e)</td>
+<td align="center"><strong>put(e)</strong></td>
+<td align="center">offer(e,time,unit)</td>
+</tr>
+<tr>
+<td align="center">移除方法</td>
+<td align="center">remove()</td>
+<td align="center">poll()</td>
+<td align="center"><strong>take()</strong></td>
+<td align="center">poll(time,unit)</td>
+</tr>
+<tr>
+<td align="center">检查方法</td>
+<td align="center">element()</td>
+<td align="center">peek()</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+</tbody></table>
+<ul>
+<li>抛出异常：如果操作无法立即执行，会抛异常。当阻塞队列满时候，再往队列里插入元素，会抛出 <code>IllegalStateException(“Queue full”)</code>异常。当队列为空时，从队列里获取元素时会抛出 NoSuchElementException 异常 。</li>
+<li>返回特殊值：如果操作无法立即执行，会返回一个特殊值，通常是 true &#x2F; false。</li>
+<li>一直阻塞：如果操作无法立即执行，则一直阻塞或者响应中断。</li>
+<li>超时退出：如果操作无法立即执行，该方法调用将会发生阻塞，直到能够执行，但等待时间不会超过给定值。返回一个特定值以告知该操作是否成功，通常是 true &#x2F; false。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>不能往阻塞队列中插入 null，会抛出空指针异常。</li>
+<li>可以访问阻塞队列中的任意元素，调用 <code>remove(o)</code>可以将队列之中的特定对象移除，但并不高效，尽量避免使用。</li>
+</ul>
+<p>我们会在后面单独开一篇<a target="_blank" rel="noopener" href="https://javabetter.cn/thread/BlockingQueue.html">BlockingQueue</a>来细讲，戳链接直达。</p>
+<h3 id="BlockingQueue-的实现类"><a href="#BlockingQueue-的实现类" class="headerlink" title="BlockingQueue 的实现类"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#blockingqueue-%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB">BlockingQueue 的实现类</a></h3><h4 id="ArrayBlockingQueue"><a href="#ArrayBlockingQueue" class="headerlink" title="ArrayBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#arrayblockingqueue">ArrayBlockingQueue</a></h4><p>由<strong>数组</strong>结构组成的<strong>有界</strong>阻塞队列。内部结构是数组，具有数组的特性。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ArrayBlockingQueue</span><span class="hljs-params">(<span class="hljs-type">int</span> capacity, <span class="hljs-type">boolean</span> fair)</span></span>&#123;<br> <span class="hljs-comment">//..省略代码</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
+<p>可以初始化队列大小，一旦初始化将不能改变。构造方法中的 fair 表示控制对象的内部锁是否采用公平锁，默认是<strong>非公平锁</strong>。</p>
+<h4 id="LinkedBlockingQueue"><a href="#LinkedBlockingQueue" class="headerlink" title="LinkedBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#linkedblockingqueue">LinkedBlockingQueue</a></h4><p>由<strong>链表</strong>结构组成的<strong>有界</strong>阻塞队列。内部结构是链表，具有链表的特性。默认队列的大小是<code>Integer.MAX_VALUE</code>，也可以指定大小。此队列按照<strong>先进先出</strong>的原则对元素进行排序。</p>
+<h4 id="DelayQueue"><a href="#DelayQueue" class="headerlink" title="DelayQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#delayqueue">DelayQueue</a></h4><p>该队列中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素。注入其中的元素必须实现 <code>java.util.concurrent.Delayed</code> 接口。</p>
+<p>DelayQueue 是一个没有大小限制的队列，因此往队列中插入数据的操作（生产者）永远不会被阻塞，而只有获取数据的操作（消费者）才会被阻塞。</p>
+<h4 id="PriorityBlockingQueue"><a href="#PriorityBlockingQueue" class="headerlink" title="PriorityBlockingQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#priorityblockingqueue">PriorityBlockingQueue</a></h4><p>基于优先级的无界阻塞队列（优先级的判断通过构造函数传入的 Compator 对象来决定），内部控制线程同步的锁采用的是非公平锁。</p>
+<blockquote>
+<p>网上大部分博客上<strong>PriorityBlockingQueue</strong>为公平锁，其实是不对的，查阅源码（感谢 github:<strong>ambition0802</strong>同学的指出）：</p>
+</blockquote>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs aspectj"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">PriorityBlockingQueue</span><span class="hljs-params">(<span class="hljs-keyword">int</span> initialCapacity,</span></span><br><span class="hljs-params"><span class="hljs-function">                                 Comparator&lt;? <span class="hljs-keyword">super</span> E&gt; comparator)</span> </span>&#123;<br>    <span class="hljs-keyword">this</span>.lock = <span class="hljs-keyword">new</span> ReentrantLock(); <span class="hljs-comment">//默认构造方法-非公平锁</span><br>    ...<span class="hljs-comment">//其余代码略</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="SynchronousQueue"><a href="#SynchronousQueue" class="headerlink" title="SynchronousQueue"></a><a target="_blank" rel="noopener" href="https://javabetter.cn/thread/map.html#synchronousqueue">SynchronousQueue</a></h4><p>这个队列比较特殊，<strong>没有任何内部容量</strong>，甚至连一个队列的容量都没有。并且每个 put 必须等待一个 take，反之亦然。</p>
+<p>需要区别容量为 1 的 ArrayBlockingQueue、LinkedBlockingQueue。</p>
+<p>以下方法的返回值，可以帮助理解这个队列：</p>
+<ul>
+<li><code>iterator()</code> 永远返回空，因为里面没有东西</li>
+<li><code>peek()</code> 永远返回 null</li>
+<li><code>put()</code> 往 queue 放进去一个 element 以后就一直 wait 直到有其他 thread 进来把这个 element 取走。</li>
+<li><code>offer()</code> 往 queue 里放一个 element 后立即返回，如果碰巧这个 element 被另一个 thread 取走了，offer 方法返回 true，认为 offer 成功；否则返回 false。</li>
+<li><code>take()</code> 取出并且 remove 掉 queue 里的 element，取不到东西他会一直等。</li>
+<li><code>poll()</code> 取出并且 remove 掉 queue 里的 element，只有到碰巧另外一个线程正在往 queue 里 offer 数据或者 put 数据的时候，该方法才会取到东西。否则立即返回 null。</li>
+<li><code>isEmpty()</code> 永远返回 true</li>
+<li><code>remove()&amp;removeAll()</code> 永远返回 false</li>
+</ul>
+<p><strong>注意</strong></p>
+<p><strong>PriorityBlockingQueue</strong>不会阻塞数据生产者（因为队列是无界的），而只会在没有可消费的数据时阻塞数据的消费者。因此使用的时候要特别注意，**生产者生产数据的速度绝对不能快于消费者消费数据的速度，否则时间一长，会最终耗尽所有的可用堆内存空间。**对于使用默认大小的**LinkedBlockingQueue**也是一样的。</p>
+<h1 id="w"><a href="#w" class="headerlink" title="w"></a>w</h1>
                 
               </div>
             
@@ -287,6 +371,13 @@
             <div>
               <div class="post-metas my-3">
   
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
+      
+    </div>
   
 </div>
 
@@ -296,8 +387,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
-      <div>http://example.com/2025/11/13/CAS,AQS,lock/</div>
+      <div>可重入锁的引入：不可重入锁中的死锁问题</div>
+      <div>http://example.com/2025/11/13/并发容器/</div>
     </div>
     <div class="license-meta">
       
@@ -341,9 +432,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-sync)/" title="JUC">
+                      <a href="/2025/11/13/HashMap/" title="HashMap">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">JUC</span>
+                        <span class="hidden-mobile">HashMap</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -351,8 +442,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/09/15/leetcode-%E5%9B%9E%E6%BA%AF%E7%9A%84j-%E5%92%8Cj-1%E5%92%8C-j/" title="leetcode:回溯的j--和j-1和--j">
-                        <span class="hidden-mobile">leetcode:回溯的j--和j-1和--j</span>
+                      <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" title="可重入锁的引入：不可重入锁中的死锁问题">
+                        <span class="hidden-mobile">可重入锁的引入：不可重入锁中的死锁问题</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
