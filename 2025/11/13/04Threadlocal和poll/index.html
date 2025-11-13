@@ -26,11 +26,14 @@
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="Threadlocal是什么是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。 通常，我们会使用 synchronzed 关键字 或者 lock 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。 线程安全问题的核心在于多个线程会对">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/02ede02b26c85d797a995abf520e08b5.png">
+<meta property="og:image" content="http://example.com/img/14e547adfd9dfea589e2e0141ff52718.png">
 <meta property="article:published_time" content="2025-11-13T11:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-13T16:07:20.179Z">
+<meta property="article:modified_time" content="2025-11-13T17:00:58.524Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/02ede02b26c85d797a995abf520e08b5.png">
   
   
   
@@ -223,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          4.8k 字
         
       </span>
     
@@ -234,7 +237,7 @@
         
         
         
-          22 分钟
+          40 分钟
         
       </span>
     
@@ -280,8 +283,7 @@
 <p>通常，我们会使用 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/synchronized-1.html">synchronzed 关键字</a> 或者 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/lock.html">lock</a> 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。</p>
 <p><strong>线程安全问题的核心在于多个线程会对同一个临界区的共享资源进行访问</strong>，那如果每个线程都拥有自己的“共享资源”，各用各的，互不影响，这样就不会出现线程安全的问题了，对吧？</p>
 <p>事实上，这就是一种“<strong>空间换时间</strong>”的思想，每个线程拥有自己的“共享资源”，虽然内存占用变大了，但由于不需要同步，也就减少了线程可能存在的阻塞问题，从而提高时间上的效率。</p>
-<p>不过，ThreadLocal 并不在 java.util.concurrent 并发包下，而是在 java.lang 包下，但我更倾向于把它当作是一种并发容器。</p>
-<p>顾名思义，<strong>ThreadLocal 就是线程的“本地变量”，即每个线程都拥有该变量的一个副本，达到人手一份的目的，这样就可以避免共享资源的竞争</strong>。</p>
+<p>ThreadLocal 并不在 java.util.concurrent 并发包下，而是在 java.lang 包下，但我更倾向于把它当作是一种并发容器。顾名思义，<strong>ThreadLocal 就是线程的“本地变量”，即每个线程都拥有该变量的一个副本，达到人手一份的目的，这样就可以避免共享资源的竞争</strong>。</p>
 <h2 id="set方法"><a href="#set方法" class="headerlink" title="set方法"></a>set方法</h2><p>set 方法<br>set 方法用于设置当前线程中 ThreadLocal 的变量值，该方法的源码如下：</p>
 <pre><code class="hljs">public void set(T value) &#123;
 	//1. 获取当前线程实例对象
@@ -373,7 +375,7 @@ else
 
 <ol>
 <li><strong><code>tl = null</code>后</strong>：<ul>
-<li>外部代码不再持有对ThreadLocal实例的强引用</li>
+<li>外部代码不再持有对ThreadLocal实例的强引用（运行完栈不再指向队中的ThreadLocal实例）</li>
 <li>ThreadLocalMap中key是弱引用，所以ThreadLocalMap对ThreadLocal实例的引用是弱引用</li>
 </ul>
 </li>
@@ -400,7 +402,62 @@ else
 <blockquote>
 <p>💡 <strong>重要提示</strong>：即使key是弱引用，ThreadLocal的value仍然是强引用，如果忘记调用<code>remove()</code>，value仍然会泄漏。所以，<strong>正确使用ThreadLocal的关键是：使用完后调用<code>remove()</code></strong>。</p>
 </blockquote>
-<p>end</p>
+<h1 id="Threadpool"><a href="#Threadpool" class="headerlink" title="Threadpool"></a>Threadpool</h1><h2 id="一、什么是线程池"><a href="#一、什么是线程池" class="headerlink" title="一、什么是线程池"></a>一、什么是线程池</h2><p>线程池其实是一种池化的技术实现，池化技术的核心思想就是实现资源的复用，避免资源的重复创建和销毁带来的性能开销。线程池可以管理一堆线程，让线程执行完任务之后不进行销毁，而是继续去处理其它线程已经提交的任务。</p>
+<p>使用线程池的好处</p>
+<p>降低资源消耗。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。<br>提高响应速度。当任务到达时，任务可以不需要等到线程创建就能立即执行。<br>提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</p>
+<h2 id="二、线程池的构造"><a href="#二、线程池的构造" class="headerlink" title="二、线程池的构造"></a>二、线程池的构造</h2><p>Java 主要是通过构建 ThreadPoolExecutor 来创建线程池的。</p>
+<ul>
+<li>corePoolSize：线程池中用来工作的核心线程数量。</li>
+<li>maximumPoolSize：最大线程数，线程池允许创建的最大线程数。</li>
+<li>keepAliveTime：超出 corePoolSize 后创建的线程存活时间或者是所有线程最大存活时间，取决于配置。</li>
+<li>unit：keepAliveTime 的时间单位。</li>
+<li>workQueue：任务队列，是一个阻塞队列，当线程数达到核心线程数后，会将任务存储在阻塞队列中。</li>
+<li>threadFactory ：线程池内部创建线程所用的工厂。</li>
+<li>handler：拒绝策略；当队列已满并且线程数量达到最大线程数量时，会调用该方法处理任务。</li>
+</ul>
+<h2 id="运行过程"><a href="#运行过程" class="headerlink" title="运行过程"></a>运行过程</h2><p><img src="/./../img/02ede02b26c85d797a995abf520e08b5.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="线程池中线程实现复用的原理"><a href="#线程池中线程实现复用的原理" class="headerlink" title="线程池中线程实现复用的原理"></a>线程池中线程实现复用的原理</h2><p>线程池的核心功能就是实现线程的重复利用，那么线程池是如何实现线程的复用呢？</p>
+<p>线程在线程池内部其实被封装成了一个 Worker 对象</p>
+<p>runWorker 内部使用了 while 死循环，当第一个任务执行完之后，会不断地通过 getTask 方法获取任务，只要能获取到任务，就会调用 run 方法继续执行任务，这就是线程能够复用的主要原因。</p>
+<p>但是如果从 getTask 获取不到方法的话，就会调用 finally 中的 processWorkerExit 方法，将线程退出。</p>
+<p>这里有个一个细节就是，因为 Worker 继承了 AQS，每次在执行任务之前都会调用 Worker 的 lock 方法，执行完任务之后，会调用 unlock 方法，这样做的目的就可以通过 Woker 的加锁状态判断出当前线程是否正在执行任务。</p>
+<p>如果想知道线程是否正在执行任务，只需要调用 Woker 的 tryLock 方法，根据是否加锁成功就能判断，加锁成功说明当前线程没有加锁，也就没有执行任务了，在调用 shutdown 方法关闭线程池的时候，就时用这种方式来判断线程有没有在执行任务，如果没有的话，会尝试打断没有执行任务的线程。</p>
+<h2 id="线程是如何获取任务以及如何实现超时的"><a href="#线程是如何获取任务以及如何实现超时的" class="headerlink" title="线程是如何获取任务以及如何实现超时的"></a>线程是如何获取任务以及如何实现超时的</h2><p><img src="/./../img/14e547adfd9dfea589e2e0141ff52718.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="线程池的-5-种状态"><a href="#线程池的-5-种状态" class="headerlink" title="线程池的 5 种状态"></a>线程池的 5 种状态</h2><p>线程池内部有 5 个常量来代表线程池的五种状态</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-keyword">private</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> RUNNING    = <span class="hljs-number">-1</span> &lt;&lt; COUNT_BITS;<br><span class="hljs-keyword">private</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> SHUTDOWN   =  <span class="hljs-number">0</span> &lt;&lt; COUNT_BITS;<br><span class="hljs-keyword">private</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> STOP       =  <span class="hljs-number">1</span> &lt;&lt; COUNT_BITS;<br><span class="hljs-keyword">private</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> TIDYING    =  <span class="hljs-number">2</span> &lt;&lt; COUNT_BITS;<br><span class="hljs-keyword">private</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> TERMINATED =  <span class="hljs-number">3</span> &lt;&lt; COUNT_BITS;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>RUNNING：线程池创建时就是这个状态，能够接收新任务，以及对已添加的任务进行处理。</li>
+<li>SHUTDOWN：调用 shutdown 方法，线程池就会转换成 SHUTDOWN 状态，此时线程池不再接收新任务，但能继续处理已添加的任务到队列中。</li>
+<li>STOP：调用 shutdownNow 方法，线程池就会转换成 STOP 状态，不接收新任务，也不能继续处理已添加的任务到队列中任务，并且会尝试中断正在处理的任务的线程。</li>
+<li>TIDYING：SHUTDOWN 状态下，任务数为 0， 其他所有任务已终止，线程池会变为 TIDYING 状态；线程池在 SHUTDOWN 状态，任务队列为空且执行中任务为空，线程池会变为 TIDYING 状态；线程池在 STOP 状态，线程池中执行中任务为空时，线程池会变为 TIDYING 状态。</li>
+<li>TERMINATED：线程池彻底终止。线程池在 TIDYING 状态执行完 <code>terminated()</code> 方法就会转变为 TERMINATED 状态。</li>
+</ul>
+<p>线程池状态具体是存在 ctl 成员变量中的，ctl 中不仅存储了线程池的状态还存储了当前线程池中线程数的大小</p>
+<p>所以也可以看出 shutdown 方法和 shutdownNow 方法的主要区别就是，shutdown 之后还能处理在队列中的任务，shutdownNow 直接就将任务从队列中移除，线程池里的线程就不再处理了。</p>
+<h2 id="Executors-构建线程池以及问题分析"><a href="#Executors-构建线程池以及问题分析" class="headerlink" title="Executors 构建线程池以及问题分析"></a>Executors 构建线程池以及问题分析</h2><p>虽然 JDK 提供了快速创建线程池的方法，但其实不推荐使用 Executors 来创建线程池。</p>
+<p>Executors 返回线程池对象的弊端如下(后文会详细介绍到)：</p>
+<p>FixedThreadPool 和 SingleThreadExecutor:使用的是阻塞队列 LinkedBlockingQueue，任务队列最大长度为 Integer.MAX_VALUE，可以看作是无界的，可能堆积大量的请求，从而导致 OOM。</p>
+<p>CachedThreadPool:使用的是同步队列 SynchronousQueue, 允许创建的线程数量为 Integer.MAX_VALUE ，如果任务数量过多且执行速度较慢，可能会创建大量的线程，从而导致 OOM。</p>
+<p>ScheduledThreadPool 和 SingleThreadScheduledExecutor:使用的无界的延迟阻塞队列DelayedWorkQueue，任务队列最大长度为 Integer.MAX_VALUE,可能堆积大量的请求，从而导致 OOM。</p>
+<h2 id="回收核心吗？"><a href="#回收核心吗？" class="headerlink" title="回收核心吗？"></a>回收核心吗？</h2><p><code>ThreadPoolExecutor</code> 默认不会回收核心线程，即使它们已经空闲了。这是为了减少创建线程的开销，因为核心线程通常是要长期保持活跃的。但是，如果线程池是被用于周期性使用的场景，且频率不高（周期之间有明显的空闲时间），可以考虑将 <code>allowCoreThreadTimeOut(boolean value)</code> 方法的参数设置为 <code>true</code>，这样就会回收空闲（时间间隔由 <code>keepAliveTime</code> 指定）的核心线程了</p>
+<h2 id="线程池的拒绝策略有哪些？"><a href="#线程池的拒绝策略有哪些？" class="headerlink" title="线程池的拒绝策略有哪些？"></a>线程池的拒绝策略有哪些？</h2><p>如果当前同时运行的线程数量达到最大线程数量并且队列也已经被放满了任务时，<code>ThreadPoolExecutor</code> 定义一些策略:</p>
+<ul>
+<li><code>ThreadPoolExecutor.AbortPolicy</code>：抛出 <code>RejectedExecutionException</code>来拒绝新任务的处理。</li>
+<li><code>ThreadPoolExecutor.CallerRunsPolicy</code>：调用执行者自己的线程运行任务，也就是直接在调用<code>execute</code>方法的线程中运行(<code>run</code>)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果你的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。</li>
+</ul>
+<p>不过，如果走到<code>CallerRunsPolicy</code>的任务是个非常耗时的任务，且处理提交任务的线程是主线程，可能会导致主线程阻塞，影响程序的正常运行。</p>
+<ul>
+<li><code>ThreadPoolExecutor.DiscardPolicy</code>：不处理新任务，直接丢弃掉。</li>
+<li><code>ThreadPoolExecutor.DiscardOldestPolicy</code>：此策略将丢弃最早的未处理的任务请求。</li>
+</ul>
+<h2 id="线程池中线程异常后，销毁还是复用？"><a href="#线程池中线程异常后，销毁还是复用？" class="headerlink" title="线程池中线程异常后，销毁还是复用？"></a>线程池中线程异常后，销毁还是复用？</h2><p>直接说结论，需要分两种情况：</p>
+<p>使用execute()提交任务：</p>
+<p>​	当任务通过execute()提交到线程池并在执行过程中抛出异常时，如果这个异常没有在任务内被捕获，那么该异常会导致当前线程终止，并且异常会被打印到控制台或日志文件中。线程池会检测到这种线程终止，并创建一个新线程来替换它，从而保持配置的线程数不变。</p>
+<p>使用submit()提交任务：</p>
+<p>​	对于通过submit()提交的任务，如果在任务执行中发生异常，这个异常不会直接打印出来。相反，异常会被封装在由submit()返回的Future对象中。当调用Future.get()方法时，可以捕获到一个ExecutionException。在这种情况下，线程不会因为异常而终止，它会继续存在于线程池中，准备执行后续的任务。</p>
+<p>简单来说：使用execute()时，未捕获异常导致线程终止，线程池创建新线程替代；使用submit()时，异常被封装在Future中，线程继续复用。这种设计允许submit()提供更灵活的错误处理机制，因为它允许调用者决定如何处理异常，而execute()则适用于那些不需要关注执行结果的场景。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>end</p>
 <p>?</p>
 
                 
