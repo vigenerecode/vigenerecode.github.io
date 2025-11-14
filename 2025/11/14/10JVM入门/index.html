@@ -1,0 +1,859 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="JVM入门JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。 JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Area">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10JVM入门">
+<meta property="og:url" content="http://example.com/2025/11/14/10JVM%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="JVM入门JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。 JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Area">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/9rftrsb8st_1dqVcgS15u.png">
+<meta property="og:image" content="http://example.com/img/f34fwdrnqp_E-2JbLGeOR.png">
+<meta property="og:image" content="http://example.com/img/5-uimsnj2g_Sr1CWnJefh.png">
+<meta property="og:image" content="http://example.com/img/sdjj2fytry_6MVUMZQ6pU.png">
+<meta property="og:image" content="http://example.com/img/vp4h8zqgws_u0qUuN3ae3.png">
+<meta property="og:image" content="http://example.com/img/rinmsg3_1p_QE17pQoIsp.png">
+<meta property="og:image" content="http://example.com/img/7-2-vjot3h_LwAUJlKN6d.png">
+<meta property="og:image" content="http://example.com/img/ji_9qj_q9c_JNMl-h-9vA.png">
+<meta property="og:image" content="http://example.com/img/r6c_4ar-bc_Eu-c_NUlRK.png">
+<meta property="og:image" content="http://example.com/img/pqmd75qtz-_a66lc6uWYi.png">
+<meta property="article:published_time" content="2025-11-14T05:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-14T13:43:04.330Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/9rftrsb8st_1dqVcgS15u.png">
+  
+  
+  
+  <title>10JVM入门 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="10JVM入门"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-14 13:07" pubdate>
+          2025年11月14日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">10JVM入门</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="JVM入门"><a href="#JVM入门" class="headerlink" title="JVM入门"></a>JVM入门</h1><p>JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。</p>
+<p>JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Areas）和执行引擎（Excution Engine）</p>
+<p>类加载器用来加载类文件，也就是 .class 文件。如果类文件加载失败，也就没有运行时数据区和执行引擎什么事了，它们什么也干不了。类加载器负责将字节码文件加载到内存中，主要会经历加载-&gt;连接-&gt;实例化这三个阶段，我们会放在后面的章节单独来讲。</p>
+<p>运行时数据区就是Java 程序运行期间需要使用到的内存区域，简单来说，这块内存区域存放了字节码信息以及程序执行过程的数据，垃圾收集器也会针对运行时数据区进行对象回收的工作。</p>
+<p>执行引擎的任务就是将<a target="_blank" rel="noopener" href="https://javabetter.cn/jvm/zijiema-zhiling.html">字节码指令</a>解释&#x2F;编译为对应平台上的本地机器指令才可以。简单来说，JVM 中的执行引擎充当了将高级语言翻译为机器语言的译者</p>
+<h1 id="JVM如何运行指令"><a href="#JVM如何运行指令" class="headerlink" title="JVM如何运行指令"></a>JVM如何运行指令</h1><p>Java 代码首先被编译器转换为字节码，然后在 JVM 上运行。在运行时，JVM 通过解释执行或即时编译（JIT）将字节码转换为机器码。解释执行直接运行字节码，而 JIT 在运行时将热点代码编译优化为机器码以提升性能。</p>
+<p>这中间需要运行时数据区来存储字节码数据以及运行时中间数据。</p>
+<p>字节码是 JVM 中非常关键的内容，涉及到类的加载机制、字节码文件的结构、字节码指令的执行流程等等，</p>
+<h1 id="类加载器的介绍"><a href="#类加载器的介绍" class="headerlink" title="类加载器的介绍"></a>类加载器的介绍</h1><p>之前也提到了它是负责加载.class 文件的，它们在文件开头会有特定的文件标示，将 class 文件字节码内容加载到内存中，并将这些内容转换成方法区中的运行时数据结构，并且 ClassLoader 只负责 class 文件的加载，而是否能够运行则由 Execution Engine 来决定</p>
+<h2 id="2-1-类加载器的流程"><a href="#2-1-类加载器的流程" class="headerlink" title="2.1 类加载器的流程"></a>2.1 类加载器的流程</h2><p>从类被加载到虚拟机内存中开始，到释放内存总共有 7 个步骤：加载，验证，准备，解析，初始化，使用，卸载。其中<strong>验证，准备，解析三个部分统称为连接</strong></p>
+<h3 id="2-1-1-加载"><a href="#2-1-1-加载" class="headerlink" title="2.1.1 加载"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/jvm-intro.html#_2-1-1-%E5%8A%A0%E8%BD%BD">2.1.1 加载</a></h3><ol>
+<li>将 class 文件加载到内存</li>
+<li>将静态数据结构转化成方法区中运行时的数据结构</li>
+<li>在堆中生成一个代表这个类的 java.lang.Class 对象作为数据访问的入口</li>
+</ol>
+<h3 id="2-1-2-链接"><a href="#2-1-2-链接" class="headerlink" title="2.1.2 链接"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/jvm-intro.html#_2-1-2-%E9%93%BE%E6%8E%A5">2.1.2 链接</a></h3><ol>
+<li>验证：确保加载的类符合 JVM 规范和安全，保证被校验类的方法在运行时不会做出危害虚拟机的事件，其实就是一个安全检查</li>
+<li>准备：为 static 变量在方法区中分配内存空间，设置变量的初始值，例如 static int a &#x3D; 3 （注意：准备阶段只设置类中的静态变量（方法区中），不包括实例变量（堆内存中），实例变量是对象初始化时赋值的）</li>
+<li>解析：虚拟机将常量池内的符号引用替换为直接引用的过程（符号引用比如我现在 import java.util.ArrayList 这就算符号引用，直接引用就是指针或者对象地址，注意引用对象一定是在内存进行）</li>
+</ol>
+<h3 id="2-1-3-初始化"><a href="#2-1-3-初始化" class="headerlink" title="2.1.3 初始化"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/jvm-intro.html#_2-1-3-%E5%88%9D%E5%A7%8B%E5%8C%96">2.1.3 初始化</a></h3><p>初始化其实就是执行类构造器方法的<code>&lt;clinit&gt;()</code>的过程，而且要保证执行前父类的<code>&lt;clinit&gt;()</code>方法执行完毕。这个方法由编译器收集，顺序执行所有类变量（static 修饰的成员变量）显式初始化和静态代码块中语句。此时准备阶段时的那个 <code>static int a</code> 由默认初始化的 0 变成了显式初始化的 3。 由于执行顺序缘故，初始化阶段类变量如果在静态代码块中又进行了更改，会覆盖类变量的显式初始化，最终值会为静态代码块中的赋值。</p>
+<blockquote>
+<p>注意：字节码文件中初始化方法有两种，非静态资源初始化的<code>&lt;init&gt;</code>和静态资源初始化的<code>&lt;clinit&gt;</code>，类构造器方法<code>&lt;clinit&gt;()</code>不同于类的构造器，这些方法都是字节码文件中只能给 JVM 识别的特殊方法。</p>
+</blockquote>
+<h3 id="2-1-4-卸载"><a href="#2-1-4-卸载" class="headerlink" title="2.1.4 卸载"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/jvm-intro.html#_2-1-4-%E5%8D%B8%E8%BD%BD">2.1.4 卸载</a></h3><p>GC 将无用对象从内存中卸载</p>
+<h2 id="2-2-类加载器的加载顺序"><a href="#2-2-类加载器的加载顺序" class="headerlink" title="2.2 类加载器的加载顺序"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/jvm-intro.html#_2-2-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F">2.2 类加载器的加载顺序</a></h2><p>加载一个 Class 类的顺序也是有优先级的，类加载器从最底层开始往上的顺序是这样的</p>
+<ol>
+<li>BootStrap ClassLoader：rt.jar</li>
+<li>Extension ClassLoader: 加载扩展的 jar 包</li>
+<li>App ClassLoader：指定的 classpath 下面的 jar 包</li>
+<li>Custom ClassLoader：自定义的类加载器</li>
+</ol>
+<h2 id="双亲委派"><a href="#双亲委派" class="headerlink" title="双亲委派"></a>双亲委派</h2><p>双亲委派模型（Parent Delegation Model）是 Java 类加载器使用的一种机制，用于确保 Java 程序的稳定性和安全性。在这个模型中，类加载器在尝试加载一个类时，首先会委派给其父加载器去尝试加载这个类，只有在父加载器无法加载该类时，子加载器才会尝试自己去加载。</p>
+<ol>
+<li><strong>委派给父加载器</strong>：当一个类加载器接收到类加载的请求时，它首先不会尝试自己去加载这个类，而是将这个请求委派给它的父加载器。</li>
+<li><strong>递归委派</strong>：这个过程会递归向上进行，从启动类加载器（Bootstrap ClassLoader）开始，再到扩展类加载器（Extension ClassLoader），最后到系统类加载器（System ClassLoader）。</li>
+<li><strong>加载类</strong>：如果父加载器可以加载这个类，那么就使用父加载器的结果。如果父加载器无法加载这个类（它没有找到这个类），子加载器才会尝试自己去加载。</li>
+<li><strong>安全性和避免重复加载</strong>：这种机制可以确保不会重复加载类，并保护 Java 核心 API 的类不被恶意替换。</li>
+</ol>
+<h1 id="执行引擎Execution-Engine"><a href="#执行引擎Execution-Engine" class="headerlink" title="执行引擎Execution Engine"></a>执行引擎Execution Engine</h1><p><strong>Execution Engine</strong>执行引擎负责解释命令，提交操作系统执行。</p>
+<h1 id="本地方法接口Native-Interface"><a href="#本地方法接口Native-Interface" class="headerlink" title="本地方法接口Native Interface"></a>本地方法接口Native Interface</h1><p>本地接口的作用是融合不同的编程语言为 Java 所用，它的初衷是<code>融合 C/C++程序</code>，Java 诞生的时候是 C&#x2F;C++横行的时候，要想立足，必须有调用 C&#x2F;C++程序，于是就<code>在内存中专门开辟了一块区域处理标记为native的代码，它的具体做法是 Native Method Stack中登记 native方法，在Execution Engine 执行时加载native libraies</code>。</p>
+<h1 id="Native-Method-Stack"><a href="#Native-Method-Stack" class="headerlink" title="Native Method Stack"></a>Native Method Stack</h1><p>它的具体做法是Native Method Stack中登记native方法，在Execution Engine 执行时加载本地方法库。</p>
+<h1 id="PC寄存器-程序计数器"><a href="#PC寄存器-程序计数器" class="headerlink" title="PC寄存器(程序计数器)"></a>PC寄存器(程序计数器)</h1><p>每个线程都有一个程序计数器，是<code>线程私有的</code>，就是一个指针，指向方法区中的方法字节码<code>（用来存储指向下一条指令的地址，即 将要执行的指令代码）</code>，由执行引擎读取下一条指令，是一个非常小的内存空间，几乎可以忽略不记。</p>
+<p><strong>两个常见问题：</strong></p>
+<p><code>1、使用PC寄存器存储字节码指令地址有什么用呢？为什么使用PC寄存器记录当前线程的执行地址呢？</code></p>
+<p>答：因为CPU需要不停的切换各个线程，这时候切换回来以后，就得知道接着从哪开始继续执行。</p>
+<p>JVM的字节码解释器就需要通过改变PC寄存器的值来明确下一条应该执行什么样的字节码指令。</p>
+<p><code>2、PC寄存器为什么会被设定为线程私有？</code></p>
+<p>答：我们都知道所谓的多线程在一个特定的时间段内只会执行其中某一个线程的方法，CPU会不停地做任务切换，这样必然导致经常中断或恢复，如何保证分毫无差呢？<code>为了能够准确地记录各个线程正在执行的当前字节码指令地址，最好的办法自然是为每一个线程都分配一个PC寄存器，</code>这样一来各个线程之间便可以进行独立计算，从而不会出现相互干扰的情况。</p>
+<h1 id="Method-Area方法区"><a href="#Method-Area方法区" class="headerlink" title="Method Area方法区"></a>Method Area方法区</h1><p><strong>方法区存储什么：</strong></p>
+<p>方法区是被<code>所有线程共享</code>。《深入理解Java虚拟机》书中对方法区存储内容的<code>经典描述</code>如下：它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等：</p>
+<p><img src="/./../img/9rftrsb8st_1dqVcgS15u.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>方法区演进细节：</strong></p>
+<p>Hotspot中方法区的变化：</p>
+<p><img src="/./../img/f34fwdrnqp_E-2JbLGeOR.png" srcset="/img/loading.gif" lazyload></p>
+<p><code>补充：</code>只有Hotspot才有永久代。BEA JRockit、IBM J9等来说，是不存在永久代的概念的</p>
+<h1 id="虚拟机栈stack"><a href="#虚拟机栈stack" class="headerlink" title="虚拟机栈stack"></a>虚拟机栈stack</h1><h2 id="常见问题：栈溢出（是Error）"><a href="#常见问题：栈溢出（是Error）" class="headerlink" title="常见问题：栈溢出（是Error）"></a>常见问题：栈溢出（是Error）</h2><p><code>通常出现在递归调用时：</code></p>
+<p><img src="/./../img/5-uimsnj2g_Sr1CWnJefh.png" srcset="/img/loading.gif" lazyload></p>
+<p><code>例如，如下代码：</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.atguigu.jvmdemo.chap02;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StackRecurrenceDemo</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        StackRecurrenceDemo.test();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">test</span><span class="hljs-params">()</span>&#123;<br>        test();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1、Stack-栈是什么？"><a href="#1、Stack-栈是什么？" class="headerlink" title="1、Stack 栈是什么？"></a>1、Stack 栈是什么？</h2><ul>
+<li><p>栈也叫栈内存，主管Java程序的运行，<code>是在线程创建时创建</code>，每个线程都有自己的栈，它的生命期是跟随线程的生命期，线程结束栈内存也就释放，<code>是线程私有的</code>。</p>
+</li>
+<li><p>线程上正在执行的每个方法都各自对应一个<code>栈帧（Stack Frame）</code>。</p>
+</li>
+</ul>
+<h2 id="2、栈运行原理"><a href="#2、栈运行原理" class="headerlink" title="2、栈运行原理"></a>2、栈运行原理</h2><ul>
+<li><p>JVM对Java栈的操作只有两个，就是对栈帧的<code>压栈</code>和<code>出栈</code>，遵循<code>“先进后出”</code>或者<code>“后进先出”</code>原则。</p>
+</li>
+<li><p>一个线程中只能由一个正在执行的方法<code>（当前方法）</code>，因此对应只会有一个活动的栈帧<code>（当前栈帧）</code></p>
+</li>
+</ul>
+<p><img src="/./../img/sdjj2fytry_6MVUMZQ6pU.png" srcset="/img/loading.gif" lazyload></p>
+<p>当一个方法1被调用时就产生了一个栈帧1 并被压入到栈中，栈帧1位于栈底位置</p>
+<p>方法1又调用了方法2，于是产生栈帧2 也被压入栈，</p>
+<p>方法2又调用了方法3，于是产生栈帧3 也被压入栈，</p>
+<p>……</p>
+<p>执行完毕后，先弹出栈帧4，再弹出栈帧3，再弹出栈帧2，再弹出栈帧1，线程结束，栈释放。</p>
+<p><code>例如，如下代码：</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.atguigu.jvmdemo.chap02;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StackDemo</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">StackDemo</span> <span class="hljs-variable">test</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StackDemo</span>();<br>        test.method2();<br>        System.out.println(<span class="hljs-string">&quot;main()结束&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">method2</span><span class="hljs-params">()</span>&#123;<br>        System.out.println(<span class="hljs-string">&quot;method2()执行...&quot;</span>);<br>        <span class="hljs-built_in">this</span>.method3();<br>        System.out.println(<span class="hljs-string">&quot;method2()结束...&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">method3</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;method3()执行...&quot;</span>);<br>        <span class="hljs-built_in">this</span>.method4();<br>        System.out.println(<span class="hljs-string">&quot;method3()结束...&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">method4</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;method4()执行...&quot;</span>);<br>        System.out.println(<span class="hljs-string">&quot;method4()结束...&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3、栈存储什么"><a href="#3、栈存储什么" class="headerlink" title="3、栈存储什么?"></a>3、栈存储什么?</h2><p>栈中的数据都是以<code>栈帧（Stack Frame）</code>的格式存在。栈帧是一个内存区块，是一个数据集，<code>包含方法执行过程中的各种数据信息</code>。</p>
+<p><img src="/./../img/vp4h8zqgws_u0qUuN3ae3.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="3-1、局部变量表（Local-Variables）"><a href="#3-1、局部变量表（Local-Variables）" class="headerlink" title="3.1、局部变量表（Local Variables）"></a>3.1、局部变量表（Local Variables）</h3><p>也叫本地变量表。</p>
+<p><strong>作用：</strong> 存储方法<code>参数</code>和方法体内的<code>局部变量</code>：8种基本类型变量、对象引用（reference）。</p>
+<p>可以用如下方式查看字节码中一个方法内定义的的局部变量，当程序运行时，这些局部变量会被加载到局部变量表中。<code>定义代码如下：</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.atguigu.jvmdemo.chap02;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LocalVariableTableDemo</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">s</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;hello&quot;</span>;<br>        <span class="hljs-type">char</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;c&#x27;</span>;<br>        <span class="hljs-type">Date</span> <span class="hljs-variable">date</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>查看局部变量：</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">类路径&gt; javap -v 类名.class<br></code></pre></td></tr></table></figure>
+
+<p><img src="/./../img/rinmsg3_1p_QE17pQoIsp.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="3-2、操作数栈（Operand-Stack）"><a href="#3-2、操作数栈（Operand-Stack）" class="headerlink" title="3.2、操作数栈（Operand Stack）"></a>3.2、操作数栈（Operand Stack）</h3><p><strong>作用：</strong><code>也是一个栈</code>，在方法执行过程中根据字节码指令记录当前操作的数据，将它们入栈或出栈。用于保存计算过程的中间结果，同时作为<code>计算过程中变量的临时存储空间</code>。</p>
+<p><img src="/./../img/7-2-vjot3h_LwAUJlKN6d.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="3-3、帧数据区（Frame-Data）"><a href="#3-3、帧数据区（Frame-Data）" class="headerlink" title="3.3、帧数据区（Frame Data）"></a>3.3、帧数据区（Frame Data）</h3><p>包括类信息、方法信息等等。</p>
+<h4 id="3-3-1、动态链接（Dynamic-Linking）"><a href="#3-3-1、动态链接（Dynamic-Linking）" class="headerlink" title="3.3.1、动态链接（Dynamic Linking）"></a>3.3.1、动态链接（Dynamic Linking）</h4><p><strong>作用：</strong><code>可以知道当前帧执行的是哪个方法。</code>指向运行时常量池中方法的引用。</p>
+<p><img src="/./../img/ji_9qj_q9c_JNMl-h-9vA.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>完整的内存结构图如下：</strong></p>
+<p><img src="/./../img/r6c_4ar-bc_Eu-c_NUlRK.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="3-3-2、方法返回地址（Return-Address）"><a href="#3-3-2、方法返回地址（Return-Address）" class="headerlink" title="3.3.2、方法返回地址（Return Address）"></a>3.3.2、方法返回地址（Return Address）</h4><p>方法返回地址存储的是调用该方法的程序计数器的值。</p>
+<p><strong>作用：</strong><code>可以知道调用完当前方法后，上一层方法接着做什么。</code></p>
+<p>一个方法的结束，有两种方式，分别是正常执行完成结束和出现异常导致非正常结束。</p>
+<p>无论通过哪种方式退出，在方法退出后都返回到该方法被调用的位置。</p>
+<ul>
+<li><p><code>方法正常退出时，调用者的程序计数器的值作为返回地址，即调用该方法的指令的下一条指令的地址。</code></p>
+</li>
+<li><p>而通过异常退出的，返回地址是要通过异常表来确定。</p>
+</li>
+</ul>
+<h4 id="3-3-3、一些附加信息"><a href="#3-3-3、一些附加信息" class="headerlink" title="3.3.3、一些附加信息"></a>3.3.3、一些附加信息</h4><p>栈帧中还允许携带与Java虚拟机实现相关的一些附加信息。例如，对程序调试提供支持的信息。</p>
+<h1 id="堆、栈、方法区的关系："><a href="#堆、栈、方法区的关系：" class="headerlink" title="堆、栈、方法区的关系："></a>堆、栈、方法区的关系：</h1><p><img src="/./../img/pqmd75qtz-_a66lc6uWYi.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>HotSpot</strong>是使用指针的方式来访问对象：</p>
+<p>Java堆中会存放指向<code>类元数据</code>的地址</p>
+<p>Java栈中的reference存储的是指向堆中的对象的地址</p>
+<h2 id="类元数据"><a href="#类元数据" class="headerlink" title="类元数据"></a>类元数据</h2><ul>
+<li><strong>对象类型数据</strong>：存储类的元数据（如类的结构、方法、字段等信息）。</li>
+</ul>
+<p>简单来说：<strong>元数据是”类的说明书”</strong>，告诉JVM”这个类长什么样、有什么方法、有什么字段”。</p>
+<hr>
+<h3 id="类的元数据包含哪些内容？（核心组成）"><a href="#类的元数据包含哪些内容？（核心组成）" class="headerlink" title="类的元数据包含哪些内容？（核心组成）"></a>类的元数据包含哪些内容？（核心组成）</h3><table>
+<thead>
+<tr>
+<th>元数据类型</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>类名</strong></td>
+<td>类的完整名称（包括包名）</td>
+<td><code>com.example.Person</code></td>
+</tr>
+<tr>
+<td><strong>父类</strong></td>
+<td>继承的父类</td>
+<td><code>java.lang.Object</code></td>
+</tr>
+<tr>
+<td><strong>接口</strong></td>
+<td>实现的接口列表</td>
+<td><code>Serializable</code>, <code>Cloneable</code></td>
+</tr>
+<tr>
+<td><strong>字段</strong></td>
+<td>成员变量信息（名称、类型、访问权限）</td>
+<td><code>private String name;</code></td>
+</tr>
+<tr>
+<td><strong>方法</strong></td>
+<td>方法信息（名称、参数、返回类型、访问权限）</td>
+<td><code>public String getName()</code></td>
+</tr>
+<tr>
+<td><strong>常量池</strong></td>
+<td>字符串常量、类常量等</td>
+<td><code>&quot;Hello World&quot;</code></td>
+</tr>
+<tr>
+<td><strong>访问标志</strong></td>
+<td>类&#x2F;方法的访问权限（public、private等）</td>
+<td><code>public final class</code></td>
+</tr>
+<tr>
+<td><strong>注解</strong></td>
+<td>类&#x2F;方法&#x2F;字段上的注解</td>
+<td><code>@Deprecated</code>, <code>@Override</code></td>
+</tr>
+</tbody></table>
+<h3 id="元数据-vs-实例数据（关键区别）"><a href="#元数据-vs-实例数据（关键区别）" class="headerlink" title="元数据 vs 实例数据（关键区别）"></a>元数据 vs 实例数据（关键区别）</h3><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>元数据</th>
+<th>实例数据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>存储位置</strong></td>
+<td>方法区（或元空间）</td>
+<td>Java堆</td>
+</tr>
+<tr>
+<td><strong>生命周期</strong></td>
+<td>类加载时创建，JVM运行期间存在</td>
+<td>通过<code>new</code>创建，随对象销毁而回收</td>
+</tr>
+<tr>
+<td><strong>内容</strong></td>
+<td>类的”说明书”（静态结构）</td>
+<td>对象的实际数据（动态值）</td>
+</tr>
+<tr>
+<td><strong>示例</strong></td>
+<td><code>Person</code>类的字段&#x2F;方法定义</td>
+<td><code>new Person(&quot;Tom&quot;, 25)</code>中的<code>name=&quot;Tom&quot;</code></td>
+</tr>
+<tr>
+<td><strong>数量</strong></td>
+<td>每个类只有1份</td>
+<td>每个对象1份</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>类比理解</strong>：<br> 元数据 &#x3D; 《房屋设计图纸》<br> 实例数据 &#x3D; 真实建造的房屋（每个房子不同）</p>
+</blockquote>
+<hr>
+<h3 id="为什么需要元数据？（为什么不是只有代码）"><a href="#为什么需要元数据？（为什么不是只有代码）" class="headerlink" title="为什么需要元数据？（为什么不是只有代码）"></a>为什么需要元数据？（为什么不是只有代码）</h3><p>如果JVM只存储代码，<strong>无法实现以下功能</strong>：</p>
+<ul>
+<li><code>instanceof</code> 检查（<code>obj instanceof Person</code>）</li>
+<li>动态加载类（<code>Class.forName(&quot;com.example.Person&quot;)</code>）</li>
+<li>注解处理（如Spring的<code>@Autowired</code>）</li>
+<li>类型安全检查（编译器在运行时验证）</li>
+</ul>
+<blockquote>
+<p>✅ <strong>总结</strong>：元数据是JVM理解”类”的<strong>唯一桥梁</strong>，没有它，Java的动态特性（反射、注解、动态代理等）将无法实现。</p>
+</blockquote>
+<p>实际内存中的表现（简化版）</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">方法区（元空间）：</span><br><span class="hljs-attribute">┌───────────────────────────────────────┐</span><br><span class="hljs-attribute">│          类元数据 (Person)            │</span><br><span class="hljs-attribute">├───────────────┬───────────────────────┤</span><br><span class="hljs-attribute">│ 类名</span><span class="hljs-punctuation">:</span> <span class="hljs-string">        │ com.example.Person    │</span><br><span class="hljs-attribute">│ 父类</span><span class="hljs-punctuation">:</span> <span class="hljs-string">        │ java.lang.Object      │</span><br><span class="hljs-attribute">│ 接口</span><span class="hljs-punctuation">:</span> <span class="hljs-string">        │ Serializable          │</span><br><span class="hljs-attribute">│ 字段列表</span><span class="hljs-punctuation">:</span> <span class="hljs-string">    │ name(String), age(int)│</span><br><span class="hljs-attribute">│ 方法列表</span><span class="hljs-punctuation">:</span> <span class="hljs-string">    │ Person(String,int),   │</span><br>│               │ getName():String      │<br><span class="hljs-attribute">│ 访问标志</span><span class="hljs-punctuation">:</span> <span class="hljs-string">    │ public                │</span><br><span class="hljs-attribute">│ 注解</span><span class="hljs-punctuation">:</span> <span class="hljs-string">        │ @Deprecated           │</span><br><span class="hljs-attribute">└───────────────┴───────────────────────┘</span><br><span class="hljs-attribute"></span><br><span class="hljs-attribute">Java堆：</span><br><span class="hljs-attribute">┌───────────────────────────────────────┐</span><br><span class="hljs-attribute">│          实例对象 (Person)            │</span><br><span class="hljs-attribute">├───────────────┬───────────────────────┤</span><br><span class="hljs-attribute">│ name</span><span class="hljs-punctuation">:</span> <span class="hljs-string">        │ &quot;Tom&quot;                 │</span><br><span class="hljs-attribute">│ age</span><span class="hljs-punctuation">:</span> <span class="hljs-string">         │ 25                    │</span><br>└───────────────┴───────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="💡-关键点："><a href="#💡-关键点：" class="headerlink" title="💡 关键点："></a>💡 <strong>关键点</strong>：</h3><p> 元数据在<strong>方法区</strong>（类加载时创建），<br> 实例数据在<strong>堆</strong>（运行时创建），<br> <strong>元数据描述了实例数据的结构</strong>。</p>
+<p>end？。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/JVM/" class="print-no-link">#JVM</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>10JVM入门</div>
+      <div>http://example.com/2025/11/14/10JVM入门/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" title="05原子类和Unsafe">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">05原子类和Unsafe</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" title="06并发工具等">
+                        <span class="hidden-mobile">06并发工具等</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
