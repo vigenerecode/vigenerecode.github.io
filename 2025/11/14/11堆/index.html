@@ -21,7 +21,7 @@
   
     <meta name="description" content="堆堆、栈、方法区的关系：  HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 堆空间概述Java栈中的reference存储的是指向堆中的对象的地址  一个Java程序运行起来对应一个进程，一个进程对应一个JVM实例，一个JVM实例中有一个运行时数据区，一个运行时数据区中只存在一个堆内存和一个方法区。 一个进程中可以包含多个线程，因此堆内存和方法区是线程共享的。堆中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="10JVM入门">
+<meta property="og:title" content="11堆">
 <meta property="og:url" content="http://example.com/2025/11/14/11%E5%A0%86/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="堆堆、栈、方法区的关系：  HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 堆空间概述Java栈中的reference存储的是指向堆中的对象的地址  一个Java程序运行起来对应一个进程，一个进程对应一个JVM实例，一个JVM实例中有一个运行时数据区，一个运行时数据区中只存在一个堆内存和一个方法区。 一个进程中可以包含多个线程，因此堆内存和方法区是线程共享的。堆中">
@@ -35,8 +35,8 @@
 <meta property="og:image" content="http://example.com/img/-n83l7j40p_9u1Vtn0PUf.gif">
 <meta property="og:image" content="http://example.com/img/gt802yy-r1_V6nc6kONPH.gif">
 <meta property="og:image" content="http://example.com/img/ei8pop8k1q_GLa6wPJHmS.png">
-<meta property="article:published_time" content="2025-11-14T15:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-14T13:50:18.216Z">
+<meta property="article:published_time" content="2025-11-14T05:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-15T03:53:45.190Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
   
   
   
-  <title>10JVM入门 - NoFlowCloud</title>
+  <title>11堆 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -210,7 +210,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="10JVM入门"></span>
+            <span id="subtitle" data-typed-text="11堆"></span>
           
         </div>
 
@@ -221,8 +221,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-14 23:07" pubdate>
-          2025年11月14日 晚上
+        <time datetime="2025-11-14 13:07" pubdate>
+          2025年11月14日 下午
         </time>
       </span>
     
@@ -233,7 +233,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.4k 字
+          6.6k 字
         
       </span>
     
@@ -244,7 +244,7 @@
         
         
         
-          54 分钟
+          56 分钟
         
       </span>
     
@@ -281,7 +281,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">10JVM入门</h1>
+            <h1 id="seo-header">11堆</h1>
             
             
               <div class="markdown-body">
@@ -308,7 +308,8 @@
 </ul>
 </li>
 </ul>
-<h2 id="堆和对象"><a href="#堆和对象" class="headerlink" title="堆和对象"></a>堆和对象</h2><p>以前，Java 中“几乎”所有的对象都会在堆中分配，但随着 <a target="_blank" rel="noopener" href="https://javabetter.cn/jvm/jit.html">JIT</a> 编译器的发展和逃逸技术的逐渐成熟，所有的对象都分配到堆上渐渐变得不那么“绝对”了。从 JDK 7 开始，Java 虚拟机已经默认开启逃逸分析了，意味着如果某些方法中的对象引用没有被返回或者未被外面使用（也就是未逃逸出去），那么对象可以直接在栈上分配内存。</p>
+<h2 id="堆和对象"><a href="#堆和对象" class="headerlink" title="堆和对象"></a>堆和对象</h2><p>以前，Java 中“几乎”所有的对象都会在堆中分配，但随着 <a target="_blank" rel="noopener" href="https://javabetter.cn/jvm/jit.html">JIT</a> 编译器的发展和逃逸技术的逐渐成熟，所有的对象都分配到堆上渐渐变得不那么“绝对”了。从 JDK 7 开始，Java 虚拟机已经默认开启逃逸分析了，</p>
+<p><strong>意味着如果某些方法中的对象引用没有被返回或者未被外面使用（也就是未逃逸出去），那么对象可以直接在栈上分配内存。</strong></p>
 <p><img src="/./../img/neicun-jiegou-20231225154450.png" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>栈就是前面提到的 JVM 栈（主要存储局部变量、方法参数、对象引用等），属于线程私有，通常随着方法调用的结束而消失，也就无需进行垃圾收集；堆前面也讲了，属于线程共享的内存区域，几乎所有的对象都在对上分配，生命周期不由单个方法调用所决定，可以在方法调用结束后继续存在，直到不在被任何变量引用，然后被垃圾收集器回收。</p>
 <p>简单解释一下 JIT 和逃逸分析（后面讲 <a target="_blank" rel="noopener" href="https://javabetter.cn/jvm/jit.html">JIT</a> 会细讲）。</p>
@@ -325,10 +326,33 @@
 <h2 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h2><p>在讲字节码的时候，我们详细的讲过常量池，它是字节码文件的资源仓库，先是一个常量池大小，从 1 到 n-1，0 为保留索引，然后是常量池项的集合，包括类信息、字段信息、方法信息、接口信息、字符串常量等。</p>
 <p>运行时常量池，顾名思义，就是在运行时期间，JVM 会将字节码文件中的常量池加载到内存中，存放在运行时常量池中。</p>
 <p>也就是说，常量池是在字节码文件中，而运行时常量池在元空间当中（JDK 8 及以后），讲的是一个东西，但形态不一样，就好像一个是固态，一个是液态；或者一个是模子，一个是模子里的锅碗瓢盆。</p>
+<p><strong>字符串常量池</strong>：</p>
+<ul>
+<li>在JDK 7及之后的版本中，字符串常量池被移动到了<strong>堆内存</strong>中（Heap）</li>
+<li>JDK 7之前，字符串常量池位于永久代（PermGen）</li>
+</ul>
+<p><strong>运行时常量池</strong>：</p>
+<ul>
+<li>运行时常量池属于<strong>方法区</strong>（Method Area）</li>
+<li>在JDK 8及之后，方法区由<strong>元空间</strong>（Metaspace）实现</li>
+<li>元空间使用的是<strong>本地内存</strong>（直接从操作系统申请），而不是堆内存</li>
+</ul>
+<p>具体来说：</p>
+<ul>
+<li>JDK 7：字符串常量池移到堆中，运行时常量池仍在方法区（永久代）</li>
+<li>JDK 8及之后：永久代被彻底移除，改用元空间（Metaspace）作为方法区的实现，运行时常量池在元空间中，而字符串常量池仍在堆中</li>
+</ul>
+<p>所以，当前（JDK 8+）环境下，字符串常量池确实在堆里面，而运行时常量池在方法区（具体实现为元空间，使用本地内存，不是堆内存）。</p>
+<p>这是JDK 7版本的重要改进，将字符串常量池从永久代移到堆中，是为了让字符串常量池能更好地参与垃圾回收，避免永久代内存不足导致的OOM问题。</p>
 <h2 id="字符串常量池"><a href="#字符串常量池" class="headerlink" title="字符串常量池"></a>字符串常量池</h2><p>字符串常量池我们在讲字符串的时候已经详细讲过了，它的作用是存放字符串常量，也就是我们在代码中写的字符串。依然在堆中。</p>
 <p>OK，方法区（不管是永久代还是元空间的实现）和堆一样，是线程共享的区域。</p>
 <h1 id="运行时数据区的主要组成"><a href="#运行时数据区的主要组成" class="headerlink" title="运行时数据区的主要组成"></a>运行时数据区的主要组成</h1><p>来总结一下运行时数据区的主要组成：</p>
-<p>PC 寄存器（PC Register），也叫程序计数器（Program Counter Register），是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。<br>JVM 栈（Java Virtual Machine Stack），与 PC 寄存器一样，JVM 栈也是线程私有的。每一个 JVM 线程都有自己的 JVM 栈（也叫方法栈），这个栈与线程同时创建，它的生命周期与线程相同。<br>本地方法栈（Native Method Stack），JVM 可能会使用到传统的栈来支持 Native 方法的执行，这个栈就是本地方法栈。<br>堆（Heap），在 JVM 中，堆是可供各条线程共享的运行时内存区域，也是供所有类实例和数据对象分配内存的区域。<br>方法区（Method area），JDK 8 开始，使用元空间取代了永久代。方法区是 JVM 中的一个逻辑区域，用于存储类的结构信息，包括类的定义、方法的定义、字段的定义以及字节码指令。不同的是，元空间不再是 JVM 内存的一部分，而是通过本地内存（Native Memory）来实现的。<br>运行时常量池，运行时常量池是每一个类或接口的常量在运行时的表现形式，它包括了编译器可知的数值字面量，以及运行期解析后才能获得的方法或字段的引用。简而言之，当一个方法或者变量被引用时，JVM 通过运行时常量区来查找方法或者变量在内存里的实际地址。<br>在 JVM 启动时，元空间的大小由 MaxMetaspaceSize 参数指定，JVM 在运行时会自动调整元空间的大小，以适应不同的程序需求。</p>
+<p>PC 寄存器（PC Register），也叫程序计数器（Program Counter Register），是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的信号指示器。</p>
+<p>JVM 栈（Java Virtual Machine Stack），与 PC 寄存器一样，JVM 栈也是线程私有的。每一个 JVM 线程都有自己的 JVM 栈（也叫方法栈），这个栈与线程同时创建，它的生命周期与线程相同。</p>
+<p>本地方法栈（Native Method Stack），JVM 可能会使用到传统的栈来支持 Native 方法的执行，这个栈就是本地方法栈。</p>
+<p>堆（Heap），在 JVM 中，堆是可供各条线程共享的运行时内存区域，也是供所有类实例和数据对象分配内存的区域。</p>
+<p>方法区（Method area），JDK 8 开始，使用元空间取代了永久代。方法区是 JVM 中的一个逻辑区域，用于存储类的结构信息，包括类的定义、方法的定义、字段的定义以及字节码指令。不同的是，元空间不再是 JVM 内存的一部分，而是通过本地内存（Native Memory）来实现的。</p>
+<p>在 JVM 启动时，元空间的大小由 MaxMetaspaceSize 参数指定，JVM 在运行时会自动调整元空间的大小，以适应不同的程序需求。</p>
 <h1 id="堆的分代"><a href="#堆的分代" class="headerlink" title="堆的分代"></a>堆的分代</h1><p><img src="/./../img/image-20251114202938085.png" srcset="/img/loading.gif" lazyload alt="image-20251114202938085"></p>
 <h2 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h2><p><strong>内存结构：</strong></p>
 <ul>
@@ -378,6 +402,7 @@
 <p>查看某个java进程总结性垃圾回收统计：<code>jstat -gc 进程号</code></p>
 <h1 id="Java的垃圾回收"><a href="#Java的垃圾回收" class="headerlink" title="Java的垃圾回收"></a>Java的垃圾回收</h1><h2 id="什么是GC"><a href="#什么是GC" class="headerlink" title="什么是GC"></a>什么是GC</h2><p>Java 的自动内存管理主要是针对对象内存的回收和对象内存的分配。同时，Java 自动内存管理最核心的功能是</p>
 <p>GC： <strong>堆</strong> 内存中对象的分配与回收。</p>
+<p>堆中几乎放着所有的对象实例，对堆垃圾回收前的第一步就是要判断哪些对象已经死亡（即不能再被任何途径使用的对象）。</p>
 <p>Java 堆是垃圾收集器管理的主要区域，因此也被称作 <strong>GC 堆（Garbage Collected Heap）</strong>。</p>
 <p>从垃圾回收的角度来说，由于现在收集器基本都采用分代垃圾收集算法，所以 Java 堆被划分为了几个不同的区域，这样我们就可以根据各个区域的特点选择合适的垃圾收集算法。</p>
 <h3 id="GC种类"><a href="#GC种类" class="headerlink" title="GC种类"></a>GC种类</h3><p>针对 HotSpot VM 的实现，它里面的 GC 其实准确分类只有两大种：</p>
@@ -569,7 +594,17 @@
 <p><code>PhantomReference</code> 类实现虚引用。无法通过虚引用获取一个对象的实例，为一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时收到一个系统通知。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ReferenceQueue</span> <span class="hljs-variable">phantomQueue</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReferenceQueue</span>();<br>PhantomReference&lt;User&gt; obj = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PhantomReference</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(<span class="hljs-number">1</span>, <span class="hljs-string">&quot;tom&quot;</span>), phantomQueue);<br></code></pre></td></tr></table></figure>
 
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>end</p>
+
+
+
+
+
+
+
+
+
+
+<p>end</p>
 
                 
               </div>
@@ -594,7 +629,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>10JVM入门</div>
+      <div>11堆</div>
       <div>http://example.com/2025/11/14/11堆/</div>
     </div>
     <div class="license-meta">
@@ -639,12 +674,18 @@
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" title="05原子类和Unsafe">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">05原子类和Unsafe</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/14/12%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" title="12垃圾回收器">
-                        <span class="hidden-mobile">12垃圾回收器</span>
+                      <a href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8%E5%92%8C%E6%A0%88/" title="10JVM入门和栈">
+                        <span class="hidden-mobile">10JVM入门和栈</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

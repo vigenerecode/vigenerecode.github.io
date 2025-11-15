@@ -38,7 +38,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251105231648198.png">
 <meta property="og:image" content="http://example.com/img/image-20251106080951548.png">
 <meta property="article:published_time" content="2025-11-14T15:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-14T16:33:36.272Z">
+<meta property="article:modified_time" content="2025-11-15T03:23:58.019Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary_large_image">
@@ -647,7 +647,7 @@
 <h4 id="4-4-9-7-ZGC存在的问题"><a href="#4-4-9-7-ZGC存在的问题" class="headerlink" title="4.4.9.7 ZGC存在的问题"></a>4.4.9.7 ZGC存在的问题</h4><p>ZGC最大的问题是浮动垃圾。</p>
 <p>浮动垃圾</p>
 <p>ZGC的停顿时间是在10ms以下，但是ZGC的执行时间还是远远大于这个时间的。假如ZGC全过程需要执行10分钟，在这个期间由于对象分配速率很高，将创建大量的新对象，这些对象很难进入当次GC，所以只能在下次GC的时候进行回收，这些只能等到下次GC才能回收的对象就是浮动垃圾。</p>
-<p>ZGC没有分代概念，每次都需要进行全堆扫描，导致一些“朝生夕死”的对象没能及时的被回收。</p>
+<p>JDK21以及之前，ZGC没有分代概念，每次都需要进行全堆扫描，导致一些“朝生夕死”的对象没能及时的被回收。</p>
 <p><strong>解决方案</strong></p>
 <p>目前唯一的办法是增大堆的容量，使得程序得到更多的喘息时间，但是这个也是一个治标不治本的方案。如果需要从根本上解决这个问题，还是需要引入分代收集，让新生对象都在一个专门的区域中创建，然后专门针对这个区域进行更频繁、更快的收集。</p>
 <h3 id="4-4-10-垃圾回收器比较"><a href="#4-4-10-垃圾回收器比较" class="headerlink" title="4.4.10. 垃圾回收器比较"></a>4.4.10. 垃圾回收器比较</h3><p><img src="/./../img/image-20251106080951548.png" srcset="/img/loading.gif" lazyload alt="image-20251106080951548"></p>
@@ -726,9 +726,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/14/11%E5%A0%86/" title="10JVM入门">
+                      <a href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" title="13对象内存和反射">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">10JVM入门</span>
+                        <span class="hidden-mobile">13对象内存和反射</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

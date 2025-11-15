@@ -227,15 +227,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/14/11%E5%A0%86/" target="_self">
-          10JVM入门
+        <a href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
+          13对象内存和反射
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/11%E5%A0%86/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
         <div>
-          堆堆、栈、方法区的关系：  HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 堆空间概述Java栈中的reference存储的是指向堆中的对象的地址  一个Java程序运行起来对应一个进程，一个进程对应一个JVM实例，一个JVM实例中有一个运行时数据区，一个运行时数据区中只存在一个堆内存和一个方法区。 一个进程中可以包含多个线程，因此堆内存和方法区是线程共享的。堆中
+          a对象如何存储 HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 Java栈中的reference存储的是指向堆中的对象的地址 类元数据 对象类型数据：存储类的元数据（如类的结构、方法、字段等信息）。  简单来说：元数据是”类的说明书”，告诉JVM”这个类长什么样、有什么方法、有什么字段”。  类的元数据包含哪些内容？（核心组成）   元数据类型 说明 示例
         </div>
       </a>
 
@@ -243,8 +243,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 23:07" pubdate>
-              2025-11-14
+            <time datetime="2025-11-15 11:07" pubdate>
+              2025-11-15
             </time>
           </div>
         
@@ -387,15 +387,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8/" target="_self">
-          10JVM入门
+        <a href="/2025/11/14/11%E5%A0%86/" target="_self">
+          11堆
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/11%E5%A0%86/" target="_self">
         <div>
-          JVM入门JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。 JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Area
+          堆堆、栈、方法区的关系：  HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 堆空间概述Java栈中的reference存储的是指向堆中的对象的地址  一个Java程序运行起来对应一个进程，一个进程对应一个JVM实例，一个JVM实例中有一个运行时数据区，一个运行时数据区中只存在一个堆内存和一个方法区。 一个进程中可以包含多个线程，因此堆内存和方法区是线程共享的。堆中
         </div>
       </a>
 
@@ -414,6 +414,86 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/JVM/">#JVM</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8%E5%92%8C%E6%A0%88/" target="_self">
+          10JVM入门和栈
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8%E5%92%8C%E6%A0%88/" target="_self">
+        <div>
+          JVM入门JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。 JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Area
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-14 11:07" pubdate>
+              2025-11-14
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JVM/">#JVM</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
+          Git
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
+        <div>
+          Git实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 23:07" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Git/">#Git</a>
             
           </div>
         
@@ -494,86 +574,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Java/">#Java</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
-          Git
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
-        <div>
-          Git实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-13 23:07" pubdate>
-              2025-11-13
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Git/">#Git</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/13/04Threadlocal%E5%92%8Cpoll/" target="_self">
-          04Threadlocal和poll
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/04Threadlocal%E5%92%8Cpoll/" target="_self">
-        <div>
-          Threadlocal是什么是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。 通常，我们会使用 synchronzed 关键字 或者 lock 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。 线程安全问题的核心在于多个线程会对
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-13 19:07" pubdate>
-              2025-11-13
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JUC/">#JUC</a>
             
           </div>
         
