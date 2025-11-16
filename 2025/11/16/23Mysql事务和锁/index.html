@@ -1,0 +1,898 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="23Mysql事务和锁">
+<meta property="og:url" content="http://example.com/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/image-20251116111043986.png">
+<meta property="og:image" content="http://example.com/img/image-20220511171419081.png">
+<meta property="og:image" content="http://example.com/2025/11/16/img/image-20251116104621382.png">
+<meta property="article:published_time" content="2025-11-16T08:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-16T03:11:31.319Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="Mysql">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/image-20251116111043986.png">
+  
+  
+  
+  <title>23Mysql事务和锁 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="23Mysql事务和锁"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-16 16:07" pubdate>
+          2025年11月16日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">23Mysql事务和锁</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="3-MySQL锁"><a href="#3-MySQL锁" class="headerlink" title="3 MySQL锁"></a>3 MySQL锁</h1><p>事务的 <strong>隔离性</strong> 由这章讲述的 <strong>锁</strong> 来实现。</p>
+<h2 id="3-1-锁概述"><a href="#3-1-锁概述" class="headerlink" title="3.1 锁概述"></a>3.1 锁概述</h2><p><strong>锁</strong>是计算机协调多个进程或者线程<strong>并发访问某一个资源</strong>的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻<strong>最多只有一个线程</strong>在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。</p>
+<p>在数据库中，除传统的计算资源（如CPU、RAM、I&#x2F;O等）的争用以外，数据也是一种供许多用户共享的资源。为保证数据的一致性，<strong>需要对并发操作进行控制</strong> ，因此产生了锁 。同时锁机制也为实现MySQL的各个隔离级别提供了保证。 <strong>锁冲突</strong> 也是影响数据库 <strong>并发访问性能</strong> 的一个重要因素。</p>
+<h2 id="3-2-并发事务带来的问题"><a href="#3-2-并发事务带来的问题" class="headerlink" title="3.2 并发事务带来的问题"></a>3.2 并发事务带来的问题</h2><ul>
+<li><strong>脏读（Dirty read）:</strong> 当一个事务正在访问数据并且对数据进行了修改，而这种修改还没有提交到数据库中，这时另外一个事务也访问了这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，那么另外一个事务读到的这个数据是“脏数据”，依据“脏数据”所做的操作可能是不正确的。</li>
+<li><strong>丢失修改（Lost to modify）:</strong> 也叫丢失更新。指在一个事务读取一个数据时，另外一个事务也访问了该数据，那么在第一个事务中修改了这个数据后，第二个事务也修改了这个数据。这样第一个事务内的修改结果就被丢失，因此称为丢失修改。 例如：事务1读取某表中的数据A&#x3D;20，事务2也读取A&#x3D;20，事务1修改A&#x3D;A-1，事务2也修改A&#x3D;A-1，最终结果A&#x3D;19，事务1的修改被丢失。</li>
+<li><strong>不可重复读（Unrepeatableread）:</strong> 指在一个事务内多次读同一数据。在这个事务还没有结束时，另一个事务也访问该数据。那么，在第一个事务中的两次读数据之间，由于第二个事务的<font color='red'><strong>修改</strong></font>导致第一个事务两次读取的数据可能不太一样。这就发生了在一个事务内两次读到的数据是不一样的情况，因此称为不可重复读。</li>
+<li><strong>幻读（Phantom read）:</strong> 幻读与不可重复读类似。它发生在一个事务（T1）读取了几行数据，接着另一个并发事务（T2）<font color = 'red'><strong>插入或者删除</strong></font>了一些数据时。在随后的查询中，第一个事务（T1）就会发现多了一些原本不存在的记录，就好像发生了幻觉一样，所以称为幻读。</li>
+</ul>
+<p><strong>不可重复度和幻读区别：</strong></p>
+<p>不可重复读的重点是<strong>修改</strong>，针对的数据是多行。幻读的重点在于<strong>新增或者删除</strong>，针对数据是多行。</p>
+<h2 id="3-3-并发事务的解决方案"><a href="#3-3-并发事务的解决方案" class="headerlink" title="3.3 并发事务的解决方案"></a>3.3 并发事务的解决方案</h2><p>解决方案：对事务进行隔离</p>
+<p>MySQL的四种隔离级别如下:</p>
+<ul>
+<li>READ-UNCOMMITTED(读取未提交)： 最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读。</li>
+<li>READ-COMMITTED(读取已提交)： 允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生。</li>
+<li>REPEATABLE-READ(可重复读)： 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生。</li>
+<li>SERIALIZABLE(可串行化)： 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。可以看到，在终端 B 事务执行新增操作时，会发生阻塞，锁超时后会抛出 <code>1205 - Lock wait timeout exceeded; try restarting transaction</code> 错误，避免了幻读。可以通过 <code>select * from performance_schema.data_locks;</code> 查看事务的锁信息，从 <code>supremum pseudo-record </code>获知，通过添加锁解决幻读问题。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> @<span class="hljs-variable">@global</span>.transaction_isolation ;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-4-并发事务访问情况说明"><a href="#3-4-并发事务访问情况说明" class="headerlink" title="3.4 并发事务访问情况说明"></a>3.4 并发事务访问情况说明</h2><p>并发事务访问相同记录的情况大致可以划分为3种：读-读情况、写-写情况、读-写</p>
+<h3 id="3-4-1-读-读情况"><a href="#3-4-1-读-读情况" class="headerlink" title="3.4.1 读-读情况"></a>3.4.1 读-读情况</h3><p><strong>读-读</strong>情况，即并发事务相继<strong>读取相同的记录</strong> 。读取操作本身不会对记录有任何影响，并不会引起什么问题，所以允许这种情况的发生。</p>
+<h3 id="3-4-2-写-写情况"><a href="#3-4-2-写-写情况" class="headerlink" title="3.4.2 写-写情况"></a>3.4.2 写-写情况</h3><p>写-写 情况，即并发事务相继对相同的记录做出改动。 在这种情况下会发生 <strong>脏写(脏写读取、脏写覆盖)</strong> 的问题，任何一种隔离级别都不允许这种问题的发生。所以在多个未提交事务相继对一条记录做改动时，需要让它们排队执行 ，这个排队的过程其实是通过<strong>锁</strong>来实现的。这个所谓 的锁其实是一个 内存中的结构 ，在事务执行前本来是没有锁的，也就是说一开始是没有 锁结构 和记录进 行关联的，如图所示：</p>
+<p>当一个事务想对这条记录做改动时，首先会看看内存中有没有与这条记录关联的<strong>锁结构</strong> ，当没有的时候 就会在内存中生成一个 锁结构 与之关联。比如，事务 T1 要对这条记录做改动，就需要生成一个 锁结构 与之关联：</p>
+<p>在锁结构中存在很多的信息，为了简化理解，只把两个比较重要的属性拿出来：</p>
+<p>1、trx信息：代表这个锁结构是哪一个事务生成的</p>
+<p>2、is_waiting: 代表当前事务是否在线等待</p>
+<p>当事务T1改动了这条记录后，就生成了一个锁结构与该条记录关联，因为之前没有别的事务为这条记录加锁，所以is_waiting属性就是false，我们把这个场景就称之为获取锁成功，或者加锁成功。然后就可以继续进行操作了。</p>
+<p><img src="/./../img/image-20251116111043986.png" srcset="/img/loading.gif" lazyload alt="image-20251116111043986"></p>
+<p>在事务T1提交之前，另外一个事务T2也想对该记录做更改，那么先看看有没有锁结构与该条记录关联，发现有一个锁结构与之关联，然后也生成了一个锁结构与这条记录关联，不过锁结构的is_waiting属性就是true，表示当前事务需要等待，我们把这个场景就称之为获取锁失败，或者加锁失败。如下图所示：</p>
+<p>当事务T1提交之后，就会把该事务生成的<strong>锁结构释放掉</strong>，然后看看有没有别的事务在等待获取锁，发现了事务T2还在等待获取锁，所以把<strong>事务T2对应的锁结构的is_waiting属性设置为false</strong>，然后把该事务对应的线程唤醒，让他继续执行，此时事务T2就算获取到了锁。</p>
+<p>小结几种说法： </p>
+<p>1、<strong>不加锁</strong> 意思就是不需要在内存中生成对应的 锁结构 ，可以直接执行操作。 </p>
+<p>2、<strong>获取锁成功，或者加锁成功</strong> 意思就是在内存中生成了对应的 锁结构 ，而且锁结构的 is_waiting 属性为 false ，也就是事务 可以继续执行操作。 </p>
+<p>3、<strong>获取锁失败，或者加锁失败</strong>，或者没有获取到锁 意思就是在内存中生成了对应的 锁结构 ，不过锁结构的 is_waiting 属性为 true ，也就是事务 需要等待，不可以继续执行操作。</p>
+<h3 id="3-4-3-读-写情况"><a href="#3-4-3-读-写情况" class="headerlink" title="3.4.3 读-写情况"></a>3.4.3 读-写情况</h3><p>读-写  ，即一个事务进行读取操作，另一个进行改动操作。这种情况下可能发生 脏读 、 不可重复读 、 幻读 的问题。</p>
+<p>要想解决这些问题就需要使用到到事务的隔离级别，而事务的隔离性的实现原理有两种：</p>
+<p>1、使用<strong>MVCC</strong>：读操作利用多版本并发控制（ MVCC ），写操作进行加锁 。</p>
+<blockquote>
+<p>普通的SELECT语句在READ COMMITTED和REPEATABLE READ隔离级别下会使用到MVCC读取记录。</p>
+<p>1、在 READ COMMITTED 隔离级别下，一个事务在执行过程中<strong>每次</strong>执行SELECT操作时都会生成一 个<strong>ReadView</strong>，ReadView的存在本身就保证了 事务不可以读取到未提交的事务所做的更改 ，也就 是避免了脏读现象； </p>
+<p>2、在 REPEATABLE READ 隔离级别下，一个事务在执行过程中只有 <strong>第一次</strong>执行SELECT操作 才会 生成一个<strong>ReadView</strong>，之后的SELECT操作都 复用 这个ReadView，这样也就避免了不可重复读的问题。但仍可能出现幻读问题</p>
+</blockquote>
+<p>2、读、写操作都采用 加锁 的方式。</p>
+<p>小结对比发现： </p>
+<p>1、采用 MVCC 方式的话， 读-写 操作彼此并不冲突， 性能更高 。 </p>
+<p>2、采用 加锁 方式的话， 读-写 操作彼此需要 排队执行 ，影响性能。 </p>
+<p>一般情况下我们当然愿意采用 MVCC 来解决 读-写 操作并发执行的问题，但是业务在某些特殊情况 下，要求必须采用 加锁 的方式执行。</p>
+<h2 id="3-5-锁的分类"><a href="#3-5-锁的分类" class="headerlink" title="3.5 锁的分类"></a>3.5 锁的分类</h2><p>从对数据操作的粒度分 ： </p>
+<p>1） 表锁(手动加)：操作时，会锁定整个表。</p>
+<p>2） 行锁(Innodb默认)：操作时，会锁定当前操作行。</p>
+<p>3） 意向锁(自动加)：解决表锁和行锁之间的兼容性冲突，提高并发效率</p>
+<p>从对数据操作的类型分：</p>
+<p>1） 读锁（共享锁）：针对同一份数据，多个读操作可以同时进行而不会互相影响。</p>
+<p>2） 写锁（排它锁）：当前操作没有完成之前，它会阻断其他写锁和读锁。</p>
+<p>相对其他数据库而言，MySQL的锁机制比较简单，其最显著的特点是不同的存储引擎支持不同的锁机制。下表中罗列出了各存储引擎对锁的支持情况：</p>
+<table>
+<thead>
+<tr>
+<th>存储引擎</th>
+<th>表级锁</th>
+<th>行级锁</th>
+<th>页面锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MyISAM</td>
+<td>支持</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>InnoDB</td>
+<td>支持</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+</tbody></table>
+<p>MySQL这3种锁的特性可大致归纳如下 ：</p>
+<table>
+<thead>
+<tr>
+<th>锁类型</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表级锁</td>
+<td>偏向MyISAM 存储引擎，开销小，加锁快；不会出现死锁；锁定粒度大，发生锁冲突的概率最高,并发度最低。</td>
+</tr>
+<tr>
+<td>行级锁</td>
+<td>偏向InnoDB 存储引擎，开销大，加锁慢；会出现死锁；锁定粒度最小，发生锁冲突的概率最低,并发度也最高。</td>
+</tr>
+<tr>
+<td>意向锁</td>
+<td>意向锁是 <strong>表级锁</strong>，但不会真的阻塞其他行操作 当事务要加行锁时，InnoDB 会先在表上加意向锁，告诉系统我要对某些行加锁了 这样，当其他事务想申请表锁时，就能快速判断表里是否已经有人持有行锁，而不需要一行一行检查。</td>
+</tr>
+<tr>
+<td>页面锁</td>
+<td>开销和加锁时间界于表锁和行锁之间；会出现死锁；锁定粒度界于表锁和行锁之间，并发度一般。</td>
+</tr>
+</tbody></table>
+<p>从上述特点可见，很难笼统地说哪种锁更好，只能就具体应用的特点来说哪种锁更合适！仅从锁的角度来说：表级锁更适合于以查询为主，只有少量按索引条件更新数据的应用，如Web 应用；而行级锁则更适合于有大量按索引条件并发更新少量不同数据，同时又有并查询的应用。最后意向锁解决表锁和行锁之间的兼容性冲突，提高并发效率</p>
+<h2 id="3-6-InnoDB行锁"><a href="#3-6-InnoDB行锁" class="headerlink" title="3.6 InnoDB行锁"></a>3.6 InnoDB行锁</h2><h3 id="3-6-1-加锁特点"><a href="#3-6-1-加锁特点" class="headerlink" title="3.6.1 加锁特点"></a>3.6.1 加锁特点</h3><p>InnoDB  实现了以下两种类型的行锁。</p>
+<p>1、共享锁（S）：又称为读锁，简称S锁，共享锁就是多个事务对于同一数据可以共享一把锁，都能访问到数据，但是只能读不能修改。</p>
+<p>2、排他锁（X）：又称为写锁，简称X锁，排他锁就是不能与其他锁并存，如一个事务获取了一个数据行的排他锁，其他事务就不能再获取该行的其他锁，包括共享锁和排他锁，但是获取排他锁的事务是可以对数据进行读取和修改 select…for update。</p>
+<p>对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及到的数据集加排他锁（X)；</p>
+<p>对于普通SELECT语句，InnoDB不会加任何锁；</p>
+<h3 id="3-6-2-案例准备工作3-6-3-行锁基本演示"><a href="#3-6-2-案例准备工作3-6-3-行锁基本演示" class="headerlink" title="3.6.2 案例准备工作3.6.3 行锁基本演示"></a>3.6.2 案例准备工作3.6.3 行锁基本演示</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">set autocommit=0;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-6-4-无索引行锁升级为表锁"><a href="#3-6-4-无索引行锁升级为表锁" class="headerlink" title="3.6.4 无索引行锁升级为表锁"></a>3.6.4 无索引行锁升级为表锁</h3><p>如果不通过索引条件检索数据，那么InnoDB将对表中的所有记录加锁，实际效果跟表锁一样。</p>
+<h3 id="3-6-6-意向锁"><a href="#3-6-6-意向锁" class="headerlink" title="3.6.6 意向锁"></a>3.6.6 意向锁</h3><p>意向锁是表级锁，共有两种：</p>
+<ul>
+<li><strong>意向共享锁（Intention Shared Lock，IS 锁）</strong>：事务有意向对表中的某些记录加共享锁（S 锁），加共享锁前必须先取得该表的 IS 锁。</li>
+<li><strong>意向排他锁（Intention Exclusive Lock，IX 锁）</strong>：事务有意向对表中的某些记录加排他锁（X 锁），加排他锁之前必须先取得该表的 IX 锁。</li>
+</ul>
+<p><strong>意向锁是由数据引擎自己维护的，用户无法手动操作意向锁，在为数据行加共享&#x2F;排他锁之前，InnoDB 会先获取该数据行所在在数据表的对应意向锁。</strong></p>
+<p>意向锁之间是互相兼容的。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>IS 锁</th>
+<th>IX 锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IS 锁</td>
+<td>兼容</td>
+<td>兼容</td>
+</tr>
+<tr>
+<td>IX 锁</td>
+<td>兼容</td>
+<td>兼容</td>
+</tr>
+</tbody></table>
+<p>意向锁和共享锁和排它锁互斥（这里指的是表级别的共享锁和排他锁，意向锁不会与行级的共享锁和排他锁互斥）。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>IS 锁</th>
+<th>IX 锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S 锁</td>
+<td>兼容</td>
+<td>互斥</td>
+</tr>
+<tr>
+<td>X 锁</td>
+<td>互斥</td>
+<td>互斥</td>
+</tr>
+</tbody></table>
+<p>《MySQL 技术内幕 InnoDB 存储引擎》这本书对应的描述应该是笔误了。</p>
+<p><img src="/./../img/image-20220511171419081.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<hr>
+<p>著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/mysql-questions-01.html">https://javaguide.cn/database/mysql/mysql-questions-01.html</a></p>
+<p>总结</p>
+<p><strong>行锁自动带意向锁</strong>：任何行锁操作都会在表上自动生成对应的意向锁（IX &#x2F; IS）。</p>
+<p><strong>意向锁的作用</strong>：加速判断“能否加表级锁”。</p>
+<ul>
+<li>如果表上有 IX，那么后续再申请表级 X 锁，就会直接被阻塞。</li>
+<li>这样 MySQL 不用去扫描整张表的每一行，看是不是有人加了行锁。</li>
+</ul>
+<p><strong>演示效果</strong>：</p>
+<ul>
+<li>Session 1、2 在不同的行上 <code>FOR UPDATE</code> 可以并发成功（因为意向锁不互斥）。</li>
+<li>但只要有人持有行锁（带 IX），别人就无法直接加表级写锁。</li>
+</ul>
+<h3 id="3-6-6-间隙锁危害"><a href="#3-6-6-间隙锁危害" class="headerlink" title="3.6.6 间隙锁危害"></a>3.6.6 间隙锁危害</h3><p>当我们用范围条件，而不是使用相等条件检索数据，并请求共享或排他锁时，InnoDB会给符合条件的已有数据进行加锁； 对于键值在条件范围内但并不存在的记录，叫做 “间隙（GAP）” ， InnoDB也会对这个 “间隙” 加锁，这种锁机制就是所谓的 间隙锁（Next-Key锁） 。</p>
+<h3 id="自增锁有了解吗？"><a href="#自增锁有了解吗？" class="headerlink" title="[自增锁有了解吗？]"></a>[自增锁有了解吗？]</h3><blockquote>
+<p>不太重要的一个知识点，简单了解即可。</p>
+</blockquote>
+<p>关系型数据库设计表的时候，通常会有一列作为自增主键。InnoDB 中的自增主键会涉及一种比较特殊的表级锁— <strong>自增锁（AUTO-INC Locks）</strong> 。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">CREATE TABLE</span> `sequence_id` (<br>  `id` <span class="hljs-type">BIGINT</span>(<span class="hljs-number">20</span>) UNSIGNED <span class="hljs-keyword">NOT NULL</span> AUTO_INCREMENT,<br>  `stub` <span class="hljs-type">CHAR</span>(<span class="hljs-number">10</span>) <span class="hljs-keyword">NOT NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">&#x27;&#x27;</span>,<br>  <span class="hljs-keyword">PRIMARY KEY</span> (`id`),<br>  <span class="hljs-keyword">UNIQUE</span> KEY `stub` (`stub`)<br>) ENGINE<span class="hljs-operator">=</span>InnoDB <span class="hljs-keyword">DEFAULT</span> CHARSET<span class="hljs-operator">=</span>utf8mb4;<br></code></pre></td></tr></table></figure>
+
+<p>更准确点来说，不仅仅是自增主键，<code>AUTO_INCREMENT</code>的列都会涉及到自增锁，毕竟非主键也可以设置自增长。</p>
+<p>如果一个事务正在插入数据到有自增列的表时，会先获取自增锁，拿不到就可能会被阻塞住。这里的阻塞行为只是自增锁行为的其中一种，可以理解为自增锁就是一个接口，其具体的实现有多种。具体的配置项为 <code>innodb_autoinc_lock_mode</code> （MySQL 5.1.22 引入），可以选择的值如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">innodb_autoinc_lock_mode</th>
+<th align="left">介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">传统模式</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">连续模式（MySQL 8.0 之前默认）</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">交错模式(MySQL 8.0 之后默认)</td>
+</tr>
+</tbody></table>
+<p>交错模式下，所有的“INSERT-LIKE”语句（所有的插入语句，包括：<code>INSERT</code>、<code>REPLACE</code>、<code>INSERT…SELECT</code>、<code>REPLACE…SELECT</code>、<code>LOAD DATA</code>等）都不使用表级锁，使用的是轻量级互斥锁实现，多条插入语句可以并发执行，速度更快，扩展性也更好。</p>
+<p>不过，如果你的 MySQL 数据库有主从同步需求并且 Binlog 存储格式为 Statement 的话，不要将 InnoDB 自增锁模式设置为交叉模式，不然会有数据不一致性问题。这是因为并发情况下插入语句的执行顺序就无法得到保障。</p>
+<blockquote>
+<p>如果 MySQL 采用的格式为 Statement ，那么 MySQL 的主从同步实际上同步的就是一条一条的 SQL 语句。</p>
+</blockquote>
+<h3 id="3-6-7-总结"><a href="#3-6-7-总结" class="headerlink" title="3.6.7 总结"></a>3.6.7 总结</h3><p>InnoDB 存储引擎由于实现了行级锁定，虽然在锁定机制的实现方面带来了一定的性能损耗，可能比表锁开销更高，但整体并发处理能力远高于 MyISAM 的表锁。当系统并发量较高时，InnoDB 的整体性能表现通常会更好。</p>
+<p>不过，InnoDB 的行级锁也有脆弱的一面，如果使用不当，性能不仅不会优于 MyISAM，甚至可能更差。</p>
+<p>另外需要注意的是，InnoDB 在行锁和表锁之间引入了 <strong>意向锁</strong>。意向锁是一种表级锁，用来标识事务即将在表中某些行上加行锁，从而避免在加行锁时与其他事务的表级锁产生冲突。它并不会真正阻塞具体的行访问，但能显著提升锁的检测效率。</p>
+<p><strong>优化建议：</strong></p>
+<ol>
+<li>尽可能让所有数据检索都能通过索引来完成，避免无索引导致行锁退化为表锁。</li>
+<li>合理设计索引，尽量缩小锁的范围。</li>
+<li>尽可能减少索引条件范围，避免过多间隙锁的产生。</li>
+<li>尽量控制事务大小，减少锁定资源数量和时间长度。</li>
+<li>在业务允许的前提下，使用较低级别的事务隔离，减少锁冲突。</li>
+<li>合理利用 <strong>意向锁</strong> 的机制，理解它只是用于快速判定是否存在行锁，避免在表级与行级锁之间产生不必要的冲突。</li>
+</ol>
+<h1 id="4-MySQL中的MVCC"><a href="#4-MySQL中的MVCC" class="headerlink" title="4 MySQL中的MVCC"></a>4 MySQL中的MVCC</h1><h2 id="4-1-MVCC概述"><a href="#4-1-MVCC概述" class="headerlink" title="4.1 MVCC概述"></a>4.1 MVCC概述</h2><p>全称Multi-Version Concurrency Control，即多版本并发控制，主要是为了提高数据库的读写并发性能。</p>
+<p>同一行数据平时发生读写请求时，会上锁阻塞住。但mvcc用更好的方式去处理读—写请求，做到在发生读—写请求冲突时不用加锁。这个读是指的快照读，而不是当前读，当前读是一种加锁操作，是悲观锁。</p>
+<h2 id="4-2-MVCC三要素"><a href="#4-2-MVCC三要素" class="headerlink" title="4.2 MVCC三要素"></a>4.2 MVCC三要素</h2><h3 id="4-2-1-隐藏字段"><a href="#4-2-1-隐藏字段" class="headerlink" title="4.2.1 隐藏字段"></a>4.2.1 隐藏字段</h3><h3 id=""><a href="#" class="headerlink" title=""></a><img src="./../img/image-20251116104621382.png" srcset="/img/loading.gif" lazyload alt="image-20251116104621382" style="zoom: 50%;" /></h3><p>回滚日志,在insert update delete的时候产生的便于数据回滚的日志</p>
+<p>当insert的时候,产生的undolog日志只在回滚时需要,一旦事务提交,会被立即删除</p>
+<p>但update和delete的时候,产生的undolog日志不仅在回滚的时候需要,mvcc版本访问也需要,不会立即被删除</p>
+<p>不同事务或相同事务对同一条记录进行修改,会导致该记录的undolog生成一条记录版本链表,链表的头部是最新的旧记录,链表的尾部是最早的旧记录</p>
+<h3 id="4-2-3-ReadView读视图"><a href="#4-2-3-ReadView读视图" class="headerlink" title="4.2.3 ReadView读视图"></a>4.2.3 ReadView读视图</h3><p>读视图是快照读SQL执行时MVCC提取数据的依据, 记录并维护系统当前活跃事务(未提交的事务)id</p>
+<h4 id="4-2-3-1-MVCC读"><a href="#4-2-3-1-MVCC读" class="headerlink" title="4.2.3.1 MVCC读"></a>4.2.3.1 MVCC读</h4><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>概念</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>当前读</td>
+<td>读取的是记录的最新版本,读取时还要保证其他并发事务不能修改当前记录,会对当前记录进行加锁,是阻塞的</td>
+<td>select…for update</td>
+</tr>
+<tr>
+<td>快照读</td>
+<td>我们平常写的select都是快照读,读取的是数据的可见版本,有可能是历史数据,不加锁,是非阻塞的</td>
+<td>RC隔离级别: 每次select 都生成一个快照读  RR隔离级别: 开启事务后,同一条select语句多次查询共用RW</td>
+</tr>
+</tbody></table>
+<h4 id="4-2-3-2-RW组成"><a href="#4-2-3-2-RW组成" class="headerlink" title="4.2.3.2 RW组成"></a>4.2.3.2 RW组成</h4><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>m_ids</td>
+<td>当前活跃事务的ID集合    案例中的3,4,5 事务2已提交 不属于活跃事务</td>
+</tr>
+<tr>
+<td>min_trx_id</td>
+<td>最小活跃事务事务ID  案例中事务3为最小活跃事务id</td>
+</tr>
+<tr>
+<td>max_trx_id</td>
+<td>预分配事务ID,当前最大事务ID+1(ID是自增的)     案例中事务5+1 也就是事务6</td>
+</tr>
+<tr>
+<td>creator_trx_id</td>
+<td>RW创建者的事务ID    案例中的事务5</td>
+</tr>
+</tbody></table>
+<h1 id="背书"><a href="#背书" class="headerlink" title="背书"></a>背书</h1><p><strong>mvcc的意思是多版本并发控制。指维护一个数据的多个版本，使得读写操作没有冲突，它的底层实现主要是分为了三个部分，第一个是隐藏字段，第二个是undolog日志，第三个是readView读视图,隐藏字段是指:在mysql中给每个表都设置了隐藏字段，有一个是trx_id(事务id)，记录每一次操作的事务id，是自增的;另一个字段roll_pointer(回滚指针)，指向上一个版本的事务版本记录地址</strong></p>
+<p><strong>undolog主要的作用是记录回滚日志，存储老版本数据，在内部会形成一个版本链，在多个事务并行查找某一行记录，记录不同事务修改数据的版本，通过roll_pointer指针形成一个链表</strong></p>
+<p><strong>readView解决的是一个事务查询选择版本的问题，在内部定义了一些匹配规则和当前的一些事务id判断该访问那个版本的数据，不同的隔离级别快照读是不一样的，最终的访问的结果不一样。如果是rc隔离级别，每一次执行快照读时生成ReadView，如果是rr隔离级别仅在事务中第一次执行快照读时生成ReadView，后续复用</strong></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Mysql/" class="print-no-link">#Mysql</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>23Mysql事务和锁</div>
+      <div>http://example.com/2025/11/16/23Mysql事务和锁/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/16/22Mysql%E6%97%A5%E5%BF%97/" title="22Mysql日志">
+                        <span class="hidden-mobile">22Mysql日志</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

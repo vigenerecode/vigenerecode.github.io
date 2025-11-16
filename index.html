@@ -227,15 +227,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
-          
+        <a href="/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/" target="_self">
+          23Mysql事务和锁
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/" target="_self">
         <div>
-          5. 索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被
+          3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要
         </div>
       </a>
 
@@ -243,12 +243,99 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-15 21:41" pubdate>
+            <time datetime="2025-11-16 16:07" pubdate>
+              2025-11-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Mysql/">#Mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/16/22Mysql%E6%97%A5%E5%BF%97/" target="_self">
+          22Mysql日志
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/16/22Mysql%E6%97%A5%E5%BF%97/" target="_self">
+        <div>
+          MySQL基础日志1.1 日志分类在任何一种数据库中，都会有各种各样的日志，记录着数据库工作的方方面面，以帮助数据库管理员追踪数据库曾经发生过的各种事件。MySQL有多种类型的日志，用于记录数据库的操作和状态。以下是一些常见的MySQL日志： 1、错误日志（Error Log）：记录MySQL服务器在启动、运行过程中发生的错误和异常情况，如启动错误、语法错误等。 2、查询日志（Query Log）
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-16 11:07" pubdate>
+              2025-11-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Mysql/">#Mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
+          21索引优化
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
+        <div>
+          索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-15 22:07" pubdate>
               2025-11-15
             </time>
           </div>
         
         
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Mysql/">#Mysql</a>
+            
+          </div>
         
       </div>
     </article>
@@ -380,86 +467,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
-          05原子类和Unsafe
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
-        <div>
-          AtomicJava 中的 java.util.concurrent.atomic 包提供了一系列类，这些类支持原子操作（即线程安全而无需同步）在单个变量上，这大大减少了并发编程的复杂性。 原子操作类主要有这些：  原子操作的基本数据类型：AtomicBoolean、AtomicInteger、AtomicLong； 原子操作的数组类型：AtomicIntegerArray、AtomicLongA
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 13:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JUC/">#JUC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
-          06并发工具等
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
-        <div>
-          
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 13:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JUC/">#JUC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
         <a href="/2025/11/14/11%E5%A0%86/" target="_self">
           11堆
         </a>
@@ -476,7 +483,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 13:07" pubdate>
+            <time datetime="2025-11-14 15:07" pubdate>
               2025-11-14
             </time>
           </div>
@@ -516,7 +523,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 11:07" pubdate>
+            <time datetime="2025-11-14 14:07" pubdate>
               2025-11-14
             </time>
           </div>
@@ -540,15 +547,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/13/ConcurrentHashMap%20/" target="_self">
-          ConcurrentHashMap
+        <a href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
+          06并发工具等
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/ConcurrentHashMap%20/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
         <div>
-          1.7ConcurrentHashMap中保存了一个默认长度为16的Segment[],相当于同时支持16个并发put操作，每个Segment元素中保存了一个默认长度为2的HashEntry[]，我们添加的元素，是存入对应的Segment中的HashEntry[]中。所ConcurrentHashMap中默认元素的长度是32个，而不是16个  总结： JDK7 中的 ConcurrentHashM
+          
         </div>
       </a>
 
@@ -556,8 +563,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-13 23:07" pubdate>
-              2025-11-13
+            <time datetime="2025-11-14 13:09" pubdate>
+              2025-11-14
             </time>
           </div>
         
@@ -580,15 +587,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
-          Git
+        <a href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
+          05原子类和Unsafe
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/Git%E4%B8%8EGitLab%E7%9A%84%E4%BC%81%E4%B8%9A%E5%AE%9E%E6%88%98/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
         <div>
-          Git实战第1章 Git概述Git是一个免费的、开源的分布式版本控制系统，可以快速高效地处理从小型到大型的各种项目。 Git易于学习，占地面积小，性能极快。 它具有廉价的本地库，方便的暂存区域和多个工作流分支等特性。其性能优于Subversion(svn)、CVS、Perforce和ClearCase等版本控制工具。 1. 何为版本控制版本控制是一种记录文件内容变化，以便将来查阅特定版本修订情况的
+          AtomicJava 中的 java.util.concurrent.atomic 包提供了一系列类，这些类支持原子操作（即线程安全而无需同步）在单个变量上，这大大减少了并发编程的复杂性。 原子操作类主要有这些：  原子操作的基本数据类型：AtomicBoolean、AtomicInteger、AtomicLong； 原子操作的数组类型：AtomicIntegerArray、AtomicLongA
         </div>
       </a>
 
@@ -596,8 +603,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-13 23:07" pubdate>
-              2025-11-13
+            <time datetime="2025-11-14 13:07" pubdate>
+              2025-11-14
             </time>
           </div>
         
@@ -606,7 +613,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/Git/">#Git</a>
+              <a href="/tags/JUC/">#JUC</a>
             
           </div>
         

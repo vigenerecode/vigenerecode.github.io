@@ -227,6 +227,86 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/07/05/%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84%E5%BC%95%E5%85%A5%EF%BC%9A%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E4%B8%AD%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/" target="_self">
+          可重入锁的引入：不可重入锁中的死锁问题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/05/%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84%E5%BC%95%E5%85%A5%EF%BC%9A%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E4%B8%AD%E7%9A%84%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98/" target="_self">
+        <div>
+          重入锁（ReentrantLock），顾名思义，就是支持重复进入的锁，它表示该锁能够支持同一个线程对一个资源的重复加锁。也就是说，如果某个线程试图获得一个已经由它自己持有的可重入锁，那个这个请求就会成功。 相反，不可重入锁就是指该锁不支持同一个线程对一个资源的重复加锁，由于 Java 中并没有现成的可重入锁可供使用，下面简单实现一个： 123456789101112131415public cla
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-07-05 16:12" pubdate>
+              2025-07-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/07/03/leetcode%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9/" target="_self">
+          leetcode：删除链表的倒数第N个节点
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/03/leetcode%EF%BC%9A%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9/" target="_self">
+        <div>
+          s双指针想象有一把长度固定的尺子，左端点在链表头部，右端点在正数第 n 个节点。向右移动尺子，当尺子右端点到达链表末尾时，左端点就在倒数第 n 个节点。 由于需要删除节点，我们需要找倒数第 n 个节点的前一个节点（倒数第 n+1 个节点），这样才能做删除操作。 修改：左端点在链表头部，右端点在正数第 n+1 个节点。向右移动尺子，当尺子右端点到达链表末尾时，左端点就在倒数第 n+1 个节点。 细节
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-07-03 10:03" pubdate>
+              2025-07-03
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/leetcode/">#leetcode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/06/28/leetcode%EF%BC%9Ak%E4%B8%AA%E4%B8%80%E7%BB%84%E9%93%BE%E8%A1%A8%E5%80%92%E8%BD%AC/" target="_self">
           leetcode：k个一组链表倒转
         </a>
@@ -527,86 +607,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/leetcode/">#leetcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/" target="_self">
-          chmod读文件之755
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/22/chmod%E8%AF%BB%E6%96%87%E4%BB%B6%E4%B9%8B755/" target="_self">
-        <div>
-          755读文件最经典，r的权限只能看一眼有什么文件，还需要执行权限才能进去看文件内容或者里面的文件夹内容 注意，要将（比如MySQL这个大类）文件夹设为755，其余人员才能进去，然后将文件夹里面的设置为754，就能实现不能运行了
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-22 21:33" pubdate>
-              2025-06-22
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" target="_self">
-          Linux的三个问题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/06/22/Linux%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98/" target="_self">
-        <div>
-          三个问题1三个问题1.Linux怎么样部署测试环境，部署完了之后怎么样知道是否启动成功了这个项目 2.部署出现问题，用什么命令去查找相关的logo日志 3.当某个可执行文件的权限不足时候，怎么做 基本回答如下 测试环境用容器来部署。这样可以保证所有开发人员环境统一。可以选择docker或者podman，选择对应compose编写部署文件。使用dockerfile编译与打包程序，可以减少自动化测试时
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-22 12:10" pubdate>
-              2025-06-22
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Linux/">#Linux</a>
             
           </div>
         

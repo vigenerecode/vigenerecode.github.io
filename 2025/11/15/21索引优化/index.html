@@ -19,46 +19,25 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="5. 索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被">
+    <meta name="description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NoFlowCloud">
+<meta property="og:title" content="21索引优化">
 <meta property="og:url" content="http://example.com/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="5. 索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被">
+<meta property="og:description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/image-20251115214304209.png">
 <meta property="og:image" content="http://example.com/img/image-20251115232116929.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719171454730.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719171719730-1689758613516.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719172054219.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719172235885.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562230949642.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707171924786.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707172805195.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707173047676.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707171719588.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703093135225.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703094056036.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703100500796.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703114212506.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562314980042.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315067430.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315510720.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315894113.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315987115.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562316267214.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20211121185234856.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20211121190241237.png">
-<meta property="og:image" content="http://example.com/C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230620142048732.png">
-<meta property="article:published_time" content="2025-11-15T13:41:50.944Z">
-<meta property="article:modified_time" content="2025-11-16T00:18:34.089Z">
+<meta property="article:published_time" content="2025-11-15T14:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-16T03:47:12.866Z">
 <meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/img/image-20251115214304209.png">
   
   
   
-  <title>NoFlowCloud</title>
+  <title>21索引优化 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -224,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="21索引优化"></span>
           
         </div>
 
@@ -235,7 +214,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-15 21:41" pubdate>
+        <time datetime="2025-11-15 22:07" pubdate>
           2025年11月15日 晚上
         </time>
       </span>
@@ -247,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.1k 字
+          8.2k 字
         
       </span>
     
@@ -258,7 +237,7 @@
         
         
         
-          60 分钟
+          69 分钟
         
       </span>
     
@@ -295,12 +274,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">21索引优化</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="5-索引优化"><a href="#5-索引优化" class="headerlink" title="5. 索引优化"></a>5. 索引优化</h1><h2 id="5-1-性能分析（explain）"><a href="#5-1-性能分析（explain）" class="headerlink" title="5.1. 性能分析（explain）"></a>5.1. 性能分析（explain）</h2><p>很多现象需要在5.5才能演示成功。</p>
+                <h1 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h1><h2 id="5-1-性能分析（explain）"><a href="#5-1-性能分析（explain）" class="headerlink" title="5.1. 性能分析（explain）"></a>5.1. 性能分析（explain）</h2><p>很多现象需要在5.5才能演示成功。</p>
 <h3 id="5-1-1-explain是什么"><a href="#5-1-1-explain是什么" class="headerlink" title="5.1.1. explain是什么?"></a>5.1.1. explain是什么?</h3><p><strong>模拟优化器查看执行计划</strong></p>
 <p>使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的<strong>性能瓶颈</strong></p>
 <h3 id="5-1-2-explain能干什么？"><a href="#5-1-2-explain能干什么？" class="headerlink" title="5.1.2. explain能干什么？"></a>5.1.2. explain能干什么？</h3><ul>
@@ -438,7 +417,7 @@
 <p><strong>impossible where</strong>：where子句的值总是false。</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">EXPLAIN</span> <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> t_emp <span class="hljs-keyword">WHERE</span> <span class="hljs-number">1</span> != <span class="hljs-number">1</span>;<br></code></pre></td></tr></table></figure>
 
-<p><font color="red"><strong>Using index condition</strong></font>: 叫作Index Condition Pushdown Optimization （<strong>索引下推优化</strong>）</p>
+<h4 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h4><p><font color="red"><strong>Using index condition</strong></font>: 叫作Index Condition Pushdown Optimization （<strong>索引下推优化</strong>）</p>
 <p>什么是索引下推:</p>
 <p>是MySQL中的一种查询优化技术，用于提高查询性能和减少回表次数。</p>
 <p>ICP 开启时 (默认)：MySQL 会把二级索引里能过滤的条件 下推到存储引擎，在索引层就过滤一部分数据，减少回表次数。也就是说 直接在索引扫描阶段就完成过滤</p>
@@ -533,25 +512,21 @@
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">SELECT * FROM emp WHERE age=30 and deptId=1 and name=&#x27;abc&#x27;;<br>create index idx_age_deptId_name on emp(age, deptId, name);<br>SELECT * FROM emp WHERE age=30 and deptId=1 and name=&#x27;abc&#x27;;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719171454730.png" srcset="/img/loading.gif" lazyload alt="image-20230719171454730"></p>
 <ol start="2">
 <li>最左匹配原则</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">SELECT * FROM emp WHERE age=30 and deptId=1;<br>SELECT * FROM emp WHERE deptId=1 and name=&#x27;abc&#x27;;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719171719730-1689758613516.png" srcset="/img/loading.gif" lazyload alt="image-20230719171719730"></p>
 <ol start="3">
 <li>OR关联</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">explain SELECT * FROM emp WHERE age=30 and deptId=1 and name=&#x27;abc&#x27;;<br><br>explain SELECT * FROM emp WHERE age=30 and deptId=1 OR name=&#x27;abc&#x27;;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719172054219.png" srcset="/img/loading.gif" lazyload alt="image-20230719172054219"></p>
 <ol start="4">
 <li>范围条件右边的列</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">explain SELECT * FROM emp WHERE age=30 and deptId=1 and name=&#x27;abc&#x27;;<br><br>explain SELECT * FROM emp WHERE age=30 and deptId&gt;10000 and name=&#x27;abc&#x27;;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230719172235885.png" srcset="/img/loading.gif" lazyload alt="image-20230719172235885"></p>
 <h3 id="5-3-3-小结"><a href="#5-3-3-小结" class="headerlink" title="5.3.3. 小结"></a>5.3.3. 小结</h3><p>一般性建议：</p>
 <ol>
 <li>对于单键索引，尽量选择针对当前query过滤性更好的索引</li>
@@ -560,43 +535,37 @@
 <li>在选择组合索引的时候，如果某个字段可能出现范围查询时，尽量把这个字段放在索引次序的最后面</li>
 <li>书写sql语句时，尽量避免造成索引失效的情况</li>
 </ol>
-<p>假设index(a,b,c)<br><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562230949642.png" srcset="/img/loading.gif" lazyload alt="1562230949642"></p>
 <h2 id="5-4-关联查询优化"><a href="#5-4-关联查询优化" class="headerlink" title="5.4. 关联查询优化"></a>5.4. 关联查询优化</h2><p>接下来再次创建两张表，并分别导入数据：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE TABLE IF NOT EXISTS `class` (<br>	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,<br>	`card` INT(10) UNSIGNED NOT NULL,<br>	PRIMARY KEY (`id`)<br>);<br>CREATE TABLE IF NOT EXISTS `book` (<br>	`bookid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,<br>	`card` INT(10) UNSIGNED NOT NULL,<br>	PRIMARY KEY (`bookid`)<br>);<br><br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO class(card) VALUES(FLOOR(1 + (RAND() * 20)));<br> <br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br>INSERT INTO book(card) VALUES(FLOOR(1 + (RAND() * 20)));<br></code></pre></td></tr></table></figure>
 
 <p>此时class有16条数据，book有20条数据。</p>
+<p>在<strong>MySQL</strong>中，驱动表和被驱动表的选择依赖于查询的类型。例如，在<em>LEFT JOIN</em>操作中，左表（left table）是驱动表，而右表（right table）是被驱动表。相反，在<em>RIGHT JOIN</em>中，右表成为驱动表，左表则是被驱动表。对于<em>INNER JOIN</em>，MySQL通常会选择数据量较小的表作为驱动表，因为这样可以减少查询时的循环次数，提高效率。</p>
 <h3 id="5-4-1-关联案例"><a href="#5-4-1-关联案例" class="headerlink" title="5.4.1. 关联案例"></a>5.4.1. 关联案例</h3><p>explain分析一下几个sql：其中左外连接中驱动表是左表 右外连接驱动表是右表</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card = book.card;<br><br>EXPLAIN SELECT * FROM class RIGHT JOIN book ON class.card = book.card;<br><br>EXPLAIN SELECT * FROM class INNER JOIN book ON class.card = book.card;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707171924786.png" srcset="/img/loading.gif" lazyload alt="image-20230707171924786"></p>
 <p>没有创建索引前的测试： 进行了进行了全表扫描，查询次数为16*20</p>
 <p>给book.card创建索引：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">create index idx_book_card on book(card);<br></code></pre></td></tr></table></figure>
 
 <p>然后explain分析：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707172805195.png" srcset="/img/loading.gif" lazyload alt="image-20230707172805195"></p>
 <p>删除旧索引，添加新索引：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mysql"># 删除旧索引 + 新建 + 第3次explain<br>call proc_drop_index(&quot;fydb&quot;,&quot;book&quot;);<br><br>create index idx_class_card on class(card);<br></code></pre></td></tr></table></figure>
 
 <p>再次explain分析：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707173047676.png" srcset="/img/loading.gif" lazyload alt="image-20230707173047676"></p>
 <p>同时给两张表的card字段添加索引：（class(card)索引已有：index_class_card，只需给book（card）添加索引）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">create index idx_book_card on book(card);<br></code></pre></td></tr></table></figure>
 
 <p>最后explain分析：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230707171719588.png" srcset="/img/loading.gif" lazyload alt="image-20230707171719588"></p>
 <p>结论：针对两张表的连接条件涉及的列，索引要创建在被驱动表上，驱动表尽量是小表</p>
 <p>关于查询方式的选择</p>
 <p>需求: 求所有人物对应的掌门名称(此处使用第四章创建的t_emp 和 t_dept )</p>
 <p>方式一:三表左连接方式</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">-- 员工表(t_emp)、部门表(t_dept)、ceo(t_emp)表 关联查询<br>EXPLAIN SELECT emp.name, ceo.name AS ceoname<br>FROM t_emp emp<br>LEFT JOIN t_dept dept ON emp.deptid = dept.id<br>LEFT JOIN t_emp ceo ON dept.ceo = ceo.id;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703093135225.png" srcset="/img/loading.gif" lazyload alt="image-20230703093135225"></p>
 <p>一趟查询，用到了主键索引，<strong>效果最佳</strong></p>
 <p>方式二: 子查询方式</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs mysql">explain SELECT<br>emp.name,<br>(SELECT ceo.name FROM t_emp ceo WHERE ceo.id = dept.ceo) AS ceoname<br>FROM t_emp emp<br>LEFT JOIN t_dept dept ON emp.deptid = dept.id;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703094056036.png" srcset="/img/loading.gif" lazyload alt="image-20230703094056036"></p>
 <p>两趟查询，用到了主键索引，跟第一种比，效果稍微差点。</p>
 <p><strong>总结</strong>：能够直接多表关联的尽量直接关联，不用子查询。减少查询趟数</p>
 <h3 id="5-4-2-优化建议"><a href="#5-4-2-优化建议" class="headerlink" title="5.4.2. 优化建议"></a>5.4.2. 优化建议</h3><ol>
@@ -607,12 +576,91 @@
 <li>能够直接多表关联的尽量直接关联，不用子查询。</li>
 <li>索引要创建在被驱动表上</li>
 </ol>
+<h1 id="MySQL驱动表详解"><a href="#MySQL驱动表详解" class="headerlink" title="MySQL驱动表详解"></a>MySQL驱动表详解</h1><p><strong>驱动表</strong>是MySQL多表连接查询（JOIN）中的一个重要概念，指的是<strong>在JOIN操作中首先被读取和处理的表</strong>。</p>
+<h2 id="驱动表的核心定义"><a href="#驱动表的核心定义" class="headerlink" title="驱动表的核心定义"></a>驱动表的核心定义</h2><ul>
+<li><strong>驱动表</strong>（Driving Table）：查询中<strong>首先被扫描</strong>的表，它的每一行都会去被驱动表中查找匹配数据</li>
+<li><strong>被驱动表</strong>（Driven Table）：查询中<strong>后续被扫描</strong>的表，依赖驱动表的中间结果进行匹配</li>
+</ul>
+<h2 id="为什么需要驱动表？"><a href="#为什么需要驱动表？" class="headerlink" title="为什么需要驱动表？"></a>为什么需要驱动表？</h2><p>MySQL在执行JOIN查询时，通常使用<strong>嵌套循环连接</strong>（Nested Loop Join）算法：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> <span class="hljs-keyword">row</span> <span class="hljs-keyword">in</span> 驱动表 &#123;      <span class="hljs-comment">-- 外层循环</span><br>    <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> <span class="hljs-keyword">row</span> <span class="hljs-keyword">in</span> 被驱动表 &#123;  <span class="hljs-comment">-- 内层循环</span><br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">row</span>满足连接条件) &#123;<br>            输出匹配结果<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：驱动表的行数决定了外层循环的次数，因此选择合适驱动表可以大幅减少查询成本。</p>
+<h2 id="驱动表选择原则"><a href="#驱动表选择原则" class="headerlink" title="驱动表选择原则"></a>驱动表选择原则</h2><h3 id="1-优先选择”小表”作为驱动表"><a href="#1-优先选择”小表”作为驱动表" class="headerlink" title="1. 优先选择”小表”作为驱动表"></a>1. 优先选择”小表”作为驱动表</h3><ul>
+<li><strong>核心原则</strong>：永远用<strong>结果集小的表</strong>驱动<strong>结果集大的表</strong></li>
+<li>例如：<ul>
+<li>user表10,000条记录（小表）</li>
+<li>class表20条记录（大表）</li>
+<li>选择class表作为驱动表，只需循环20次</li>
+<li>选择user表作为驱动表，需要循环10,000次</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-选择驱动表的判断依据"><a href="#2-选择驱动表的判断依据" class="headerlink" title="2. 选择驱动表的判断依据"></a>2. 选择驱动表的判断依据</h3><table>
+<thead>
+<tr>
+<th>情况</th>
+<th>选择依据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>未指定联接条件</td>
+<td>行数少的表作为驱动表</td>
+</tr>
+<tr>
+<td>指定了联接条件</td>
+<td>过滤后结果集小的表作为驱动表</td>
+</tr>
+<tr>
+<td>有WHERE条件</td>
+<td>WHERE条件过滤后结果集小的表作为驱动表</td>
+</tr>
+</tbody></table>
+<h2 id="如何确定驱动表？"><a href="#如何确定驱动表？" class="headerlink" title="如何确定驱动表？"></a>如何确定驱动表？</h2><ol>
+<li><p><strong>通过EXPLAIN查看执行计划</strong>：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql"><span class="hljs-keyword">EXPLAIN</span> <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> tableA <span class="hljs-keyword">JOIN</span> tableB <span class="hljs-keyword">ON</span> tableA.id = tableB.id;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>排在第一行的表是驱动表</li>
+<li><code>rows</code>列显示扫描的行数，越小越好</li>
+</ul>
+</li>
+<li><p><strong>使用STRAIGHT_JOIN强制指定</strong>：</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pf">SELECT * FROM <span class="hljs-built_in">table</span>B STRAIGHT_JOIN <span class="hljs-built_in">table</span>A ON <span class="hljs-built_in">table</span>B.id = <span class="hljs-built_in">table</span>A.id;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>强制指定tableB为驱动表，tableA为被驱动表</li>
+</ul>
+</li>
+</ol>
+<h2 id="为什么驱动表选择如此重要？"><a href="#为什么驱动表选择如此重要？" class="headerlink" title="为什么驱动表选择如此重要？"></a>为什么驱动表选择如此重要？</h2><ul>
+<li><strong>性能差异巨大</strong>：使用大表作为驱动表可能导致查询时间从几毫秒增加到几秒甚至几分钟</li>
+<li><strong>I&#x2F;O成本</strong>：驱动表的行数决定需要执行的内层循环次数</li>
+<li><strong>索引利用</strong>：被驱动表的关联字段必须有索引才能高效查询</li>
+</ul>
+<h2 id="实际案例"><a href="#实际案例" class="headerlink" title="实际案例"></a>实际案例</h2><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">-- 错误示例：大表作为驱动表<br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> users u <span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> orders o <span class="hljs-keyword">ON</span> u.id = o.user_id;<br><br>-- 正确示例：小表作为驱动表<br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders o <span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> users u <span class="hljs-keyword">ON</span> o.user_id = u.id;<br></code></pre></td></tr></table></figure>
+
+<p>如果orders表有10万条记录，users表有1000条记录：</p>
+<ul>
+<li>错误示例：需要10万次循环（每次在users表中查找匹配）</li>
+<li>正确示例：只需1000次循环（每次在orders表中查找匹配）</li>
+</ul>
+<h2 id="优化建议"><a href="#优化建议" class="headerlink" title="优化建议"></a>优化建议</h2><ol>
+<li><strong>小表驱动大表</strong>：永远优先选择结果集小的表作为驱动表</li>
+<li><strong>被驱动表建立索引</strong>：确保关联字段有索引</li>
+<li><strong>使用EXPLAIN分析</strong>：查看执行计划，确认驱动表是否合理</li>
+<li><strong>必要时使用STRAIGHT_JOIN</strong>：当优化器选择错误时手动干预</li>
+</ol>
+<blockquote>
+<p>💡 <strong>一句话记住</strong>：驱动表是”起点”，被驱动表是”终点”。选择小结果集作为起点，能大幅减少查询成本。</p>
+</blockquote>
+<p>理解驱动表的概念并正确应用，是优化MySQL查询性能的关键一步。在实际开发中，养成使用EXPLAIN分析查询的习惯，能帮助你写出更高效的SQL。😊</p>
 <h2 id="5-5-子查询优化"><a href="#5-5-子查询优化" class="headerlink" title="5.5. 子查询优化"></a>5.5. 子查询优化</h2><p>尽量不要使用not in  或者 not exists (此处使用第四章关联建表语句和数据)</p>
 <p>需求：查询非掌门人的信息</p>
 <p>方式一：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs mysql">-- 查询员工，这些员工的id没在（掌门人id列表中）<br>-- 【查询不是CEO的员工】<br>explain SELECT * FROM t_emp emp WHERE emp.id NOT IN<br>(SELECT dept.ceo FROM t_dept dept WHERE dept.ceo IS NOT NULL);<br>-- mysql8之后 做了优化  演示效果不明显<br>explain SELECT * FROM t_emp emp WHERE emp.id  IN<br>(SELECT dept.ceo FROM t_dept dept WHERE dept.ceo IS NOT NULL);<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703100500796.png" srcset="/img/loading.gif" lazyload alt="image-20230703100500796"></p>
+
+
 <h2 id="5-6-排序及分组优化"><a href="#5-6-排序及分组优化" class="headerlink" title="5.6. 排序及分组优化"></a>5.6. 排序及分组优化</h2><h3 id="5-6-1-无过滤-不索引"><a href="#5-6-1-无过滤-不索引" class="headerlink" title="5.6.1. 无过滤 不索引"></a>5.6.1. 无过滤 不索引</h3><p>准备工作</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mysql">-- 删除采用存储过程导入数据的 emp表   中的所有的索引<br>-- 创建新的索引结构<br>CREATE INDEX idx_age_deptid_name ON emp (age,deptid,`name`);<br></code></pre></td></tr></table></figure>
 
@@ -620,7 +668,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mysql">-- 没有使用索引：<br>EXPLAIN SELECT * FROM emp ORDER BY age,deptid;<br>-- 使用了索引：order by想使用索引，必须有过滤条件，索引才能生效，limit也可以看作是过滤条件<br>EXPLAIN SELECT * FROM emp ORDER BY age,deptid LIMIT 10;<br></code></pre></td></tr></table></figure>
 
 <p>执行结果如下</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230703114212506.png" srcset="/img/loading.gif" lazyload alt="image-20230703114212506"></p>
 <h3 id="5-6-2-顺序错不索引"><a href="#5-6-2-顺序错不索引" class="headerlink" title="5.6.2. 顺序错不索引"></a>5.6.2. 顺序错不索引</h3><p>sql演示</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs mysql">-- 创建了一个索引 idx_age_deptId_name  理论key_len=73<br><br>-- 会走索引type=ref  key_len = 5   extra中没有using filesort           <br>EXPLAIN SELECT * FROM emp WHERE age=45 ORDER BY deptid; <br><br>-- 会走索引type=ref  key_len = 5   extra中没有using filesort   <br>EXPLAIN SELECT * FROM emp WHERE age=45 ORDER BY deptid, `name`; <br><br>-- 会走索引type=ref  key_len = 5   extra出现了using filesort  获取数据的时候走索引,但是排序的时候没有走<br>EXPLAIN SELECT * FROM emp WHERE age=45 ORDER BY deptid, empno;<br><br>-- 会走索引type=ref  key_len = 5   extra出现了using filesort  获取数据的时候走索引,但是排序的时候没有走<br>EXPLAIN SELECT * FROM emp WHERE age=45 ORDER BY `name`, deptid;<br><br>-- 不会走索引type=all  key_len = 0   extra出现了using filesort using where  获取数据的时候走索引,但是--- 排序的时候没有走<br>EXPLAIN SELECT * FROM emp WHERE deptid=45 ORDER BY age;<br></code></pre></td></tr></table></figure>
 
@@ -631,8 +678,6 @@
 <p><strong>执行案例前先清除emp上的索引，只留主键</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql"># 查询 年龄为30岁的，且员工编号小于101000的用户，按用户名称排序<br>SELECT  * FROM emp WHERE age =30 AND empno &lt;101000 ORDER BY NAME;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562314980042.png" srcset="/img/loading.gif" lazyload alt="1562314980042"></p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315067430.png" srcset="/img/loading.gif" lazyload alt="1562315067430"></p>
 <p>结论：type 是 ALL,即最坏的情况。Extra 里还出现了 Using filesort,也是最坏的情况。优化是必须的。</p>
 <p>优化思路： 尽量让where的过滤条件和排序使用上索引。</p>
 <p>现在过滤条件使用了两个字段（age，empno）排序使用了name。</p>
@@ -640,7 +685,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE INDEX idx_age_empno_name ON emp(age,empno,NAME);<br></code></pre></td></tr></table></figure>
 
 <p>再次explain测试：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315510720.png" srcset="/img/loading.gif" lazyload alt="1562315510720"></p>
 <p>我们发现using filesort 依然存在，所以name 并没有用到索引。</p>
 <p>原因是因为empno是一个范围过滤，对于获取数据而言,是可以通过索引下推的方式减少回表,来快速获取要排序的数据  但是在对这些数据进行排序操作的时候,没有用到索引</p>
 <p>所以我们建一个3值索引是没有意义的<br>那么我们先删掉这个索引：</p>
@@ -650,23 +694,19 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE INDEX idx_age_name ON emp(age,NAME);<br></code></pre></td></tr></table></figure>
 
 <p>也就是说empno 和name这个两个字段只能二选其一。<br> 这样我们优化掉了 using filesort。</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315894113.png" srcset="/img/loading.gif" lazyload alt="1562315894113"></p>
 <p> 执行一下sql：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562315987115.png" srcset="/img/loading.gif" lazyload alt="1562315987115"></p>
 <p>速度果然提高了4倍。</p>
 <p>假如：<strong>选择创建age和empno会速度会怎样呢，自己试试有惊喜！</strong></p>
 <p>虽然出现了usingfilesort 表示排序的数据没有用索引进行排序  type是range表示获取数据用到了索引</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE INDEX idx_age_name ON emp(age,empno);<br></code></pre></td></tr></table></figure>
 
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/1562316267214.png" srcset="/img/loading.gif" lazyload alt="1562316267214"></p>
-<p>结果竟然有 filesort的 sql 运行速度，超过了已经优化掉 filesort的 sql ，而且快了好多倍。何故？</p>
+<p>结果竟然有 filesort的 sql 运行速度，超过了已经优化掉 filesort的 sql ，而且快了好多倍。何故</p>
 <p>原因：是所有的排序都是在条件过滤之后才执行的，所以如果条件过滤了大部分数据的话，几百几千条数据进行排序其实并不是很消耗性能，即使索引优化了排序但实际提升性能很有限。  相对的 empno&lt;101000 这个条件如果没有用到索引的话，要对几万条的数据进行扫描，这是非常消耗性能的，所以索引放在这个字段上性价比最高，是最优选择。</p>
 <p>结论：  当【范围条件】和【group by 或者 order by】的字段出现二选一时，优先观察条件字段的过滤数量，如果过滤的数据足够多，而需要排序的数据并不多时，优先把索引放在范围字段上。也可以将选择权交给MySQL：索引同时存在，mysql自动选择最优的方案：（对于这个例子，mysql选择idx_age_empno），但是，随着数据量的变化，选择的索引也会随之变化的。</p>
 <h3 id="5-6-5-双路排序和单路排序"><a href="#5-6-5-双路排序和单路排序" class="headerlink" title="5.6.5. 双路排序和单路排序"></a>5.6.5. 双路排序和单路排序</h3><p>如果排序没有使用索引，引起了filesort，那么filesort有两种算法</p>
 <p>1、双路排序</p>
 <p>2、单路排序</p>
-<h4 id="5-6-5-1-双路排序"><a href="#5-6-5-1-双路排序" class="headerlink" title="5.6.5.1 双路排序"></a>5.6.5.1 双路排序</h4><p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20211121185234856.png" srcset="/img/loading.gif" lazyload alt="image-20211121185234856"> </p>
-<p>原理：**第一遍扫描出需要排序的字段，然后进行排序后，根据排序结果，第二遍再扫描一下需要select的列数据。**这样会引起大量的随机IO，效率不高，但是节约内存。排序使用quick sort，但是如果内存不够则会按照block进行排序，将排序结果写入磁盘文件，然后再将结果合并。</p>
+<h4 id="5-6-5-1-双路排序"><a href="#5-6-5-1-双路排序" class="headerlink" title="5.6.5.1 双路排序"></a>5.6.5.1 双路排序</h4><p>原理：**第一遍扫描出需要排序的字段，然后进行排序后，根据排序结果，第二遍再扫描一下需要select的列数据。**这样会引起大量的随机IO，效率不高，但是节约内存。排序使用quick sort，但是如果内存不够则会按照block进行排序，将排序结果写入磁盘文件，然后再将结果合并。</p>
 <p>具体过程：</p>
 <p>1、读取所有满足条件的记录。</p>
 <p>2、对于每一行，存储一对值到缓冲区（排序列，行记录指针），一个是排序的索引列的值，即order by用到的列值，和指向该行数据的行指针。</p>
@@ -677,7 +717,6 @@
 <p>7、采取顺序读的方式，将每行数据读入内存，并取出数据传到客户端，这里读取数据时并不是一行一行读，读取缓存大小由read_rnd_buffer_size来指定。特点: 采取的方法为：快速排序 + 归并排序。</p>
 <p>但有一个问题，就是，一行数据会<strong>被读两次</strong>，第一次是where条件过滤时，第二个是排完序后还得用行指针去读一次，一个优化的方法是，直接读入数据，排序的时候也根据这个排序，排序完成后，就直接发送到客户端了。</p>
 <h4 id="5-6-5-2-单路排序"><a href="#5-6-5-2-单路排序" class="headerlink" title="5.6.5.2 单路排序"></a>5.6.5.2 单路排序</h4><p>在MySQL4.1版本之前只有第一种排序算法双路排序，第二种算法是从MySQL4.1开始的改进算法，主要目的是为了减少第一次算法中需要两次访问表数据的IO操作，将两次变成了一次，但相应也会耗用更多的sort buffer空间。当然，MySQL4.1开始的以后所有版本同时也支持第一种算法。</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20211121190241237.png" srcset="/img/loading.gif" lazyload alt="image-20211121190241237"> </p>
 <p>具体过程：</p>
 <p>1、读取满足条件的记录</p>
 <p>2、对于每一行，记录排序的key和数据行指针，并且把要查询的列也读出来</p>
@@ -696,7 +735,6 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SHOW</span> VARIABLES <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;%sort_buffer_size%&#x27;</span>; <span class="hljs-comment">-- 默认1MB</span><br></code></pre></td></tr></table></figure>
 
 <p>查看结果如下所示：</p>
-<p><img src="/./C:/Users/stackflow/WPSDrive/1589050618/WPS%25E4%25BA%2591%25E7%259B%2598/%25E5%2585%25B1%25E4%25BA%25AB%25E6%2596%2587%25E4%25BB%25B6%25E5%25A4%25B9%25E2%2580%2585/Java+AI%25E5%2585%25A8%25E6%25A0%2588%25E7%25B3%25BB%25E7%25BB%259F%25E8%25AF%25BE%25E7%25A8%258B/4.%2520%25E8%25A7%2586%25E9%25A2%2591%25E8%25AF%25BE%25EF%25BC%259A%25E8%25BF%259B%25E9%2598%25B6%25E5%2586%25B2%25E5%2588%25BA/3_mysql/%25E8%25AF%25BE%25E4%25BB%25B6/01.MySQL%25E9%25AB%2598%25E7%25BA%25A7%25E4%25B9%258B%25E6%259E%25B6%25E6%259E%2584%25E5%2592%258C%25E4%25BC%2598%25E5%258C%2596/assets/image-20230620142048732.png" srcset="/img/loading.gif" lazyload alt="image-20230620142048732"> </p>
 <p>3、增大<strong>max_length_for_sort_data</strong>参数的设置：MySQL根据max_length_for_sort_data变量来确定使用哪种算法，默认值是4096字节，如果需要返回的列的总长度<strong>大于max_length_for_sort_data，使用双路排序算法</strong>，否则使用单路排序算法。但是如果设的太高，数据总容量超出sort_buffer_size的概率就增大，明显症状是高的磁盘I&#x2F;O活动和低的处理器使用率。1024-8192之间调整。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SHOW</span> VARIABLES <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;%max_length_for_sort_data%&#x27;</span>; <span class="hljs-comment">-- 默认4K</span><br></code></pre></td></tr></table></figure>
 
@@ -716,6 +754,7 @@
 <li>可以把随机IO变成顺序IO加快查询效率</li>
 </ol>
 <p>**缺点：**索引字段的维护总是有代价的。因此，在建立冗余索引来支持覆盖索引时就需要权衡考虑了。  </p>
+<h1 id="Mysql优化"><a href="#Mysql优化" class="headerlink" title="Mysql优化"></a>Mysql优化</h1><p>在面试中，建议按优先级依次介绍慢 SQL 定位、<a href="">索引优化</a>、表结构设计和 <a href="">SQL 优化</a>等内容。架构层面的优化，如<a href="">读写分离和分库分表</a>、<a href="">数据冷热分离</a> 应作为最后的手段，除非在特定场景下有明显的性能瓶颈，否则不应轻易使用，因其引入的复杂性会带来额外的维护成</p>
 <p>end</p>
 
                 
@@ -726,6 +765,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Mysql/" class="print-no-link">#Mysql</a>
+      
+    </div>
+  
 </div>
 
 
@@ -734,7 +780,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
+      <div>21索引优化</div>
       <div>http://example.com/2025/11/15/21索引优化/</div>
     </div>
     <div class="license-meta">
@@ -778,6 +824,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/11/16/22Mysql%E6%97%A5%E5%BF%97/" title="22Mysql日志">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">22Mysql日志</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
