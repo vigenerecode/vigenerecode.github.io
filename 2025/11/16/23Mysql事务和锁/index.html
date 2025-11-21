@@ -19,22 +19,23 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要">
+    <meta name="description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。 在数据库中，除传统的计算资源（如CPU、RAM、I&#x2F;O等）的争用以外，数据也是一种供许多用户共享的资源">
 <meta property="og:type" content="article">
 <meta property="og:title" content="23Mysql事务和锁">
 <meta property="og:url" content="http://example.com/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要">
+<meta property="og:description" content="3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。 在数据库中，除传统的计算资源（如CPU、RAM、I&#x2F;O等）的争用以外，数据也是一种供许多用户共享的资源">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/1720433609532-38aec7fc-734e-4b35-a802-4e6ba3339ffa.png">
 <meta property="og:image" content="http://example.com/img/image-20251116111043986.png">
 <meta property="og:image" content="http://example.com/img/image-20220511171419081.png">
 <meta property="og:image" content="http://example.com/2025/11/16/img/image-20251116104621382.png">
 <meta property="article:published_time" content="2025-11-16T08:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-16T03:11:31.319Z">
+<meta property="article:modified_time" content="2025-11-17T03:25:01.697Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/image-20251116111043986.png">
+<meta name="twitter:image" content="http://example.com/img/1720433609532-38aec7fc-734e-4b35-a802-4e6ba3339ffa.png">
   
   
   
@@ -227,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.6k 字
+          6.9k 字
         
       </span>
     
@@ -238,7 +239,7 @@
         
         
         
-          47 分钟
+          58 分钟
         
       </span>
     
@@ -281,8 +282,23 @@
               <div class="markdown-body">
                 
                 <h1 id="3-MySQL锁"><a href="#3-MySQL锁" class="headerlink" title="3 MySQL锁"></a>3 MySQL锁</h1><p>事务的 <strong>隔离性</strong> 由这章讲述的 <strong>锁</strong> 来实现。</p>
-<h2 id="3-1-锁概述"><a href="#3-1-锁概述" class="headerlink" title="3.1 锁概述"></a>3.1 锁概述</h2><p><strong>锁</strong>是计算机协调多个进程或者线程<strong>并发访问某一个资源</strong>的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻<strong>最多只有一个线程</strong>在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。</p>
+<h2 id="3-1-锁概述"><a href="#3-1-锁概述" class="headerlink" title="3.1 锁概述"></a>3.1 锁概述</h2><p><strong>锁</strong>是计算机协调多个进程或者线程<strong>并发访问某一个资源</strong>的机制。我们就需要保证这个数据在任何时刻<strong>最多只有一个线程</strong>在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。</p>
 <p>在数据库中，除传统的计算资源（如CPU、RAM、I&#x2F;O等）的争用以外，数据也是一种供许多用户共享的资源。为保证数据的一致性，<strong>需要对并发操作进行控制</strong> ，因此产生了锁 。同时锁机制也为实现MySQL的各个隔离级别提供了保证。 <strong>锁冲突</strong> 也是影响数据库 <strong>并发访问性能</strong> 的一个重要因素。</p>
+<h3 id="讲一下mysql里有哪些锁？"><a href="#讲一下mysql里有哪些锁？" class="headerlink" title="讲一下mysql里有哪些锁？"></a>讲一下mysql里有哪些锁？</h3><p>在 MySQL 里，根据加锁的范围，可以分为<strong>全局锁、表级锁和行锁</strong>三类。</p>
+<p><img src="/./../img/1720433609532-38aec7fc-734e-4b35-a802-4e6ba3339ffa.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li><strong>全局锁</strong>：通过flush tables with read lock 语句会将整个数据库就处于只读状态了，这时其他线程执行以下操作，增删改或者表结构修改都会阻塞。全局锁主要应用于做<strong>全库逻辑备份</strong>，这样在备份数据库期间，不会因为数据或表结构的更新，而出现备份文件的数据与预期的不一样。</li>
+<li><strong>表级锁</strong>：MySQL 里面表级别的锁有这几种：<ul>
+<li>表锁：通过lock tables 语句可以对表加表锁，表锁除了会限制别的线程的读写外，也会限制本线程接下来的读写操作。</li>
+<li>元数据锁：当我们对数据库表进行操作时，会自动给这个表加上 MDL，对一张表进行 CRUD 操作时，加的是 <strong>MDL 读锁</strong>；对一张表做结构变更操作的时候，加的是 <strong>MDL 写锁</strong>；MDL 是为了保证当用户对表执行 CRUD 操作时，防止其他线程对这个表结构做了变更。</li>
+<li>意向锁：当执行插入、更新、删除操作，需要先对表加上「意向独占锁」，然后对该记录加独占锁。<strong>意向锁的目的是为了快速判断表里是否有记录被加锁</strong>。</li>
+</ul>
+</li>
+<li><strong>行级锁</strong>：InnoDB 引擎是支持行级锁的，而 MyISAM 引擎并不支持行级锁。</li>
+<li>记录锁，锁住的是一条记录。而且记录锁是有 S 锁和 X 锁之分的，满足读写互斥，写写互斥</li>
+<li>间隙锁，只存在于可重复读隔离级别，目的是为了解决可重复读隔离级别下幻读的现象。</li>
+<li>Next-Key Lock 称为临键锁，是 Record Lock + Gap Lock 的组合，锁定一个范围，并且锁定记录本身。</li>
+</ul>
 <h2 id="3-2-并发事务带来的问题"><a href="#3-2-并发事务带来的问题" class="headerlink" title="3.2 并发事务带来的问题"></a>3.2 并发事务带来的问题</h2><ul>
 <li><strong>脏读（Dirty read）:</strong> 当一个事务正在访问数据并且对数据进行了修改，而这种修改还没有提交到数据库中，这时另外一个事务也访问了这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，那么另外一个事务读到的这个数据是“脏数据”，依据“脏数据”所做的操作可能是不正确的。</li>
 <li><strong>丢失修改（Lost to modify）:</strong> 也叫丢失更新。指在一个事务读取一个数据时，另外一个事务也访问了该数据，那么在第一个事务中修改了这个数据后，第二个事务也修改了这个数据。这样第一个事务内的修改结果就被丢失，因此称为丢失修改。 例如：事务1读取某表中的数据A&#x3D;20，事务2也读取A&#x3D;20，事务1修改A&#x3D;A-1，事务2也修改A&#x3D;A-1，最终结果A&#x3D;19，事务1的修改被丢失。</li>
@@ -551,6 +567,30 @@
 <td>RW创建者的事务ID    案例中的事务5</td>
 </tr>
 </tbody></table>
+<h1 id="RR下的幻读问题"><a href="#RR下的幻读问题" class="headerlink" title="RR下的幻读问题"></a>RR下的幻读问题</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/564735312">(10 条消息) MySQL 可重复读隔离级别，彻底解决幻读了吗？ - 知乎</a></p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><h3 id="Mysql-设置了可重读隔离级后，怎么保证不发生幻读？"><a href="#Mysql-设置了可重读隔离级后，怎么保证不发生幻读？" class="headerlink" title="Mysql 设置了可重读隔离级后，怎么保证不发生幻读？"></a>Mysql 设置了可重读隔离级后，怎么保证不发生幻读？</h3><p><strong>尽量在开启事务之后，马上执行 select … for update 这类锁定读的语句</strong>，因为它会对记录加 next-key lock，从而避免其他事务插入一条新记录，就避免了幻读的问题。</p>
+<h3 id="串行化隔离级别是通过什么实现的？"><a href="#串行化隔离级别是通过什么实现的？" class="headerlink" title="串行化隔离级别是通过什么实现的？"></a>串行化隔离级别是通过什么实现的？</h3><p>是通过行级锁来实现的，序列化隔离级别下，普通的 select 查询是会对记录加 S 型的 next-key 锁，其他事务就没没办法对这些已经加锁的记录进行增删改操作了，从而避免了脏读、不可重复读和幻读现象。</p>
+<h3 id="一条update是不是原子性的？为什么？"><a href="#一条update是不是原子性的？为什么？" class="headerlink" title="一条update是不是原子性的？为什么？"></a>一条update是不是原子性的？为什么？</h3><p>是原子性，主要通过锁+undolog 日志保证原子性的</p>
+<ul>
+<li>执行 update 的时候，会加行级别锁，保证了一个事务更新一条记录的时候，不会被其他事务干扰。</li>
+<li>事务执行过程中，会生成 undolog，如果事务执行失败，就可以通过 undolog 日志进行回滚。</li>
+</ul>
+<h3 id="滥用事务，或者一个事务里有特别多sql的弊端？"><a href="#滥用事务，或者一个事务里有特别多sql的弊端？" class="headerlink" title="滥用事务，或者一个事务里有特别多sql的弊端？"></a>滥用事务，或者一个事务里有特别多sql的弊端？</h3><p>事务的资源在事务提交之后才会释放的，比如存储资源、锁。</p>
+<p>如果一个事务特别多 sql，那么会带来这些问题：</p>
+<ul>
+<li>如果一个事务特别多 sql，锁定的数据太多，容易造成大量的死锁和锁超时。</li>
+<li>回滚记录会占用大量存储空间，事务回滚时间长。在[MySQL中，实际上每条记录在更新的时候都会同时记录一条回滚操作。记录上的最新值，通过回滚操作，都可以得到前一个状态的值，sql 越多，所需要保存的回滚数据就越多。</li>
+<li>执行时间长，容易造成主从延迟，主库上必须等事务执行完成才会写入binlog，再传给备库。所以，如果一个主库上的语句执行10分钟，那这个事务很可能就会导致从库延迟10分钟</li>
+</ul>
+<h3 id="MySQL两个线程的update语句同时处理一条数据，会不会有阻塞？"><a href="#MySQL两个线程的update语句同时处理一条数据，会不会有阻塞？" class="headerlink" title="MySQL两个线程的update语句同时处理一条数据，会不会有阻塞？"></a>MySQL两个线程的update语句同时处理一条数据，会不会有阻塞？</h3><p>如果是两个事务同时更新了 id &#x3D; 1，比如 update … where id &#x3D; 1，那么是会阻塞的。因为 InnoDB 存储引擎实现了行级锁。</p>
+<p>当A事务对 id &#x3D;1 这行记录进行更新时，会对主键 id 为 1 的记录加X类型的记录锁，这样第二事务对 id &#x3D; 1 进行更新时，发现已经有记录锁了，就会陷入阻塞状态。</p>
+<h3 id="两条update语句处理一张表的不同的主键范围的记录，一个15，会不会遇到阻塞？底层是为什么的？"><a href="#两条update语句处理一张表的不同的主键范围的记录，一个15，会不会遇到阻塞？底层是为什么的？" class="headerlink" title="#两条update语句处理一张表的不同的主键范围的记录，一个&lt;10，一个&gt;15，会不会遇到阻塞？底层是为什么的？"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/interview/mysql.html#%E4%B8%A4%E6%9D%A1update%E8%AF%AD%E5%8F%A5%E5%A4%84%E7%90%86%E4%B8%80%E5%BC%A0%E8%A1%A8%E7%9A%84%E4%B8%8D%E5%90%8C%E7%9A%84%E4%B8%BB%E9%94%AE%E8%8C%83%E5%9B%B4%E7%9A%84%E8%AE%B0%E5%BD%95-%E4%B8%80%E4%B8%AA-10-%E4%B8%80%E4%B8%AA-15-%E4%BC%9A%E4%B8%8D%E4%BC%9A%E9%81%87%E5%88%B0%E9%98%BB%E5%A1%9E-%E5%BA%95%E5%B1%82%E6%98%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E7%9A%84">#</a>两条update语句处理一张表的不同的主键范围的记录，一个&lt;10，一个&gt;15，会不会遇到阻塞？底层是为什么的？</h3><p>不会，因为锁住的范围不一样，不会形成冲突。</p>
+<ul>
+<li>第一条 update sql 的话（ id&lt;10），锁住的范围是（-♾️，10）</li>
+<li>第二条 update sql 的话（id &gt;15），锁住的范围是（15，+♾️）</li>
+</ul>
+<h3 id="如果2个范围不是主键或索引-还会阻塞吗"><a href="#如果2个范围不是主键或索引-还会阻塞吗" class="headerlink" title="如果2个范围不是主键或索引-还会阻塞吗"></a>如果2个范围不是主键或索引-还会阻塞吗</h3><p>如果2个范围查询的字段不是索引的话，那就代表 update 没有用到索引，这时候触发了全表扫描，全部索引都会加行级锁，这时候第二条 update 执行的时候，就会阻塞了。</p>
+<p>因为如果 update 没有用到索引，在扫描过程中会对索引加锁，所以全表扫描的场景下，所有记录都会被加锁，相当于锁住了全表。</p>
 <h1 id="背书"><a href="#背书" class="headerlink" title="背书"></a>背书</h1><p><strong>mvcc的意思是多版本并发控制。指维护一个数据的多个版本，使得读写操作没有冲突，它的底层实现主要是分为了三个部分，第一个是隐藏字段，第二个是undolog日志，第三个是readView读视图,隐藏字段是指:在mysql中给每个表都设置了隐藏字段，有一个是trx_id(事务id)，记录每一次操作的事务id，是自增的;另一个字段roll_pointer(回滚指针)，指向上一个版本的事务版本记录地址</strong></p>
 <p><strong>undolog主要的作用是记录回滚日志，存储老版本数据，在内部会形成一个版本链，在多个事务并行查找某一行记录，记录不同事务修改数据的版本，通过roll_pointer指针形成一个链表</strong></p>
 <p><strong>readView解决的是一个事务查询选择版本的问题，在内部定义了一些匹配规则和当前的一些事务id判断该访问那个版本的数据，不同的隔离级别快照读是不一样的，最终的访问的结果不一样。如果是rc隔离级别，每一次执行快照读时生成ReadView，如果是rr隔离级别仅在事务中第一次执行快照读时生成ReadView，后续复用</strong></p>
@@ -622,6 +662,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/11/17/208-Trie%E6%A0%91/" title="208-Trie树">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">208-Trie树</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

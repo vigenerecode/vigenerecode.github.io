@@ -21,7 +21,7 @@
   
     <meta name="description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
 <meta property="og:type" content="article">
-<meta property="og:title" content="21索引优化">
+<meta property="og:title" content="21优化">
 <meta property="og:url" content="http://example.com/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251115214304209.png">
 <meta property="og:image" content="http://example.com/img/image-20251115232116929.png">
 <meta property="article:published_time" content="2025-11-15T14:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-16T03:47:12.866Z">
+<meta property="article:modified_time" content="2025-11-17T13:44:43.355Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary_large_image">
@@ -37,7 +37,7 @@
   
   
   
-  <title>21索引优化 - NoFlowCloud</title>
+  <title>21优化 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -203,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="21索引优化"></span>
+            <span id="subtitle" data-typed-text="21优化"></span>
           
         </div>
 
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8.2k 字
+          9.8k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          69 分钟
+          82 分钟
         
       </span>
     
@@ -274,7 +274,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">21索引优化</h1>
+            <h1 id="seo-header">21优化</h1>
             
             
               <div class="markdown-body">
@@ -754,6 +754,153 @@
 <li>可以把随机IO变成顺序IO加快查询效率</li>
 </ol>
 <p>**缺点：**索引字段的维护总是有代价的。因此，在建立冗余索引来支持覆盖索引时就需要权衡考虑了。  </p>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><h2 id="怎么决定建立哪些索引"><a href="#怎么决定建立哪些索引" class="headerlink" title="怎么决定建立哪些索引?"></a>怎么决定建立哪些索引?</h2><blockquote>
+<p>什么时候不需要创建索引？</p>
+</blockquote>
+<ul>
+<li><code>WHERE</code> 条件，<code>GROUP BY</code>，<code>ORDER BY</code> 里用不到的字段，索引的价值是快速定位，如果起不到定位的字段通常是不需要创建索引的，因为索引是会占用物理空间的。</li>
+<li>字段中存在大量重复数据，不需要创建索引，比如性别字段，只有男女，如果数据库表中，男女的记录分布均匀，那么无论搜索哪个值都可能得到一半的数据。在这些情况下，还不如不要索引，因为 MySQL 还有一个查询优化器，查询优化器发现某个值出现在表的数据行中的百分比很高的时候，它一般会忽略索引，进行全表扫描。</li>
+<li>表数据太少的时候，不需要创建索引；</li>
+<li>经常更新的字段不用创建索引，比如不要对电商项目的用户余额建立索引，因为索引字段频繁修改，由</li>
+</ul>
+<h3 id="索引优化详细讲讲"><a href="#索引优化详细讲讲" class="headerlink" title="索引优化详细讲讲"></a>索引优化详细讲讲</h3><p>常见优化索引的方法：</p>
+<ul>
+<li>前缀索引优化：使用前缀索引是为了减小索引字段大小，可以增加一个索引页中存储的索引值，有效提高索引的查询速度。在一些大字符串的字段作为索引时，使用前缀索引可以帮助我们减小索引项的大小。</li>
+<li>覆盖索引优化：覆盖索引是指 SQL 中 query 的所有字段，在索引 B+Tree 的叶子节点上都能找得到的那些索引，从二级索引中查询得到记录，而不需要通过聚簇索引查询获得，可以避免回表的操作。</li>
+<li>主键索引最好是自增的：<ul>
+<li>如果我们使用自增主键，那么每次插入的新数据就会按顺序添加到当前索引节点的位置，不需要移动已有的数据，当页面写满，就会自动开辟一个新页面。因为每次<strong>插入一条新记录，都是追加操作，不需要重新移动数据</strong>，因此这种插入数据的方法效率非常高。</li>
+<li>如果我们使用非自增主键，由于每次插入主键的索引值都是随机的，因此每次插入新的数据时，就可能会插入到现有数据页中间的某个位置，这将不得不移动其它数据来满足新数据的插入，甚至需要从一个页面复制数据到另外一个页面，我们通常将这种情况称为<strong>页分裂</strong>。页分裂还有可能会造成大量的内存碎片，导致索引结构不紧凑，从而影响查询效率。</li>
+</ul>
+</li>
+<li>防止索引失效：<ul>
+<li>当我们使用左或者左右模糊匹配的时候，也就是 <code>like %xx</code> 或者 <code>like %xx%</code>这两种方式都会造成索引失效；</li>
+<li>当我们在查询条件中对索引列做了计算、函数、类型转换操作，这些情况下都会造成索引失效；</li>
+<li>联合索引要能正确使用需要遵循最左匹配原则，也就是按照最左优先的方式进行索引的匹配，否则就会导致索引失效。</li>
+<li>在 WHERE 子句中，如果在 OR 前的条件列是索引列，而在 OR 后的条件列不是索引列，那么索引会失效。</li>
+</ul>
+</li>
+</ul>
+<h2 id="了解过前缀索引吗？"><a href="#了解过前缀索引吗？" class="headerlink" title="了解过前缀索引吗？"></a>了解过前缀索引吗？</h2><p>使用前缀索引是为了减小索引字段大小，可以增加一个索引页中存储的索引值，有效提高索引的查询速度。在一些大字符串的字段作为索引时，使用前缀索引可以帮助我们减小索引项的大小。</p>
+<h2 id="什么是前缀索引？"><a href="#什么是前缀索引？" class="headerlink" title="什么是前缀索引？"></a>什么是前缀索引？</h2><p><strong>前缀索引（Prefix Index）</strong> 是MySQL中的一种索引优化技术，<strong>只对字符串列的前N个字符创建索引</strong>，而不是对整个字符串列。<br> <strong>语法示例</strong>：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 为name列的前10个字符创建索引</span><br><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">INDEX</span> idx_name_prefix <span class="hljs-keyword">ON</span> users(<span class="hljs-type">name</span>(<span class="hljs-number">10</span>));<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>💡 <strong>核心思想</strong>：<br> <strong>“用更短的索引长度，换取更小的索引体积，从而提升查询性能”</strong></p>
+</blockquote>
+<hr>
+<h2 id="为什么需要前缀索引？（问题背景）"><a href="#为什么需要前缀索引？（问题背景）" class="headerlink" title="为什么需要前缀索引？（问题背景）"></a>为什么需要前缀索引？（问题背景）</h2><h3 id="问题：长字符串列的索引问题"><a href="#问题：长字符串列的索引问题" class="headerlink" title="问题：长字符串列的索引问题"></a>问题：长字符串列的索引问题</h3><table>
+<thead>
+<tr>
+<th>列类型</th>
+<th>示例值</th>
+<th>完整索引大小</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>VARCHAR(255)</code></td>
+<td><code>&quot;user1234567890@domain.com&quot;</code></td>
+<td>约255字节&#x2F;行</td>
+<td>索引过大，占用大量磁盘&#x2F;内存</td>
+</tr>
+<tr>
+<td><code>VARCHAR(255)</code></td>
+<td>100万行</td>
+<td>~255MB</td>
+<td>无法完全缓存到Buffer Pool</td>
+</tr>
+</tbody></table>
+<h3 id="优化目标："><a href="#优化目标：" class="headerlink" title="优化目标："></a>优化目标：</h3><ul>
+<li><strong>减少索引大小</strong> → 降低磁盘占用</li>
+<li><strong>提升内存缓存率</strong> → 减少磁盘I&#x2F;O</li>
+<li><strong>保持查询效率</strong> → 通过合理选择前缀长度</li>
+</ul>
+<hr>
+<h2 id="前缀索引优化的核心步骤"><a href="#前缀索引优化的核心步骤" class="headerlink" title="前缀索引优化的核心步骤"></a>前缀索引优化的核心步骤</h2><h3 id="步骤1：分析列值分布（关键！）"><a href="#步骤1：分析列值分布（关键！）" class="headerlink" title="步骤1：分析列值分布（关键！）"></a>步骤1：分析列值分布（关键！）</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 计算不同前缀长度的唯一值比例</span><br><span class="hljs-keyword">SELECT</span> <br>  COUNT(<span class="hljs-keyword">DISTINCT</span> LEFT(<span class="hljs-type">name</span>, <span class="hljs-number">5</span>)) / COUNT(*) <span class="hljs-keyword">AS</span> uniq_5,<br>  COUNT(<span class="hljs-keyword">DISTINCT</span> LEFT(<span class="hljs-type">name</span>, <span class="hljs-number">10</span>)) / COUNT(*) <span class="hljs-keyword">AS</span> uniq_10,<br>  COUNT(<span class="hljs-keyword">DISTINCT</span> LEFT(<span class="hljs-type">name</span>, <span class="hljs-number">15</span>)) / COUNT(*) <span class="hljs-keyword">AS</span> uniq_15<br><span class="hljs-keyword">FROM</span> users;<br></code></pre></td></tr></table></figure>
+
+<p><strong>输出示例</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>前缀长度</th>
+<th>唯一值比例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5</td>
+<td>0.85</td>
+<td>15%重复，可能不够区分</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.98</td>
+<td>2%重复，足够好</td>
+</tr>
+<tr>
+<td>15</td>
+<td>0.999</td>
+<td>0.1%重复，但索引更大</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>选择原则</strong>：<br> <strong>选择唯一值比例≥95%的最小前缀长度</strong>（例如10）</p>
+</blockquote>
+<h3 id="步骤2：创建前缀索引"><a href="#步骤2：创建前缀索引" class="headerlink" title="步骤2：创建前缀索引"></a>步骤2：创建前缀索引</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 基于分析结果，选择10字符作为前缀</span><br><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">INDEX</span> idx_name_prefix <span class="hljs-keyword">ON</span> users(<span class="hljs-type">name</span>(<span class="hljs-number">10</span>));<br></code></pre></td></tr></table></figure>
+
+<h3 id="步骤3：验证效果"><a href="#步骤3：验证效果" class="headerlink" title="步骤3：验证效果"></a>步骤3：验证效果</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 检查索引是否被使用</span><br><span class="hljs-keyword">EXPLAIN</span> <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> users <span class="hljs-keyword">WHERE</span> <span class="hljs-type">name</span> <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;John%&#x27;</span>;<br><br><span class="hljs-comment">-- 查看索引大小（优化前 vs 优化后）</span><br><span class="hljs-keyword">SHOW</span> <span class="hljs-keyword">TABLE</span> STATUS <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;users&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="前缀索引-vs-完整索引：性能对比"><a href="#前缀索引-vs-完整索引：性能对比" class="headerlink" title="前缀索引 vs 完整索引：性能对比"></a>前缀索引 vs 完整索引：性能对比</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>完整索引（<code>name(255)</code>）</th>
+<th>前缀索引（<code>name(10)</code>）</th>
+<th>优化效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>索引大小</strong></td>
+<td>255字节&#x2F;行</td>
+<td>10字节&#x2F;行</td>
+<td><strong>↓ 96%</strong></td>
+</tr>
+<tr>
+<td><strong>磁盘占用</strong></td>
+<td>255MB (100万行)</td>
+<td>10MB (100万行)</td>
+<td><strong>↓ 96%</strong></td>
+</tr>
+<tr>
+<td><strong>Buffer Pool命中率</strong></td>
+<td>70%</td>
+<td>98%</td>
+<td><strong>↑ 28%</strong></td>
+</tr>
+<tr>
+<td><strong>查询速度</strong></td>
+<td>2.1ms</td>
+<td>0.3ms</td>
+<td><strong>↑ 6倍</strong></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>为什么更快？</strong><br> 因为索引更小，<strong>更多索引页能常驻内存</strong>，减少磁盘I&#x2F;O。</p>
+</blockquote>
+<hr>
+<h2 id="前缀索引的陷阱与注意事项"><a href="#前缀索引的陷阱与注意事项" class="headerlink" title="前缀索引的陷阱与注意事项"></a>前缀索引的陷阱与注意事项</h2><h3 id="陷阱1：前缀长度不足导致重复"><a href="#陷阱1：前缀长度不足导致重复" class="headerlink" title="陷阱1：前缀长度不足导致重复"></a>陷阱1：前缀长度不足导致重复</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 问题：前缀长度太短</span><br><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">INDEX</span> idx_email <span class="hljs-keyword">ON</span> users(email(<span class="hljs-number">5</span>)); <br><br><span class="hljs-comment">-- 问题：所有以&quot;abc&quot;开头的邮箱都归为同一索引</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> users <span class="hljs-keyword">WHERE</span> email = <span class="hljs-string">&#x27;abc@domain.com&#x27;</span>; <br><span class="hljs-comment">-- 实际可能返回多个结果（需回表验证）</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><ul>
+<li>通过<code>COUNT(DISTINCT LEFT(email, 5))</code>确保唯一值比例&gt;95%</li>
+<li>对于邮箱，通常需要10-20字符（如<code>email(15)</code>）</li>
+</ul>
+<h3 id="陷阱2：无法用于ORDER-BY和GROUP-BY"><a href="#陷阱2：无法用于ORDER-BY和GROUP-BY" class="headerlink" title="陷阱2：无法用于ORDER BY和GROUP BY"></a>陷阱2：无法用于<code>ORDER BY</code>和<code>GROUP BY</code></h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 前缀索引无法优化以下查询</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> users <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> <span class="hljs-type">name</span>; <br><span class="hljs-comment">-- 会触发文件排序（filesort）</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="解决方案：-1"><a href="#解决方案：-1" class="headerlink" title="解决方案："></a>解决方案：</h3><ul>
+<li>对于<code>ORDER BY</code>，使用完整索引或<code>ORDER BY</code>字段本身</li>
+<li>前缀索引<strong>仅适用于<code>WHERE</code>条件</strong>（尤其是<code>LIKE &#39;prefix%&#39;</code>）</li>
+</ul>
 <h1 id="Mysql优化"><a href="#Mysql优化" class="headerlink" title="Mysql优化"></a>Mysql优化</h1><p>在面试中，建议按优先级依次介绍慢 SQL 定位、<a href="">索引优化</a>、表结构设计和 <a href="">SQL 优化</a>等内容。架构层面的优化，如<a href="">读写分离和分库分表</a>、<a href="">数据冷热分离</a> 应作为最后的手段，除非在特定场景下有明显的性能瓶颈，否则不应轻易使用，因其引入的复杂性会带来额外的维护成</p>
 <p>end</p>
 
@@ -780,7 +927,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>21索引优化</div>
+      <div>21优化</div>
       <div>http://example.com/2025/11/15/21索引优化/</div>
     </div>
     <div class="license-meta">

@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="缓存淘汰和过期删除过期删除策略和内存淘汰策略有什么区别？区别：  内存淘汰策略是在内存满了的时候，redis 会触发内存淘汰策略，来淘汰一些不必要的内存资源，以腾出空间，来保存新的内容 过期键删除策略是将已过期的键值对进行删除，Redis 采用的删除策略是惰性删除+定期删除。  内存淘汰策略 介绍一下Redis过期删除策略Redis采用惰性删除+定期删除的组合策略,核心目标是在合理消耗CPU资源和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="32淘汰和集群">
+<meta property="og:url" content="http://example.com/2025/11/20/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="缓存淘汰和过期删除过期删除策略和内存淘汰策略有什么区别？区别：  内存淘汰策略是在内存满了的时候，redis 会触发内存淘汰策略，来淘汰一些不必要的内存资源，以腾出空间，来保存新的内容 过期键删除策略是将已过期的键值对进行删除，Redis 采用的删除策略是惰性删除+定期删除。  内存淘汰策略 介绍一下Redis过期删除策略Redis采用惰性删除+定期删除的组合策略,核心目标是在合理消耗CPU资源和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/image-20251120154027582.png">
+<meta property="og:image" content="http://example.com/img/1755608176574-48655767-e379-45dc-af22-16f66d923ff4.webp">
+<meta property="og:image" content="http://example.com/img/1755622631933-39eeac25-ba87-45a2-9757-0843e29bc4d2.webp">
+<meta property="article:published_time" content="2025-11-20T06:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-20T16:42:42.692Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/image-20251120154027582.png">
+  
+  
+  
+  <title>32淘汰和集群 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="32淘汰和集群"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-20 14:07" pubdate>
+          2025年11月20日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">32淘汰和集群</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="缓存淘汰和过期删除"><a href="#缓存淘汰和过期删除" class="headerlink" title="缓存淘汰和过期删除"></a>缓存淘汰和过期删除</h2><h3 id="过期删除策略和内存淘汰策略有什么区别？"><a href="#过期删除策略和内存淘汰策略有什么区别？" class="headerlink" title="过期删除策略和内存淘汰策略有什么区别？"></a>过期删除策略和内存淘汰策略有什么区别？</h3><p>区别：</p>
+<ul>
+<li>内存淘汰策略是在内存满了的时候，redis 会触发内存淘汰策略，来淘汰一些不必要的内存资源，以腾出空间，来保存新的内容</li>
+<li>过期键删除策略是将已过期的键值对进行删除，Redis 采用的删除策略是惰性删除+定期删除。</li>
+</ul>
+<h2 id="内存淘汰策略"><a href="#内存淘汰策略" class="headerlink" title="内存淘汰策略"></a>内存淘汰策略</h2><p><img src="/./../img/image-20251120154027582.png" srcset="/img/loading.gif" lazyload alt="image-20251120154027582"></p>
+<h2 id="介绍一下Redis过期删除策略"><a href="#介绍一下Redis过期删除策略" class="headerlink" title="介绍一下Redis过期删除策略"></a><strong>介绍一下Redis过期删除策略</strong></h2><p>Redis采用惰性删除+定期删除的组合策略,核心目标是在合理消耗CPU资源和避免内存浪费后之间找到最优平衡</p>
+<p>(1)惰性删除</p>
+<p>流程步骤</p>
+<p>键过期并不会立即删除,仅在访问&#x2F;修改该键前,通过db.c文件中的expiredIfNeeded函数检查是否过期</p>
+<p>若已经过期则根据lazyfree_lay_expire(Redis4.0+)配置,选择同步删除或异步删除,并返回null给客户端</p>
+<p>优缺点</p>
+<p>避免在大量键同时过期时,占用过多CPU资源而拖慢Redis的正常使用.惰性删除能分散压力</p>
+<p>若过期键长期不被访问,仍会占用内存,这就依赖于定期删除了</p>
+<p>(2)定期删除</p>
+<p>每次从设置了过期时间的键中随机抽取20个,删除其中过期的键</p>
+<p>若过期键占比大于25%,则重复抽查直到小于等于25%,等待下一次执行</p>
+<p>由redis.config中的hz配置中控制执行间隔,默认100ms执行一次</p>
+<p><img src="/./../img/1755608176574-48655767-e379-45dc-af22-16f66d923ff4.webp" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h2 id="Redis缓存失效会不会立即删除-为什么"><a href="#Redis缓存失效会不会立即删除-为什么" class="headerlink" title="Redis缓存失效会不会立即删除,为什么?"></a>Redis缓存失效会不会立即删除,为什么?</h2><p>不会,Redis的缓存删除策略是惰性删除+定期删除混合使用为了</p>
+<p><strong>防止缓存短时间大量失效而造成的批量删除场景,会占用大量CPU资源进而影响Redis的响应时间和吞吐量,</strong></p>
+<h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><h1 id="主从"><a href="#主从" class="headerlink" title="主从"></a>主从</h1><h3 id="Redis主从同步中的增量和完全同步怎么实现？"><a href="#Redis主从同步中的增量和完全同步怎么实现？" class="headerlink" title="#Redis主从同步中的增量和完全同步怎么实现？"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/interview/redis.html#redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%B8%AD%E7%9A%84%E5%A2%9E%E9%87%8F%E5%92%8C%E5%AE%8C%E5%85%A8%E5%90%8C%E6%AD%A5%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0">#</a>Redis主从同步中的增量和完全同步怎么实现？</h3><blockquote>
+<p>完全同步</p>
+</blockquote>
+<p>完全同步发生在以下几种情况：</p>
+<ul>
+<li><strong>初次同步</strong>：当一个从服务器（slave）首次连接到主服务器（master）时，会进行一次完全同步。</li>
+<li><strong>从服务器数据丢失</strong>：如果从服务器数据由于某种原因（如断电）丢失，它会请求进行完全同步。</li>
+<li><strong>主服务器数据发生变化</strong>：如果从服务器长时间未与主服务器同步，导致数据差异太大，也可能触发完全同步。</li>
+</ul>
+<blockquote>
+<p>增量同步</p>
+</blockquote>
+<p>触发条件</p>
+<p>Slave断线重连同步且断线期间repl_backlog仍正常保存Slave断开时offset之后的命令未被覆盖</p>
+<p>流程拆解</p>
+<p>身份校验:Slave重连后发psync replid offset,Master验证replid一致且repl_backlog中offset之后的命令未被覆盖.</p>
+<p>增量命令</p>
+<p>推送从repl_backlog中定位到Slave提供的offset,提取该位置之后的所有命令,通过TCP连接以流的形式持续推送给Slave,同时更新Slave的offset记录</p>
+<p>Slave端接收命令按顺序执行,每执行完一批命令就向Master反馈最新的offset,直到offset版本与Master的一致</p>
+<h2 id="介绍一下repl-backlog和offset"><a href="#介绍一下repl-backlog和offset" class="headerlink" title="介绍一下repl_backlog和offset"></a>介绍一下repl_backlog和offset</h2><p>(1)repl_backlog</p>
+<p>本质上是固定大小的环形缓冲区,默认大小是1MB</p>
+<p>主要用于记录主节点接收到的写命令可以应用于增量同步和全量同步时的数据增量</p>
+<p>(2)offsetoffset</p>
+<p>是一个偏移量,用于关联repl_backlog中写命令的位置</p>
+<p>主节点维护着一个master_repl_offset,从节点维护一个slave_repl_offset都记录自己当前关联在repl_backlog中的版本</p>
+<p>主节点和从节点版本的差距不能超过一个repl_backlog的差距</p>
+<h3 id="redis主从和集群可以保证数据一致性吗-？"><a href="#redis主从和集群可以保证数据一致性吗-？" class="headerlink" title="redis主从和集群可以保证数据一致性吗 ？"></a>redis主从和集群可以保证数据一致性吗 ？</h3><p>redis 主从和集群在CAP理论都属于AP模型，即在面临网络分区时选择保证可用性和分区容忍性，而牺牲了强一致性。这意味着在网络分区的情况下，Redis主从复制和集群可以继续提供服务并保持可用，但可能会出现部分节点之间的数据不一致</p>
+<p><img src="/./../img/1755622631933-39eeac25-ba87-45a2-9757-0843e29bc4d2.webp" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h3 id="哨兵机制原理是什么？"><a href="#哨兵机制原理是什么？" class="headerlink" title="哨兵机制原理是什么？"></a>哨兵机制原理是什么？</h3><p><strong>哨兵（*<em>*</em>*Sentinel**<em>*</em>）机制</strong>，它的作用是实现<strong>主从节点故障转移</strong>。它会监测主节点是否存活，如果发现主节点挂了，它就会选举一个从节点切换为主节点，并且把新主节点的相关信息通知给从节点和客户端。</p>
+<p>哨兵节点主要负责三件事情：<strong>监控、选主、通知</strong>。</p>
+<h3 id="哨兵机制的选主节点的算法介绍一下"><a href="#哨兵机制的选主节点的算法介绍一下" class="headerlink" title="哨兵机制的选主节点的算法介绍一下"></a>哨兵机制的选主节点的算法介绍一下</h3><p>当redis集群的主节点故障时，Sentinel集群将从剩余的从节点中选举一个新的主节点，有以下步骤：</p>
+<ol>
+<li><p>故障节点主观下线</p>
+<p>每一个Sentinel节点会定时对redis集群的所有节点发心跳包检测节点是否正常。如果一个节点在down-after-milliseconds时间内没有回复Sentinel节点的心跳包，则该redis节点被该Sentinel节点主观下线。</p>
+</li>
+<li><p>故障节点客观下线</p>
+<p>该Sentinel节点会询问其他Sentinel节点，如果Sentinel集群中超过quorum数量的Sentinel节点认为该redis节点主观下线，则该redis客观下线。</p>
+</li>
+<li><p>Sentinel集群选举Leade</p>
+<p>一个Sentinel节点确认redis集群的主节点主观下线后，会请求其他Sentinel节点要求将自己选举为Leader。被请求的Sentinel节点如果没有同意过其他Sentinel节点的选举请求，则同意该请求(选举票数+1)，否则不同意。</p>
+<p>4.Sentinel Leader决定新主节点</p>
+</li>
+</ol>
+<p>当Sentinel集群选举出Sentinel Leader后，由Sentinel Leader从redis从节点中选择一个redis节点作为主节点：</p>
+<ol>
+<li>过滤故障的节点</li>
+<li>选择优先级slave-priority最大的从节点作为主节点，如不存在则继续</li>
+<li>选择复制偏移量（数据写入量的字节，记录写了多少数据。主服务器会把偏移量同步给从服务器，当主从的偏移量一致，则数据是完全同步）最大的从节点作为主节点，如不存在则继续</li>
+<li>选择runid（redis每次启动的时候生成随机的runid作为redis的标识）最小的从节点作为主节点</li>
+</ol>
+<h1 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h1><h2 id="什么是集群"><a href="#什么是集群" class="headerlink" title="什么是集群"></a>什么是集群</h2><p>Redis分片集群是Redis官方提供的分布式解决方案，通过将数据分散到多个节点，解决了单机Redis在内存容量、计算能力和可用性方面的限制。该模式采用去中心化架构，无需依赖外部协调组件如ZooKeeper或Sentinel（虽然可以配合使用）。</p>
+<h2 id="核心机制解析"><a href="#核心机制解析" class="headerlink" title="核心机制解析"></a>核心机制解析</h2><h3 id="1-哈希槽机制"><a href="#1-哈希槽机制" class="headerlink" title="1. 哈希槽机制"></a>1. 哈希槽机制</h3><ul>
+<li>Redis Cluster使用<strong>16384个固定哈希槽</strong>作为数据分布的映射处理</li>
+<li><strong>一个切片集群共有 16384 个哈希槽</strong>，这些哈希槽类似于数据分区，每个键值对都会根据它的 key，被映射到一个哈希槽中，具体执行过程分为两大步：<ul>
+<li>根据键值对的 key，按照 CRC16 算法计算一个 16 bit 的值。</li>
+<li>再用 16bit 值对 16384 取模，得到 0~16383 范围内的模数，每个模数代表一个相应编号的哈希槽。</li>
+</ul>
+</li>
+<li>键到槽的映射：<code>slot = CRC16(key) % 16384</code></li>
+<li><strong>16384这个数字的选择很精妙</strong>：足够小以保证节点间心跳包不会过大（每个包携带位图表示槽分配），又足够大以支持最多1000个节点的集群规模</li>
+</ul>
+<p>只有当16384个槽全部分配完毕,Redis Cluster才会进入正常工作状态.否则会报错</p>
+<p>平均分配:使用cluster create命令创建集群时,Redis自动平均分配</p>
+<p>手动分配:灵活可控,性能强的节点可以分配更多槽</p>
+<h3 id="2-高可用设计"><a href="#2-高可用设计" class="headerlink" title="2. 高可用设计"></a>2. 高可用设计</h3><ul>
+<li><p><strong>主从架构</strong>：每个主节点至少有一个从节点，用于数据备份和故障转移</p>
+</li>
+<li><p>去中心化通信</p>
+<p>：通过Gossip协议实现节点间高效、可靠的信息交换</p>
+<p>协议内容节点状态:</p>
+<p>节点在线情况,角色</p>
+<p>哈希槽归属:明确哪些节点负责哪些哈希槽</p>
+<p>主从映射:记录Slave对应哪个Master</p>
+<ul>
+<li>节点定期随机选择其他节点交换信息</li>
+<li>Redis Cluster节点通信不依赖单一中心组件,每个节点都能主动发起信息交换,没有核心的指挥中心,避免中心节点故障导致的整个集群通信瘫痪,不过也有状态同步的微小延迟.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-故障转移机制"><a href="#3-故障转移机制" class="headerlink" title="3. 故障转移机制"></a>3. 故障转移机制</h3><ul>
+<li>节点互相监控，当多数主节点认为某节点不可达时，标记为<strong>客观下线</strong>(PFAIL→FAIL)</li>
+<li>从节点通过类Raft投票机制选举新主，优先考虑：<ol>
+<li>数据复制偏移量(offset)最大的从节点</li>
+<li>运行ID字典序最小的节点</li>
+</ol>
+</li>
+<li>整个过程通常在几秒内完成，大幅降低服务中断时间</li>
+</ul>
+<h3 id="4-客户端交互"><a href="#4-客户端交互" class="headerlink" title="4. 客户端交互"></a>4. 客户端交互</h3><ul>
+<li>客户端维护槽到节点的映射缓存</li>
+<li>当请求错误节点时，返回<strong>MOVED重定向</strong>（永久重定向）或<strong>ASK重定向</strong>（临时重定向，用于槽迁移中）</li>
+<li>智能客户端会自动更新本地缓存，优化后续请求路由</li>
+</ul>
+<h2 id="优势分析"><a href="#优势分析" class="headerlink" title="优势分析"></a>优势分析</h2><ol>
+<li><strong>线性扩展能力</strong>：通过增加节点，几乎线性提升集群容量和吞吐量</li>
+<li><strong>高可用保障</strong>：内置故障检测和自动转移，无需额外组件</li>
+<li><strong>去中心化设计</strong>：无单点故障，避免了传统中心化协调器的瓶颈</li>
+<li><strong>灵活的数据分布</strong>：可根据节点性能分配不同数量的哈希槽</li>
+<li><strong>客户端缓存优化</strong>：减少重定向开销，提高访问效率</li>
+<li><strong>平滑扩容&#x2F;缩容</strong>：支持在线迁移哈希槽，服务不中断</li>
+</ol>
+<h2 id="局限与挑战"><a href="#局限与挑战" class="headerlink" title="局限与挑战"></a>局限与挑战</h2><ol>
+<li><strong>跨槽操作受限</strong>：<ul>
+<li>无法执行跨多个哈希槽的事务</li>
+<li>多键操作（如MGET）要求所有键在同一个槽</li>
+<li>可通过<strong>哈希标签</strong>（例如<code>&#123;user1000&#125;.profile</code>和<code>&#123;user1000&#125;.orders</code>共享相同哈希标签）解决部分场景</li>
+</ul>
+</li>
+<li><strong>复杂性代价</strong>：<ul>
+<li>集群部署、监控、故障诊断比单机模式复杂</li>
+<li>需要专门的运维知识和工具支持</li>
+</ul>
+</li>
+<li><strong>数据均衡挑战</strong>：<ul>
+<li>热点数据可能集中在少数槽，导致负载不均</li>
+<li>需要手动干预重新分配槽或使用哈希标签优化</li>
+</ul>
+</li>
+<li><strong>网络分区风险</strong>：<ul>
+<li>在严重网络分区情况下，可能面临脑裂问题</li>
+<li>需要合理配置<code>cluster-node-timeout</code>等参数平衡可用性和一致性</li>
+</ul>
+</li>
+</ol>
+<p>✅ 一句话核心结论</p>
+<blockquote>
+<p>**”脑裂 &#x3D; 网络分区导致集群分裂，多个节点同时自称主节点 → *<em>数据混乱！*</em> 解决方案：*<em>用多数派原则（Quorum）+ 合理超时*</em>，让 Redis Sentinel&#x2F;Cluster 自动避免脑裂。”**</p>
+</blockquote>
+<p> 二、Redis 如何解决脑裂？（3 个关键配置）</p>
+<h3 id="✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）"><a href="#✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）" class="headerlink" title="✅ 方案 1：Redis Sentinel 的 Quorum（法定人数）（核心！）"></a>✅ 方案 1：Redis Sentinel 的 <strong>Quorum（法定人数）</strong>（核心！）</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs smali"><span class="hljs-comment"># sentinel.conf 配置示例</span><br>sentinel<span class="hljs-built_in"> monitor </span>mymaster 10.0.0.1 6379 2  <span class="hljs-comment"># quorum=2（需2个Sentinel同意）</span><br>sentinel down-after-milliseconds mymaster 30000  <span class="hljs-comment"># 网络延迟阈值（ms）</span><br>sentinel failover-timeout mymaster 180000  <span class="hljs-comment"># 故障转移超时</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>原理</p>
+<p>：</p>
+<blockquote>
+<p>“故障转移 <strong>必须获得多数 Sentinel 同意</strong>（如 3 个 Sentinel 中需 2 个同意）→ 网络分区时，少数派 Sentinel 无法触发选举 → <strong>避免脑裂</strong>。”</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p>💡 <strong>为什么有效</strong>？</p>
+<ul>
+<li>网络分区后，Sentinel 分成两组：A组（2个）和 B组（1个）</li>
+<li>A组能触发选举（因 quorum&#x3D;2），B组不能 → <strong>只有 A组 生成新 Master</strong></li>
+<li>原 Master（在 B组）无法被选举 → <strong>不会产生第二个 Master</strong></li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="✅-方案-2：Redis-Cluster-的-cluster-require-full-coverage（核心！）"><a href="#✅-方案-2：Redis-Cluster-的-cluster-require-full-coverage（核心！）" class="headerlink" title="✅ 方案 2：Redis Cluster 的 cluster-require-full-coverage（核心！）"></a>✅ 方案 2：Redis Cluster 的 <strong><code>cluster-require-full-coverage</code></strong>（核心！）</h3><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-comment"># redis.conf 配置</span><br>cluster-<span class="hljs-built_in">require</span>-full-coverage <span class="hljs-literal">no</span>  <span class="hljs-comment"># 默认值：no（可关闭）</span><br><span class="hljs-comment"># 改为：</span><br>cluster-<span class="hljs-built_in">require</span>-full-coverage <span class="hljs-literal">yes</span>  <span class="hljs-comment"># 强制要求集群完整</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>原理</p>
+<p>：</p>
+<blockquote>
+<p>“当 <strong>节点数 &lt; 总节点数的一半</strong> 时，<strong>集群拒绝服务</strong>（不提供写操作）→ 防止小集群继续工作导致脑裂。”</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p>💡 <strong>为什么有效</strong>？</p>
+<ul>
+<li>假设集群有 5 个节点，网络分区成 2+3 两组</li>
+<li>2 个节点组无法达到 5&#x2F;2&#x3D;3 节点的法定要求 → <strong>自动拒绝服务</strong></li>
+<li>3 个节点组正常工作 → <strong>只有一个 Master</strong>（无脑裂）</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>✅ <strong>Redis 官方建议</strong>：<br> <em>“在生产环境必须开启 <code>cluster-require-full-coverage yes</code>！”</em></p>
+</blockquote>
+<hr>
+<h3 id="✅-方案-3：合理设置超时时间（避免误判）"><a href="#✅-方案-3：合理设置超时时间（避免误判）" class="headerlink" title="✅ 方案 3：合理设置超时时间（避免误判）"></a>✅ 方案 3：<strong>合理设置超时时间</strong>（避免误判）</h3><table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>推荐值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>down-after-milliseconds</code></td>
+<td>30000（30秒）</td>
+<td>网络延迟超过此值才判宕机</td>
+</tr>
+<tr>
+<td><code>failover-timeout</code></td>
+<td>180000（3分钟）</td>
+<td>故障转移超时，避免反复切换</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>为什么重要</strong>？</p>
+<ul>
+<li>短超时（如 5秒）→ 网络抖动触发误判 → <strong>脑裂风险↑</strong></li>
+<li>长超时（如 30秒）→ 等待网络恢复 → <strong>减少误判</strong><br><em>（实测：30秒是网络抖动的典型恢复时间）</em></li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>误区</th>
+<th>事实</th>
+<th>为什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Redis 会自动解决脑裂”</td>
+<td>❌ <strong>错误！</strong> 需手动配置 <code>quorum</code>&#x2F;<code>cluster-require-full-coverage</code></td>
+<td>Redis 本身不默认开启，需主动配置</td>
+</tr>
+<tr>
+<td>“脑裂只发生在 Sentinel”</td>
+<td>❌ <strong>错误！</strong> 也发生在 Redis Cluster</td>
+<td>两种模式都可能脑裂</td>
+</tr>
+<tr>
+<td>“关掉 Sentinel 就能避免脑裂”</td>
+<td>❌ <strong>错误！</strong> 无 Sentinel 时脑裂更严重</td>
+<td>无故障转移机制，数据混乱更彻底</td>
+</tr>
+<tr>
+<td>“设置 <code>quorum=1</code> 最安全”</td>
+<td>❌ <strong>错误！</strong> <code>quorum=1</code> 会放大脑裂风险</td>
+<td>1 个 Sentinel 就触发选举 → 网络抖动即脑裂</td>
+</tr>
+</tbody></table>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/redis/" class="print-no-link">#redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>32淘汰和集群</div>
+      <div>http://example.com/2025/11/20/32淘汰和集群/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/20/33redis%E5%9C%BA%E6%99%AF%E9%A2%98%E7%9B%AE/" title="33redis场景题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">33redis场景题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/" title="31redis事务和日志">
+                        <span class="hidden-mobile">31redis事务和日志</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

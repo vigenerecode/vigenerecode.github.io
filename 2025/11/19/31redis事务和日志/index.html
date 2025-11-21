@@ -1,0 +1,795 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="事务Redis事务保证原子性吗,如何实现Redis原子性 (1)Redis事务保证原子性吗Redis事务不像MySQL那样的关系型数据库事务那样拥有事务回滚操作当Redis事务的所有命令都成功执行后才能保证原子性,若某一命令失败,则下一命令仍会继续执行.(2)Redis如何实现原子性背景引入Redis内核是单线程,按发送顺序执行,天然地命令串行,不会又并发安全问题.Redis能保证同一客户端地命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="31redis事务和日志">
+<meta property="og:url" content="http://example.com/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="事务Redis事务保证原子性吗,如何实现Redis原子性 (1)Redis事务保证原子性吗Redis事务不像MySQL那样的关系型数据库事务那样拥有事务回滚操作当Redis事务的所有命令都成功执行后才能保证原子性,若某一命令失败,则下一命令仍会继续执行.(2)Redis如何实现原子性背景引入Redis内核是单线程,按发送顺序执行,天然地命令串行,不会又并发安全问题.Redis能保证同一客户端地命令">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/1719110103571-b6bd31d1-7955-4e57-aee5-ae95302183b9.webp">
+<meta property="og:image" content="http://example.com/2025/11/19/img/image-20251120115350554.png">
+<meta property="og:image" content="http://example.com/2025/11/19/img/image-20251120115422043.png">
+<meta property="article:published_time" content="2025-11-19T08:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-20T07:30:00.970Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/1719110103571-b6bd31d1-7955-4e57-aee5-ae95302183b9.webp">
+  
+  
+  
+  <title>31redis事务和日志 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="31redis事务和日志"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-19 16:07" pubdate>
+          2025年11月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">31redis事务和日志</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><p>Redis事务保证原子性吗,如何实现Redis原子性 (1)Redis事务保证原子性吗Redis事务不像MySQL那样的关系型数据库事务那样拥有事务回滚操作当Redis事务的所有命令都成功执行后才能保证原子性,若某一命令失败,则下一命令仍会继续执行.(2)Redis如何实现原子性背景引入Redis内核是单线程,按发送顺序执行,天然地命令串行,不会又并发安全问题.Redis能保证同一客户端地命令严格串行,但不同的客户端会命令会交叉执行,无法保证同一客户端的一组命令连续执行,容易出现问题.事务能保证同一客户端的一组命令连续执行,不会被其它客户端打断Lua脚本解决可以将多个操作写到一个lua脚本中,Redis会把整个lua脚本作为一个整体执行既能实现事务的核心需求”不可打断性”,又可以通过逻辑控制(if)实现条件判断来决定后续的命令是否执行,更可以解决事务的频繁网络IO问题且只仅需一次网络IO由于Lua脚本是逐行检查并执行,若中间代码出现语法错误导致不执行,那么之前的命令不回滚,而事务在EXEC时统一校验语法,  有错误则全不执行,但对于类型匹配问题校验时是通过的,事务仍会通过.1)事务没有逻辑控制,要么全不执行(语法错误),要么能执行的全执行,失败的仅自身不生效,注定它无法完成库存校验-&gt;库存扣减-&gt;订单生成这样的组合性原子操作,只能通过lua脚本2)但Lua脚本也无法实现命令执行失败的回滚操作,因为Redis追求轻量高效,没有Undo Log(MySQL通过该技术记录数据修改前的状态,回滚时可反向执行操作),若为回滚设计命令日志,会大量增加内存开销和执行复杂度.3)可以在业务层设置一个Redis延迟队列来进行兜底,先预估业务执行时间,然后创建临时标记同时将延迟任务入列,接着开启一个守护线程来阻塞等待消费,消费时通过查询数据来判断命令是否正确执行,若未执行则触发兜底操作.</p>
+<h2 id="事务不支持-ACID-的完整实现"><a href="#事务不支持-ACID-的完整实现" class="headerlink" title="事务不支持 ACID 的完整实现"></a>事务不支持 ACID 的完整实现</h2><table>
+<thead>
+<tr>
+<th>ACID 属性</th>
+<th>Redis 事务支持</th>
+<th>为什么？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>A (Atomicity)</strong></td>
+<td>❌ <strong>不支持</strong></td>
+<td>事务中命令失败时，<strong>已执行的命令不会回滚</strong>（例如 <code>SET</code> 成功后 <code>INCR</code> 失败，<code>SET</code> 的修改保留）</td>
+</tr>
+<tr>
+<td><strong>C (Consistency)</strong></td>
+<td>❌ <strong>不支持</strong></td>
+<td>事务不保证数据一致性（如 <code>INCR</code> 依赖 <code>SET</code> 的值，但事务中可能被其他客户端修改）</td>
+</tr>
+<tr>
+<td><strong>I (Isolation)</strong></td>
+<td>✅ <strong>支持</strong></td>
+<td>事务命令 <strong>串行执行</strong>（其他客户端无法在事务执行期间插入命令），实现类似串行化隔离</td>
+</tr>
+<tr>
+<td><strong>D (Durability)</strong></td>
+<td>❌ <strong>不支持</strong></td>
+<td>事务本身<strong>不涉及持久化</strong>，持久性由 AOF&#x2F;RDB 保证</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>面试官深度问</strong>：为什么 Redis 不支持原子性？ <strong>答</strong>：<br> “Redis 采用 <strong>单线程模型</strong>，事务命令在 <code>EXEC</code> 时<strong>顺序执行</strong>，但<strong>没有回滚机制</strong>。设计哲学是 <strong>‘快速执行，不保证事务完整性’</strong> —— 与数据库不同，Redis 优先保证高吞吐量，牺牲了事务的原子性。<br> <em>例如：<code>MULTI; SET a 1; INCR a; EXEC</code>，如果 <code>INCR</code> 失败，<code>SET a 1</code> 的结果已生效。”</em>（LUA中途出现语法错误）</p>
+</blockquote>
+<h1 id="aof和rdb"><a href="#aof和rdb" class="headerlink" title="aof和rdb"></a>aof和rdb</h1><h3 id="Redis有哪2种持久化方式？分别的优缺点是什么？"><a href="#Redis有哪2种持久化方式？分别的优缺点是什么？" class="headerlink" title="Redis有哪2种持久化方式？分别的优缺点是什么？"></a>Redis有哪2种持久化方式？分别的优缺点是什么？</h3><h4 id="aof"><a href="#aof" class="headerlink" title="aof"></a>aof</h4><p>Redis 的读写操作都是在内存中，所以 Redis 性能才会高，但是当 Redis 重启后，内存中的数据就会丢失，那为了保证内存中的数据不会丢失，Redis 实现了数据持久化的机制，这个机制会把数据存储到磁盘，这样在 Redis 重启就能够从磁盘中恢复原有的数据。Redis 共有三种数据持久化的方式：</p>
+<ul>
+<li><strong>AOF 日志</strong>：每执行一条写操作命令，就把该命令以追加的方式写入到一个文件里；</li>
+<li><strong>RDB 快照</strong>：将某一时刻的内存数据，以二进制的方式写入磁盘；</li>
+<li>混合模式</li>
+</ul>
+<blockquote>
+<p>AOF 日志是如何实现的？</p>
+</blockquote>
+<p>客户端发送写命令（如 SET name Tom）；<br>Redis 执行命令并将原生命令转换为 文本协议格式（RESP）；<br>命令被追加到 AOF 缓冲区（aof_buf）；<br>根据配置的同步策略（appendfsync），缓冲区内容写入并同步到磁盘文件 appendonly.aof；<br>（后台或手动触发）AOF 重写（rewrite）：压缩历史命令，生成更精简的 AOF 文件；<br>Redis 重启时加载 AOF 文件，顺序执行命令恢复数据。</p>
+<p>aof的3 个写回策略的优缺点总结成了一张表格：</p>
+<p><img src="/./../img/1719110103571-b6bd31d1-7955-4e57-aee5-ae95302183b9.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<blockquote>
+<p>RDB 快照是如何实现的呢？</p>
+</blockquote>
+<p>因为 AOF 日志记录的是操作命令，不是实际的数据，所以用 AOF 方法做故障恢复时，<strong>需要全量把日志都执行一遍，一旦 AOF 日志非常多，势必会造成 Redis 的恢复操作缓慢</strong>。为了解决这个问题，Redis 增加了 RDB 快照。</p>
+<h4 id="rdb"><a href="#rdb" class="headerlink" title="rdb"></a>rdb</h4><p>所以，RDB 快照就是记录某一个瞬间的内存数据，记录的是实际数据，而 AOF 文件记录的是命令操作的日志，而不是实际的数据。因此在 Redis 恢复数据时， RDB 恢复数据的效率会比 AOF 高些，因为直接将 RDB 文件读入内存就可以，不需要像 AOF 那样还需要额外执行操作命令的步骤才能恢复数据。</p>
+<p>Redis 提供了两个命令来生成 RDB 文件，分别是 save 和 bgsave，他们的区别就在于是否在「主线程」里执行：</p>
+<ul>
+<li>执行了 save 命令，就会在主线程生成 RDB 文件，由于和执行操作命令在同一个线程，所以如果写入 RDB 文件的时间太长，<strong>会阻塞主线程</strong>；</li>
+<li>执行了 bgsave 命令，会创建一个子进程来生成 RDB 文件，这样可以<strong>避免主线程的阻塞</strong>；</li>
+</ul>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><img src="./../img/image-20251120115350554.png" srcset="/img/loading.gif" lazyload alt="image-20251120115350554" style="zoom: 80%;" />
+
+<img src="./../img/image-20251120115422043.png" srcset="/img/loading.gif" lazyload alt="image-20251120115422043" style="zoom:80%;" />
+
+<p>(1)AOF优点数据完整性:AOF数据完整性更高,因为它每隔一小段时间就会追加到文件末尾,即使Redis服务宕机,也只会丢失最后一次追加前的数据平衡策略:AOF支持多种同步策略,可以调整数据安全与性能的平衡重写机制:触发阈值或手动重写AOF文件,减小文件体积并加快恢复速度文件修复:AOF还提供了redis-check-aof工具来修复损坏的文件</p>
+<p>缺点磁盘空间占用:因为记录每一个写操作,AOF文件比RDB文件更大磁盘IO:频繁进行磁盘IO操作,可能会拖慢Redis写入性能宕机恢复:即使重写,AOF的恢复速度通常也慢于RDB.</p>
+<p>(2)RDB优点RDB基于快照形式保存某一时刻的数据状态并进行二进制压缩,文件体积下且恢复速度快RDB是在主进程之外通过fork子进程异步生成快照,对Redis核心业务的性能影响小</p>
+<p>缺点数据完整性较低:两次快照期间若发生宕机会造成数据的大量丢失,这在高并发环境下是难以容忍的在快照形成期间,若有写请求会触发写时复制,极端情况内存占用提升一倍</p>
+<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>只要满足<strong>配置自动快照策略</strong>，就会自动执行 BGSAVE。</p>
+<p>主从全量复制（全同步）<br>当从节点首次连接主节点或主从数据严重不一致时，主节点会执行一次 RDB 快照，并将 RDB 文件发送给从节点用于初始化。此时即使未启用 SAVE 规则，也会触发 RDB 生成。<br>执行 SHUTDOWN 命令<br>若启用了 RDB（默认开启），Redis 在正常关闭（非 crash）时会执行一次 RDB 持久化以保存最新状态再退出。</p>
+<h2 id="AOF重写"><a href="#AOF重写" class="headerlink" title="AOF重写"></a>AOF重写</h2><p>✅ <strong>步骤 1：触发重写条件（自动&#x2F;手动）</strong></p>
+<table>
+<thead>
+<tr>
+<th>触发方式</th>
+<th>配置参数</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>自动触发</strong></td>
+<td><code>auto-aof-rewrite-min-size 64mb</code> <code>auto-aof-rewrite-percentage 100</code></td>
+<td>AOF &gt; 64MB 且 比上次重写后大 100%</td>
+<td>例如：上次重写后 AOF&#x3D;50MB，当前&#x3D;100MB → 触发</td>
+</tr>
+<tr>
+<td><strong>手动触发</strong></td>
+<td><code>BGREWRITEAOF</code></td>
+<td><code>redis-cli BGREWRITEAOF</code></td>
+<td>无延迟，立即执行</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>为什么这样设计</strong>？<br> 避免频繁重写（如 AOF 1MB 时重写无意义），只在文件膨胀到<strong>合理阈值</strong>时触发。</p>
+</blockquote>
+<p>✅ <strong>步骤 2：fork 子进程（关键！）</strong></p>
+<ul>
+<li><strong>操作</strong>：Redis 主进程 <code>fork()</code> 一个子进程（类似 RDB 快照）</li>
+<li>为什么用子进程？<ul>
+<li><strong>不阻塞主线程</strong>：子进程遍历内存时，主线程继续处理请求</li>
+<li><strong>内存快照</strong>：子进程获得<strong>当前内存数据的副本</strong>（fork 时的快照）</li>
+</ul>
+</li>
+<li><strong>代价</strong>：<code>fork()</code> 耗时（与内存大小正相关，1GB 内存约 10ms）</li>
+</ul>
+<blockquote>
+<p>💡 <strong>面试官深度问</strong>：为什么不用主线程重写？ <strong>答</strong>：<br> “主线程重写会<strong>阻塞所有客户端请求</strong>！例如遍历 100 万 key 需 100ms，用户会感知卡顿。<br> <strong>子进程方案保证 Redis 高可用</strong>——这是 Redis 为性能牺牲的工程智慧。”</p>
+</blockquote>
+<p>✅ <strong>步骤 3：子进程生成新 AOF 文件（核心！）</strong></p>
+<ul>
+<li>操作：子进程遍历当前内存中的所有 key，为每个 key 生成最少命令</li>
+<li>关键优化：<ul>
+<li><strong>只保留最新值</strong>：<code>SET key 1</code> → <code>SET key 2</code> → <strong>只保留 <code>SET key 2</code></strong></li>
+<li><strong>合并命令</strong>：<code>HSET user:1000 name Alice</code> + <code>HSET user:1000 age 25</code> → <strong>保留两条命令</strong>（无法合并）</li>
+<li><strong>跳过过期 key</strong>：不生成已过期 key 的命令</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>💡 <strong>为什么能压缩</strong>？<br> 例如：</p>
+<ul>
+<li>原 AOF：<code>SET a 1</code> <code>SET a 2</code> <code>SET a 3</code> … <code>SET a 1000</code></li>
+<li>重写后：<code>SET a 1000</code>（仅 1 条命令！）<br><strong>压缩率 99.9%+</strong>（小数据集压缩率 90%+，大数据集 95%+）</li>
+</ul>
+</blockquote>
+<p>✅ <strong>步骤 4：主进程处理重写缓冲区（数据安全！）</strong></p>
+<ul>
+<li><strong>问题</strong>：子进程重写期间，主线程继续处理新命令（如 <code>SET a 1001</code>）</li>
+<li>解决方案：<ul>
+<li>主线程将新命令<strong>追加到 <code>aof_rewrite_buffer</code></strong>（内存缓冲区）</li>
+<li>重写完成后，<strong>将 <code>aof_rewrite_buffer</code> 追加到新 AOF 文件</strong></li>
+</ul>
+</li>
+<li>为什么安全？<ul>
+<li>重写期间的命令被<strong>完整记录</strong>，不会丢失</li>
+<li>新 AOF 文件 &#x3D; <strong>重写文件 + 重写期间的新命令</strong></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>💡 <strong>面试官终极问</strong>：如果重写过程中 Redis 崩溃，数据会丢失吗？ <strong>答</strong>：<br> “<strong>不会丢失</strong>！因为：</p>
+<ol>
+<li>重写文件保存了<strong>当前数据</strong></li>
+<li>重写缓冲区保存了<strong>重写期间的增量</strong></li>
+<li>恢复时，Redis 先加载新 AOF 文件，再重放缓冲区命令<br><em>（这是 Redis 持久性的核心保障！）”</em></li>
+</ol>
+</blockquote>
+<h3 id="Q1：为什么-Redis-不像-MySQL-一样先写日志再执行命令？"><a href="#Q1：为什么-Redis-不像-MySQL-一样先写日志再执行命令？" class="headerlink" title="Q1：为什么 Redis 不像 MySQL 一样先写日志再执行命令？"></a>Q1：为什么 Redis 不像 MySQL 一样先写日志再执行命令？</h3><p><strong>答</strong>：</p>
+<blockquote>
+<p>“因为 <strong>Redis 的定位是 ‘内存缓存’，不是 ‘数据库’</strong>：</p>
+<ul>
+<li>MySQL 为 ACID 事务设计，<strong>必须先写日志</strong>（强一致性）</li>
+<li>Redis 为 <strong>高吞吐量</strong> 设计，<strong>先执行命令再写日志</strong>（性能优先）<br><em>（Redis 官方文档： ‘Redis 是内存数据库，速度是第一优先级’）”</em></li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="Q2：如果我用-everysec-配置，崩溃时丢失-1-秒数据，怎么避免？"><a href="#Q2：如果我用-everysec-配置，崩溃时丢失-1-秒数据，怎么避免？" class="headerlink" title="Q2：如果我用 everysec 配置，崩溃时丢失 1 秒数据，怎么避免？"></a>Q2：如果我用 <code>everysec</code> 配置，崩溃时丢失 1 秒数据，怎么避免？</h3><p><strong>答</strong>：</p>
+<blockquote>
+<p>“<strong>有三种方案</strong>：</p>
+<ol>
+<li><strong>升级配置</strong>：用 <code>appendfsync always</code>（但 QPS 会暴跌）</li>
+<li><strong>业务补偿</strong>：在应用层记录关键操作（如订单状态）</li>
+<li><strong>混合持久化</strong>：Redis 4.0+ 支持 <strong>AOF + RDB 混合</strong>（默认 RDB 为主，AOF 为辅）<br><em>（最佳实践：99% 场景用默认 <code>everysec</code>，仅关键业务用 <code>always</code>）”</em></li>
+</ol>
+</blockquote>
+<h1 id="如何进行恢复"><a href="#如何进行恢复" class="headerlink" title="如何进行恢复"></a>如何进行恢复</h1><p>Redis 启动时如何选择 RDB 还是 AOF？</p>
+<p>如果 同时开启了 RDB 和 AOF：<br>优先使用 AOF 恢复（因为 AOF 数据更新）；<br>加载 appendonly.aof 并执行所有命令。AOF恢复从磁盘中加载AOF文件到Redis进程的内存缓冲区；逐行解析AOF文件中的命令,将字节流还原成一条一条Redis命令；按顺序在内存中重新执行命令.</p>
+<p>如果只启用了 AOF：加载 AOF；<br>如果只启用了 RDB：加载 dump.rdb；RDB恢复流程检测RDB文件,若未开启AOF且配置开启RDB(默认),指定路径下扫描是否存在RDB文件,自动加载该文件按Redis定义的RDB二进制协议解析文件,先确保文件未损坏再还原数据.<br>如果都未开启：启动空数据库。</p>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/redis/" class="print-no-link">#redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>31redis事务和日志</div>
+      <div>http://example.com/2025/11/19/31redis事务和日志/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/20/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/" title="32淘汰和集群">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">32淘汰和集群</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/19/30redis%E5%9F%BA%E7%A1%80/" title="30redis基础">
+                        <span class="hidden-mobile">30redis基础</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

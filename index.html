@@ -227,6 +227,305 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/11/20/33redis%E5%9C%BA%E6%99%AF%E9%A2%98%E7%9B%AE/" target="_self">
+          33redis场景题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/20/33redis%E5%9C%BA%E6%99%AF%E9%A2%98%E7%9B%AE/" target="_self">
+        <div>
+          redis应用场景是什么？Redis 是一种基于内存的数据库，对数据的读写操作都是在内存中完成，因此读写速度非常快，常用于缓存，消息队列、分布式锁等场景。  缓存: Redis最常见的用途就是作为缓存系统。通过将热门数据存储在内存中，可以极大地提高访问速度，减轻数据库负载，这对于需要快速响应时间的应用程序非常重要。 排行榜: Redis的有序集合结构非常适合用于实现排行榜和排名系统，可以方便地进行
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-20 16:07" pubdate>
+              2025-11-20
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/20/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/" target="_self">
+          32淘汰和集群
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/20/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/" target="_self">
+        <div>
+          缓存淘汰和过期删除过期删除策略和内存淘汰策略有什么区别？区别：  内存淘汰策略是在内存满了的时候，redis 会触发内存淘汰策略，来淘汰一些不必要的内存资源，以腾出空间，来保存新的内容 过期键删除策略是将已过期的键值对进行删除，Redis 采用的删除策略是惰性删除+定期删除。  内存淘汰策略 介绍一下Redis过期删除策略Redis采用惰性删除+定期删除的组合策略,核心目标是在合理消耗CPU资源和
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-20 14:07" pubdate>
+              2025-11-20
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/" target="_self">
+          31redis事务和日志
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/" target="_self">
+        <div>
+          事务Redis事务保证原子性吗,如何实现Redis原子性 (1)Redis事务保证原子性吗Redis事务不像MySQL那样的关系型数据库事务那样拥有事务回滚操作当Redis事务的所有命令都成功执行后才能保证原子性,若某一命令失败,则下一命令仍会继续执行.(2)Redis如何实现原子性背景引入Redis内核是单线程,按发送顺序执行,天然地命令串行,不会又并发安全问题.Redis能保证同一客户端地命令
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-19 16:07" pubdate>
+              2025-11-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/19/30redis%E5%9F%BA%E7%A1%80/" target="_self">
+          30redis基础
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/19/30redis%E5%9F%BA%E7%A1%80/" target="_self">
+        <div>
+          redisRedis为什么这么快(1)纯内存操作这是最最主要的原因Redis数据读写操作发生在内存中,访问速度是纳秒级别,而数据库频繁读写磁盘的速度是毫秒级别,两者相差多个数量级. (2)高效的IO模型Redis使用单线程事件循环配合IO多路复用技术,让单线程可以同时处理多个网络连接上的IO事件,避免了多线程模型中的上下文切换和锁竞争问题. 事件循环:无限循环,不断轮询并处理就绪的事件,直到Red
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-19 09:07" pubdate>
+              2025-11-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/18/6/" target="_self">
+          
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/6/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-18 14:18" pubdate>
+              2025-11-18
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/18/8/" target="_self">
+          
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/8/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-18 14:18" pubdate>
+              2025-11-18
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/18/9/" target="_self">
+          
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/9/" target="_self">
+        <div>
+          
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-18 14:18" pubdate>
+              2025-11-18
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/17/208-Trie%E6%A0%91/" target="_self">
+          208-Trie树
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/17/208-Trie%E6%A0%91/" target="_self">
+        <div>
+          123456789101112131415161718192021222324252627282930313233343536373839404142434445464748class Trie &#123;    static class Node&#123;        boolean end =false;        Node []son =new Node[26];    &#125
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-17 20:58" pubdate>
+              2025-11-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/leetcode/">#leetcode</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/" target="_self">
           23Mysql事务和锁
         </a>
@@ -235,7 +534,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2025/11/16/23Mysql%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81/" target="_self">
         <div>
-          3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。在程序开发中会存在多线程同步的问题，当多个线程并发访问某一个数据的时候，尤其针对一些敏感的数据(比如订单、金额等)，我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要
+          3 MySQL锁事务的 隔离性 由这章讲述的 锁 来实现。 3.1 锁概述锁是计算机协调多个进程或者线程并发访问某一个资源的机制。我们就需要保证这个数据在任何时刻最多只有一个线程在访问，保证数据的完整性和一致性。在开发过程中加锁是为了保证数据的一致性，这个思想在数据库领域中同样很重要。 在数据库中，除传统的计算资源（如CPU、RAM、I&#x2F;O等）的争用以外，数据也是一种供许多用户共享的资源
         </div>
       </a>
 
@@ -301,331 +600,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
-          21索引优化
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" target="_self">
-        <div>
-          索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-15 22:07" pubdate>
-              2025-11-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Mysql/">#Mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/15/20Mysql%E6%9E%B6%E6%9E%84%E5%92%8C%E7%B4%A2%E5%BC%95/" target="_self">
-          20Mysql架构和索引
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/20Mysql%E6%9E%B6%E6%9E%84%E5%92%8C%E7%B4%A2%E5%BC%95/" target="_self">
-        <div>
-          MySQL逻辑架构和其它数据库相比，MySQL有点与众不同，它的架构可以在多种不同场景中应用，并发挥良好作用。主要体现在存储引擎的架构上，插件式的存储引擎架构将查询处理和其它的系统任务以及数据的存储提取相分离。这种架构可以根据业务的需求和实际需要选择合适的存储引擎。   连接层 最上层是一些客户端和连接服务，包含本地socket通信和大多数基于客户端&#x2F;服务端工具实现的类似于tcp&#x2
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-15 21:07" pubdate>
-              2025-11-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Mysql/">#Mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
-          13对象内存和反射
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
-        <div>
-          a对象如何存储 HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 Java栈中的reference存储的是指向堆中的对象的地址 类元数据 对象类型数据：存储类的元数据（如类的结构、方法、字段等信息）。  简单来说：元数据是”类的说明书”，告诉JVM”这个类长什么样、有什么方法、有什么字段”。  类的元数据包含哪些内容？（核心组成）   元数据类型 说明 示例
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-15 11:07" pubdate>
-              2025-11-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/12%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" target="_self">
-          12垃圾回收器
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/12%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" target="_self">
-        <div>
-          垃圾收集器如果说收集算法是内存回收的方法论，垃圾收集器就是内存回收的具体实现 在以下要分析收集器的时候，会涉及到并行，串行，并发的概念，做如下解释： 并行（Parallel）：指多条垃圾回收线程并行工作，但此时用户线程仍然处于等待状态 串行（serial）：相较于并行的概念而言，它是单线程执行，如果内存不够，则程序暂停，启动jvm垃圾回收器进行垃圾回收，回收完，再启动程序的线程 并发（concur
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 23:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/11%E5%A0%86/" target="_self">
-          11堆
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/11%E5%A0%86/" target="_self">
-        <div>
-          堆堆、栈、方法区的关系：  HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 堆空间概述Java栈中的reference存储的是指向堆中的对象的地址  一个Java程序运行起来对应一个进程，一个进程对应一个JVM实例，一个JVM实例中有一个运行时数据区，一个运行时数据区中只存在一个堆内存和一个方法区。  一个进程中可以包含多个线程，因此堆内存和方法区是线程共享的。堆
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 15:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8%E5%92%8C%E6%A0%88/" target="_self">
-          10JVM入门和栈
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/10JVM%E5%85%A5%E9%97%A8%E5%92%8C%E6%A0%88/" target="_self">
-        <div>
-          JVM入门JVM 是 Java Virtual Machine 的缩写，它是一个虚构出来的计算机，一种规范。通过在实际的计算机上仿真模拟各类计算机功能实现。。。。可以看作是 Java 程序执行的环境，它隐藏了底层操作系统和硬件的复杂性，提供了一个统一、稳定和安全的运行平台。 JVM 大致可以划分为三个部门，分别是类加载器（Class Loader）、运行时数据区（Runtime Data Area
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 14:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
-          06并发工具等
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/06%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%AD%89/" target="_self">
-        <div>
-          
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 13:09" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JUC/">#JUC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
-          05原子类和Unsafe
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/05%E5%8E%9F%E5%AD%90%E7%B1%BB%E5%92%8CUnsafe/" target="_self">
-        <div>
-          AtomicJava 中的 java.util.concurrent.atomic 包提供了一系列类，这些类支持原子操作（即线程安全而无需同步）在单个变量上，这大大减少了并发编程的复杂性。 原子操作类主要有这些：  原子操作的基本数据类型：AtomicBoolean、AtomicInteger、AtomicLong； 原子操作的数组类型：AtomicIntegerArray、AtomicLongA
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 13:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JUC/">#JUC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#board">6</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
