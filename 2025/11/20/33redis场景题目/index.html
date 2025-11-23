@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://example.com/img/1719903580960-2490c9c0-616b-4b11-a290-4891c2d7511a.png">
 <meta property="og:image" content="http://example.com/img/image-20251120233155787.png">
 <meta property="article:published_time" content="2025-11-20T08:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-21T02:47:17.134Z">
+<meta property="article:modified_time" content="2025-11-23T13:10:41.779Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          4.5k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          22 分钟
+          38 分钟
         
       </span>
     
@@ -329,6 +329,9 @@
 <li>主从同步延迟。当Redis实例配置了主从同步时，大Key可能导致主从同步延迟。由于大Key占用较多内存，同步过程中需要传输大量数据，这会导致主从之间的网络传输延迟增加，进而影响数据一致性。</li>
 <li>数据倾斜。在Redis集群模式中，某个数据分片的内存使用率远超其他数据分片，无法使数据分片的内存资源达到均衡。</li>
 </ul>
+<h4 id="如何发现-bigkey？"><a href="#如何发现-bigkey？" class="headerlink" title="[如何发现 bigkey？]"></a>[如何发现 bigkey？]</h4><p><strong>1、使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。</strong></p>
+<p><strong>2、使用 Redis 自带的 SCAN 命令</strong></p>
+<p><strong>3、借助开源工具分析 RDB 文件。</strong></p>
 <h3 id="Redis大key如何解决？"><a href="#Redis大key如何解决？" class="headerlink" title="Redis大key如何解决？"></a>Redis大key如何解决？</h3><ul>
 <li>对大Key进行拆分。例如将含有数万成员的一个HASH Key拆分为多个HASH Key，并确保每个Key的成员数量在合理范围。</li>
 <li>对大Key进行清理。将不适用Redis能力的数据存至其它存储，并在Redis中删除此类数据。注意，要使用异步删除。</li>
@@ -365,7 +368,113 @@
 <p>单增哈希函数,空间剩余值超过阈值误判率会反弹.</p>
 <p>单扩容数组,虽能降误判,但空间利用率大幅下降,内存浪费严重</p>
 <p>唯有k≈ln2*(m&#x2F;n)才能在控制误判和维持空间效率实现平衡</p>
+<h1 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h1><p>在 <code>redis.conf</code> 文件中，我们可以使用 <code>slowlog-log-slower-than</code> 参数设置耗时命令的阈值，并使用 <code>slowlog-max-len</code> 参数设置耗时命令的最大记录条数。</p>
+<p>获取慢查询日志的内容很简单，直接使用 <code>SLOWLOG GET</code> 命令即可。</p>
+<p>慢查询日志中的每个条目都由以下六个值组成：</p>
+<ol>
+<li><strong>唯一 ID</strong>: 日志条目的唯一标识符。</li>
+<li><strong>时间戳 (Timestamp)</strong>: 命令执行完成时的 Unix 时间戳。</li>
+<li><strong>耗时 (Duration)</strong>: 命令执行所花费的时间，单位是<strong>微秒</strong>。</li>
+<li><strong>命令及参数 (Command)</strong>: 执行的具体命令及其参数数组。</li>
+<li><strong>客户端信息 (Client IP:Port)</strong>: 执行命令的客户端地址和端口。</li>
+<li><strong>客户端名称 (Client Name)</strong>: 如果客户端设置了名称 (CLIENT SETNAME)。</li>
+</ol>
 <h1 id="对Redis中的缓存雪崩-缓存击穿-缓存穿透有了解吗-怎么解决"><a href="#对Redis中的缓存雪崩-缓存击穿-缓存穿透有了解吗-怎么解决" class="headerlink" title="对Redis中的缓存雪崩,缓存击穿,缓存穿透有了解吗,怎么解决"></a><strong>对Redis中的缓存雪崩,缓存击穿,缓存穿透有了解吗,怎么解决</strong></h1><p><img src="/./../img/image-20251120233155787.png" srcset="/img/loading.gif" lazyload alt="image-20251120233155787"></p>
+<h2 id="缓存穿透和缓存击穿有什么区别？"><a href="#缓存穿透和缓存击穿有什么区别？" class="headerlink" title="[缓存穿透和缓存击穿有什么区别？]"></a>[缓存穿透和缓存击穿有什么区别？]</h2><p>缓存穿透中，请求的 key 既不存在于缓存中，也不存在于数据库中。</p>
+<p>缓存击穿中，请求的 key 对应的是 <strong>热点数据</strong> ，该数据 <strong>存在于数据库中，但不存在于缓存中（通常是因为缓存中的那份数据已经过期）</strong> 。</p>
+<h1 id="redis的lua脚本"><a href="#redis的lua脚本" class="headerlink" title="redis的lua脚本"></a>redis的lua脚本</h1><p>Redis对Lua脚本的处理由命令执行器与Lua解释器协同完成</p>
+<p>1)Lua解释器:Redis内置,由Lua解释器进行语法校验,通过调用redis.call()接口将Lua函数调用映射为Redis内部命令 </p>
+<p>2)命令执行器:处理原生Redis命令</p>
+<p>3)一个Lua脚本可视为命令执行器的原子执行单元</p>
+<p>(1)脚本加载与语法解析Redis将Lua脚本交给Lua解释器Lua解释器先做适语法校验,确保脚本无语法错误</p>
+<p>(2)命令映射与执行(协同)Lua解释器逐行执行脚本,当执行到redis.call()时Lua解释器暂停脚本执行,将Lua函数映射为Redis命令转发给Redis命令执行器,并将结果返回给Lua解释器Lua解释器恢复执行,用返回值进行&#x3D;&#x3D;判断(</p>
+<p>3)原子性保障Redis执行Lua脚本时,会进入单线程原子模式无论脚本包含多少redis.call调用多少次命令执行器,Redis会阻塞所有其它客户端命令, 直到脚本完全执行完毕,保证了原子性</p>
+<p>缺陷：</p>
+<ul>
+<li>如果 Lua 脚本运行时出错并中途结束，之后的操作不会进行，但是之前已经发生的写操作不会撤销，所以即使使用了 Lua 脚本，也不能实现类似数据库回滚的原子性。</li>
+<li>Redis Cluster 下 Lua 脚本的原子操作也无法保证了，原因同样是无法保证所有的 key 都在同一个 <strong>hash slot（哈希槽）</strong> 上。</li>
+</ul>
+<h1 id="redis阻塞"><a href="#redis阻塞" class="headerlink" title="redis阻塞"></a>redis阻塞</h1><p>1.默认情况下，Redis 默认配置会使用 <code>bgsave</code> 命令。如果手动使用 <code>save</code> 命令生成 RDB 快照文件的话，就会阻塞主线程。</p>
+<ol start="2">
+<li></li>
+</ol>
+<ul>
+<li><code>ZRANGE</code>&#x2F;<code>ZREVRANGE</code>：返回指定 Sorted Set 中指定排名范围内的所有元素。时间复杂度为 O(log(n)+m)，n 为所有元素的数量， m 为返回的元素数量，当 m 和 n 相当大时，O(n) 的时间复杂度更小。</li>
+<li><code>ZREMRANGEBYRANK</code>&#x2F;<code>ZREMRANGEBYSCORE</code>：移除 Sorted Set 中指定排名范围&#x2F;指定 score 范围内的所有元素。时间复杂度为 O(log(n)+m)，n 为所有元素的数量， m 被删除元素的数量，当 m 和 n 相当大时，O(n) 的时间复杂度更小。</li>
+</ul>
+<p>3.aof<strong>为什么是在执行完命令之后记录日志呢？</strong></p>
+<ul>
+<li>避免额外的检查开销，AOF 记录日志不会对命令进行语法检查；</li>
+<li>在命令执行完之后再记录，不会阻塞当前的命令执行\</li>
+</ul>
+<p>当后台线程（ <code>aof_fsync</code> 线程）调用 <code>fsync</code> 函数同步 AOF 文件时，需要等待，直到写入完成。当磁盘压力太大的时候，会导致 <code>fsync</code> 操作发生阻塞，主线程调用 <code>write</code> 函数时也会被阻塞。<code>fsync</code> 完成后，主线程执行 <code>write</code> 才能成功返回。</p>
+<p>4.阻塞就是出现在</p>
+<p>当子线程完成创建新 AOF 文件的工作之后，服务器会将重写缓冲区中的所有内容追加到新 AOF 文件的末尾，使得新的 AOF 文件保存的数据库状态与现有的数据库状态一致。</p>
+<p>的过程中，将缓冲区中新数据写到新文件的过程中会产生<strong>阻塞</strong>。</p>
+<p>5.删除操作的本质是要释放键值对占用的内存空间。</p>
+<p>释放内存只是第一步，为了更加高效地管理内存空间，在应用程序释放内存时，<strong>操作系统需要把释放掉的内存块插入一个空闲内存块的链表</strong>，以便后续进行管理和再分配。这个过程本身需要一定时间，而且会<strong>阻塞</strong>当前释放内存的应用程序。</p>
+<p>所以，如果一下子释放了大量内存，空闲内存块链表操作时间就会增加，相应地就会造成 Redis 主线程的阻塞，如果主线程发生了阻塞，其他所有请求可能都会超时，超时越来越多，会造成 Redis 连接耗尽，产生各种异常。</p>
+<p>删除大 key 时建议采用分批次删除和异步删除的方式进行</p>
+<p>6.Redis 集群可以进行节点的动态扩容缩容，这一过程目前还处于半自动状态，需要人工介入。</p>
+<p>在扩缩容的时候，需要进行数据迁移。而 Redis 为了保证迁移的一致性，迁移所有操作都是同步操作。</p>
+<p>执行迁移时，两端的 Redis 均会进入时长不等的阻塞状态，对于小 Key，该时间可以忽略不计，但如果一旦 Key 的内存使用过大，严重的时候会触发集群内的故障转移，造成不必要的切换。</p>
+<p>7.清空数据库和上面 bigkey 删除也是同样道理，<code>flushdb</code>、<code>flushall</code> 也涉及到删除和释放所有的键值对，也是 Redis 的阻塞点</p>
+<p>8.连接拒绝、网络延迟，网卡软中断等网络问题也可能会导致 Redis 阻塞。</p>
+<p>9。CPU竞争等硬件问题</p>
+<h1 id="ZSCAN"><a href="#ZSCAN" class="headerlink" title="ZSCAN"></a>ZSCAN</h1><h2 id="Cursor分页-vs-ZRANGE：5大核心优势"><a href="#Cursor分页-vs-ZRANGE：5大核心优势" class="headerlink" title="Cursor分页 vs ZRANGE：5大核心优势"></a>Cursor分页 vs ZRANGE：5大核心优势</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>ZRANGE（深分页）</th>
+<th>ZSCAN（Cursor）</th>
+<th>为什么Cursor更优</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. 性能</strong></td>
+<td>offset&#x3D;100万时，需扫描100万行</td>
+<td><strong>始终O(1)时间</strong></td>
+<td><strong>Cursor不依赖offset</strong>，每次只返回固定数量数据</td>
+</tr>
+<tr>
+<td><strong>2. 内存占用</strong></td>
+<td>一次性返回所有数据，内存占用高</td>
+<td><strong>增量返回</strong>，内存占用低</td>
+<td><strong>适合大数据量</strong>（如1000万+记录）</td>
+</tr>
+<tr>
+<td><strong>3. 数据一致性</strong></td>
+<td>无法处理遍历过程中的数据变化</td>
+<td><strong>正确处理变化</strong>（新增&#x2F;删除）</td>
+<td><strong>遍历过程中，新增数据不会被遗漏</strong></td>
+</tr>
+<tr>
+<td><strong>4. 适用场景</strong></td>
+<td>仅适合小offset分页</td>
+<td><strong>完美适合深分页</strong></td>
+<td><strong>Cursor是深分页的’救命稻草’</strong></td>
+</tr>
+<tr>
+<td><strong>5. 代码复杂度</strong></td>
+<td>简单：<code>ZRANGE key offset size</code></td>
+<td>稍复杂：需维护游标</td>
+<td><strong>优化后，代码更简洁</strong></td>
+</tr>
+</tbody></table>
+<h3 id="Q：为什么ZSCAN比ZRANGE更适合深分页？"><a href="#Q：为什么ZSCAN比ZRANGE更适合深分页？" class="headerlink" title="Q：为什么ZSCAN比ZRANGE更适合深分页？"></a>Q：为什么ZSCAN比ZRANGE更适合深分页？</h3><p><strong>A</strong>：</p>
+<blockquote>
+<p>“ZSCAN通过<strong>增量迭代</strong>方式遍历数据，<strong>不依赖offset</strong>，因此<strong>查询时间与offset无关</strong>。<br> 而ZRANGE使用<code>LIMIT offset, size</code>，当offset很大时，<strong>MySQL会扫描offset行</strong>，导致性能随offset指数级下降。<br> <strong>—— ZSCAN是深分页的’救命稻草’，ZRANGE是’定时炸弹’！”</strong> 💣</p>
+</blockquote>
+<h3 id="Q：ZSCAN在遍历过程中，如果数据变化会怎样？"><a href="#Q：ZSCAN在遍历过程中，如果数据变化会怎样？" class="headerlink" title="Q：ZSCAN在遍历过程中，如果数据变化会怎样？"></a>Q：ZSCAN在遍历过程中，如果数据变化会怎样？</h3><p><strong>A</strong>：</p>
+<blockquote>
+<p>“ZSCAN<strong>能正确处理数据变化</strong>：</p>
+<ol>
+<li><strong>新增数据</strong>：如果新增数据的score在当前游标之后，会被包含在后续遍历中</li>
+<li><strong>删除数据</strong>：如果删除的数据在已遍历范围内，会被跳过</li>
+<li><strong>数据变化</strong>：ZSCAN<strong>不会重复返回或遗漏数据</strong><br><strong>—— 这是ZSCAN的核心优势，也是它适合高并发场景的原因！”</strong> ✅</li>
+</ol>
+</blockquote>
+<p>end</p>
 
                 
               </div>
@@ -434,6 +543,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/11/22/100%E5%BF%AB%E7%8C%AB%E7%9F%AD%E5%89%A7/" title="100快猫短剧">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">100快猫短剧</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

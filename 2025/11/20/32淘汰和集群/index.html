@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/img/1755608176574-48655767-e379-45dc-af22-16f66d923ff4.webp">
 <meta property="og:image" content="http://example.com/img/1755622631933-39eeac25-ba87-45a2-9757-0843e29bc4d2.webp">
 <meta property="article:published_time" content="2025-11-20T06:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-20T16:42:42.692Z">
+<meta property="article:modified_time" content="2025-11-21T07:36:31.024Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -368,8 +368,7 @@
 <h3 id="2-高可用设计"><a href="#2-高可用设计" class="headerlink" title="2. 高可用设计"></a>2. 高可用设计</h3><ul>
 <li><p><strong>主从架构</strong>：每个主节点至少有一个从节点，用于数据备份和故障转移</p>
 </li>
-<li><p>去中心化通信</p>
-<p>：通过Gossip协议实现节点间高效、可靠的信息交换</p>
+<li><p>去中心化通信：通过Gossip协议实现节点间高效、可靠的信息交换</p>
 <p>协议内容节点状态:</p>
 <p>节点在线情况,角色</p>
 <p>哈希槽归属:明确哪些节点负责哪些哈希槽</p>
@@ -429,12 +428,10 @@
 <blockquote>
 <p>**”脑裂 &#x3D; 网络分区导致集群分裂，多个节点同时自称主节点 → *<em>数据混乱！*</em> 解决方案：*<em>用多数派原则（Quorum）+ 合理超时*</em>，让 Redis Sentinel&#x2F;Cluster 自动避免脑裂。”**</p>
 </blockquote>
-<p> 二、Redis 如何解决脑裂？（3 个关键配置）</p>
-<h3 id="✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）"><a href="#✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）" class="headerlink" title="✅ 方案 1：Redis Sentinel 的 Quorum（法定人数）（核心！）"></a>✅ 方案 1：Redis Sentinel 的 <strong>Quorum（法定人数）</strong>（核心！）</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs smali"><span class="hljs-comment"># sentinel.conf 配置示例</span><br>sentinel<span class="hljs-built_in"> monitor </span>mymaster 10.0.0.1 6379 2  <span class="hljs-comment"># quorum=2（需2个Sentinel同意）</span><br>sentinel down-after-milliseconds mymaster 30000  <span class="hljs-comment"># 网络延迟阈值（ms）</span><br>sentinel failover-timeout mymaster 180000  <span class="hljs-comment"># 故障转移超时</span><br></code></pre></td></tr></table></figure>
+<h2 id="Redis-如何解决脑裂？（3-个关键配置）"><a href="#Redis-如何解决脑裂？（3-个关键配置）" class="headerlink" title="Redis 如何解决脑裂？（3 个关键配置）"></a>Redis 如何解决脑裂？（3 个关键配置）</h2><h3 id="✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）"><a href="#✅-方案-1：Redis-Sentinel-的-Quorum（法定人数）（核心！）" class="headerlink" title="✅ 方案 1：Redis Sentinel 的 Quorum（法定人数）（核心！）"></a>✅ 方案 1：Redis Sentinel 的 <strong>Quorum（法定人数）</strong>（核心！）</h3><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs smali"><span class="hljs-comment"># sentinel.conf 配置示例</span><br>sentinel<span class="hljs-built_in"> monitor </span>mymaster 10.0.0.1 6379 2  <span class="hljs-comment"># quorum=2（需2个Sentinel同意）</span><br>sentinel down-after-milliseconds mymaster 30000  <span class="hljs-comment"># 网络延迟阈值（ms）</span><br>sentinel failover-timeout mymaster 180000  <span class="hljs-comment"># 故障转移超时</span><br></code></pre></td></tr></table></figure>
 
 <ul>
-<li><p>原理</p>
-<p>：</p>
+<li><p>原理：</p>
 <blockquote>
 <p>“故障转移 <strong>必须获得多数 Sentinel 同意</strong>（如 3 个 Sentinel 中需 2 个同意）→ 网络分区时，少数派 Sentinel 无法触发选举 → <strong>避免脑裂</strong>。”</p>
 </blockquote>
@@ -452,8 +449,7 @@
 <h3 id="✅-方案-2：Redis-Cluster-的-cluster-require-full-coverage（核心！）"><a href="#✅-方案-2：Redis-Cluster-的-cluster-require-full-coverage（核心！）" class="headerlink" title="✅ 方案 2：Redis Cluster 的 cluster-require-full-coverage（核心！）"></a>✅ 方案 2：Redis Cluster 的 <strong><code>cluster-require-full-coverage</code></strong>（核心！）</h3><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-comment"># redis.conf 配置</span><br>cluster-<span class="hljs-built_in">require</span>-full-coverage <span class="hljs-literal">no</span>  <span class="hljs-comment"># 默认值：no（可关闭）</span><br><span class="hljs-comment"># 改为：</span><br>cluster-<span class="hljs-built_in">require</span>-full-coverage <span class="hljs-literal">yes</span>  <span class="hljs-comment"># 强制要求集群完整</span><br></code></pre></td></tr></table></figure>
 
 <ul>
-<li><p>原理</p>
-<p>：</p>
+<li><p>原理：</p>
 <blockquote>
 <p>“当 <strong>节点数 &lt; 总节点数的一半</strong> 时，<strong>集群拒绝服务</strong>（不提供写操作）→ 防止小集群继续工作导致脑裂。”</p>
 </blockquote>

@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/img/02ede02b26c85d797a995abf520e08b5.png">
 <meta property="og:image" content="http://example.com/img/14e547adfd9dfea589e2e0141ff52718.png">
 <meta property="article:published_time" content="2025-11-13T11:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-19T14:07:00.749Z">
+<meta property="article:modified_time" content="2025-11-22T16:54:09.058Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.8k 字
+          5.3k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          41 分钟
+          45 分钟
         
       </span>
     
@@ -332,10 +332,10 @@ else
 <li><strong>value 是强引用</strong>：即使 <code>key</code> 被 GC 回收，<code>value</code> 仍然被 <code>ThreadLocalMap.Entry</code> 强引用存在，无法被 GC 回收。</li>
 </ul>
 <p>当 <code>ThreadLocal</code> 实例失去强引用后，其对应的 value 仍然存在于 <code>ThreadLocalMap</code> 中，因为 <code>Entry</code> 对象强引用了它。如果线程持续存活（例如线程池中的线程），<code>ThreadLocalMap</code> 也会一直存在，导致 key 为 <code>null</code> 的 entry 无法被垃圾回收，即会造成内存泄漏。</p>
-<p>也就是说，内存泄漏的发生需要同时满足两个条件：</p>
+<p><strong>也就是说，内存泄漏的发生需要同时满足两个条件：</strong></p>
 <ol>
-<li><code>ThreadLocal</code> 实例不再被强引用；</li>
-<li>线程持续存活，导致 <code>ThreadLocalMap</code> 长期存在。</li>
+<li><strong><code>ThreadLocal</code> 实例不再被强引用；</strong></li>
+<li>线程持续存活，导致 <code>ThreadLocalMap</code> 长期存在。导致 key 为 <code>null</code> 的 entry 无法被垃圾回收，即会造成内存泄漏。</li>
 </ol>
 <p>虽然 <code>ThreadLocalMap</code> 在 <code>get()</code>, <code>set()</code> 和 <code>remove()</code> 操作时会尝试清理 key 为 null 的 entry，但这种清理机制是被动的，并不完全可靠。</p>
 <h2 id="如何避免内存泄漏的发生？"><a href="#如何避免内存泄漏的发生？" class="headerlink" title="如何避免内存泄漏的发生？"></a><strong>如何避免内存泄漏的发生？</strong></h2><ol>
@@ -398,6 +398,43 @@ else
 <li>这违背了ThreadLocal的设计目标：<strong>只要线程还活着，就应该能获取到存储的值</strong></li>
 <li>例如：<code>String value = tl.get()</code> 可能返回null，即使之前set过</li>
 </ul>
+<hr>
+<h2 id="🔍-为什么必须static？（用生活案例讲透）"><a href="#🔍-为什么必须static？（用生活案例讲透）" class="headerlink" title="🔍 为什么必须static？（用生活案例讲透）"></a>🔍 为什么必须static？（用生活案例讲透）</h2><p>✅ 一句话核心结论（面试必答）</p>
+<blockquote>
+<p><strong>“ThreadLocal实例（如<code>ThreadLocal&lt;String&gt; threadLocal</code>）必须设为static，</strong><br> <strong>因为它是’线程局部变量的管理器’，需要被所有线程共享——</strong><br> <strong>只有static才能保证：</strong><br> <strong>1. 所有线程用同一个’推车池’</strong><br> <strong>2. 避免重复创建对象（内存浪费）</strong><br> <strong>3. 确保线程安全（不互相干扰）！”</strong> 🔑</p>
+</blockquote>
+<h3 id="❌-误区：把ThreadLocal当普通变量"><a href="#❌-误区：把ThreadLocal当普通变量" class="headerlink" title="❌ 误区：把ThreadLocal当普通变量"></a>❌ 误区：把<code>ThreadLocal</code>当普通变量</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserContext</span> &#123;<br>    <span class="hljs-comment">// 错误！非static的ThreadLocal</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-title class_">ThreadLocal</span>&lt;<span class="hljs-title class_">String</span>&gt; user = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocal</span>&lt;&gt;(); <span class="hljs-comment">// 每个UserContext实例独立</span><br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">void</span> <span class="hljs-title function_">setUser</span>(<span class="hljs-params"><span class="hljs-title class_">String</span> name</span>) &#123;<br>        user.<span class="hljs-title function_">set</span>(name); <span class="hljs-comment">// 每个UserContext实例有自己的&#x27;推车&#x27;</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>问题</p>
+<p>：当多个线程共享同一个</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">UserContext</span><br></code></pre></td></tr></table></figure>
+
+<p>实例时：</p>
+<ul>
+<li>线程A：<code>context.setUser(&quot;Tom&quot;)</code> → Tom存入线程A的推车</li>
+<li>线程B：<code>context.setUser(&quot;Jerry&quot;)</code> → Jerry存入<strong>同一个</strong>推车？<br><strong>→ 实际上，因为<code>user</code>是实例变量，线程B的<code>user</code>指向的是</strong><code>context</code>的<strong>另一个推车</strong>！</li>
+</ul>
+</li>
+<li><p><strong>结果</strong>：线程A和B的值互相覆盖，<strong>并发崩溃！</strong></p>
+</li>
+</ul>
+<h3 id="✅-正确做法：ThreadLocal实例必须static"><a href="#✅-正确做法：ThreadLocal实例必须static" class="headerlink" title="✅ 正确做法：ThreadLocal实例必须static"></a>✅ 正确做法：ThreadLocal实例必须static</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserContext</span> &#123;<br>    <span class="hljs-comment">// 正确！static的ThreadLocal（推车池）</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> final <span class="hljs-title class_">ThreadLocal</span>&lt;<span class="hljs-title class_">String</span>&gt; <span class="hljs-variable constant_">USER</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocal</span>&lt;&gt;();<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">void</span> <span class="hljs-title function_">setUser</span>(<span class="hljs-params"><span class="hljs-title class_">String</span> name</span>) &#123;<br>        <span class="hljs-variable constant_">USER</span>.<span class="hljs-title function_">set</span>(name); <span class="hljs-comment">// 所有线程都用同一个推车池</span><br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-title class_">String</span> <span class="hljs-title function_">getUser</span>(<span class="hljs-params"></span>) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-variable constant_">USER</span>.<span class="hljs-title function_">get</span>(); <span class="hljs-comment">// 每个线程取自己的推车</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>运作原理</p>
+<p>：</p>
+<ol>
+<li><code>USER</code>是类级别的<strong>单例</strong>（所有线程共享同一个ThreadLocal对象）。</li>
+<li>线程A调用<code>USER.set(&quot;Tom&quot;)</code> → Tom存入<strong>线程A的槽位</strong>。</li>
+<li>线程B调用<code>USER.set(&quot;Jerry&quot;)</code> → Jerry存入<strong>线程B的槽位</strong>。</li>
+<li><strong>互不干扰</strong>！线程A永远看不到Jerry。</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>💡 <strong>类比</strong>：<br> <strong>“ThreadLocal实例 &#x3D; 便利店的’推车池’（static）</strong><br> <strong>线程 &#x3D; 顾客</strong><br> <strong>值（Tom&#x2F;Jerry）&#x3D; 顾客的购物车内容</strong><br> <strong>—— 推车池固定（static），顾客取车用（set），放回车（get），</strong><br> <strong>谁也抢不到别人的车！”</strong> 🛒</p>
+</blockquote>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>核心原因</strong>：ThreadLocal的key必须是弱引用，是为了确保当外部代码不再需要ThreadLocal实例时，ThreadLocal实例可以被GC回收，避免内存泄漏。</p>
 <p><strong>为什么”tl无法被GC回收”</strong>：因为ThreadLocalMap（属于线程）对ThreadLocal实例的引用是强引用，阻止了GC回收。</p>
 <blockquote>

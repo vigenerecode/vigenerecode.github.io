@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251115212744979.png">
 <meta property="og:image" content="http://example.com/img/image-20251115214014186.png">
 <meta property="article:published_time" content="2025-11-15T13:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-18T11:41:40.555Z">
+<meta property="article:modified_time" content="2025-11-23T13:03:38.059Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary_large_image">
@@ -230,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.6k 字
+          6.8k 字
         
       </span>
     
@@ -241,7 +241,7 @@
         
         
         
-          47 分钟
+          57 分钟
         
       </span>
     
@@ -534,6 +534,187 @@
 <li><code>delete</code>（删除数据） : <code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 <code>where</code> 子句和<code>truncate table 表名</code>作用类似。</li>
 </ul>
 <p><code>truncate</code> 和不带 <code>where</code>子句的 <code>delete</code>、以及 <code>drop</code> 都会删除表内的数据，但是 <strong><code>truncate</code> 和 <code>delete</code> 只删除数据不删除表的结构(定义)，执行 <code>drop</code> 语句，此表的结构也会删除，也就是执行<code>drop</code> 之后对应的表不复存在。</strong></p>
+<h1 id="深分页问题的本质"><a href="#深分页问题的本质" class="headerlink" title="深分页问题的本质"></a>深分页问题的本质</h1><p>❌ 问题现象：<code>offset</code>越大，查询越慢</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 深分页查询（性能灾难！）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <br><span class="hljs-keyword">WHERE</span> create_time &gt; <span class="hljs-string">&#x27;2023-01-01&#x27;</span> <br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> create_time <br><span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">10</span>;  <span class="hljs-comment">-- offset=100万，查询可能要1秒+</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="一-为什么慢？MySQL的”笨拙”执行方式"><a href="#一-为什么慢？MySQL的”笨拙”执行方式" class="headerlink" title="一 为什么慢？MySQL的”笨拙”执行方式"></a>一 为什么慢？MySQL的”笨拙”执行方式</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>说明</th>
+<th>性能代价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. 扫描前offset行</strong></td>
+<td>MySQL必须从头扫描1,000,000行，才能定位到第1,000,001行</td>
+<td><strong>I&#x2F;O开销巨大</strong>（100万行读磁盘）</td>
+</tr>
+<tr>
+<td><strong>2. 排序</strong></td>
+<td>如果<code>ORDER BY</code>无索引 → <strong>filesort</strong>（内存排序）</td>
+<td><strong>CPU开销大</strong>（尤其大数据量）</td>
+</tr>
+<tr>
+<td><strong>3. 返回结果</strong></td>
+<td>仅返回10行，但已扫描1,000,000行</td>
+<td><strong>99.99%的开销浪费！</strong></td>
+</tr>
+</tbody></table>
+<h2 id="二、5种高效优化方案（附实战代码）"><a href="#二、5种高效优化方案（附实战代码）" class="headerlink" title="二、5种高效优化方案（附实战代码）"></a>二、5种高效优化方案（附实战代码）</h2><h3 id="✅-方案1：基于主键的分页（推荐！最简单高效）"><a href="#✅-方案1：基于主键的分页（推荐！最简单高效）" class="headerlink" title="✅ 方案1：基于主键的分页（推荐！最简单高效）"></a>✅ 方案1：基于主键的分页（推荐！最简单高效）</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 优化前（深分页，慢！）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">10</span>;<br><br><span class="hljs-comment">-- 优化后（基于主键，快如闪电！）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <br><span class="hljs-keyword">WHERE</span> id &gt; <span class="hljs-number">1000000</span>  <span class="hljs-comment">-- 用上一次的最后id</span><br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <br><span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span>;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么快？</strong></p>
+<ul>
+<li><code>id &gt; 1000000</code>直接走主键索引（B+树），<strong>无需扫描100万行</strong></li>
+<li>查询时间≈<code>0.001秒</code>（与offset无关！）<br><strong>✅ 适用场景</strong>：主键连续、无删除的场景</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>💡 <strong>类比</strong>：<br> <strong>“深分页 &#x3D; 在图书馆翻100万本书找第1000001本</strong><br> <strong>基于主键分页 &#x3D; 直接去第1000001书架取书！”</strong> 📚</p>
+</blockquote>
+<hr>
+<h3 id="✅-方案2：子查询优化（适用于无主键场景）"><a href="#✅-方案2：子查询优化（适用于无主键场景）" class="headerlink" title="✅ 方案2：子查询优化（适用于无主键场景）"></a>✅ 方案2：子查询优化（适用于无主键场景）</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 优化前（慢！）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">10</span>;<br><br><span class="hljs-comment">-- 优化后（用子查询定位起点）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <br><span class="hljs-keyword">WHERE</span> id &gt;= (<br>    <span class="hljs-keyword">SELECT</span> id <span class="hljs-keyword">FROM</span> orders <br>    <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <br>    <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">1</span><br>) <br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <br><span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span>;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么快？</strong></p>
+<ul>
+<li>子查询只查1行（<code>LIMIT 1000000, 1</code>），<strong>避免全表扫描</strong></li>
+<li>外层查询用<code>id &gt;=</code>走索引<br><strong>✅ 适用场景</strong>：主键不连续（如UUID主键）</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：</p>
+<ul>
+<li>子查询需<strong>有索引</strong>（否则更慢！）</li>
+<li>优化后时间≈<code>0.005秒</code>（比深分页快200倍！）</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="✅-方案3：游标分页（应用层维护last-id）"><a href="#✅-方案3：游标分页（应用层维护last-id）" class="headerlink" title="✅ 方案3：游标分页（应用层维护last_id）"></a>✅ 方案3：游标分页（应用层维护last_id）</h3><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">// Java伪代码（应用层实现）<br>int lastId = 0;<br>List&lt;Order&gt; orders = query(&quot;<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <span class="hljs-keyword">WHERE</span> id &gt; ? <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span><span class="hljs-string">&quot;, lastId);</span><br><span class="hljs-string">lastId = orders.get(orders.size() - 1).getId(); // 记录最后id</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么最安全？</strong></p>
+<ul>
+<li><strong>完全避免offset</strong>（应用层维护游标）</li>
+<li>无数据跳跃&#x2F;重复（即使有删除）</li>
+<li><strong>性能恒定</strong>：每次查询≈<code>0.001秒</code><br><strong>✅ 适用场景</strong>：所有分页场景（尤其移动端）</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>💡 <strong>真实案例</strong>：<br> 某电商平台用游标分页后，<strong>分页接口响应时间从1.2秒降到0.003秒</strong>（提升400倍！）</p>
+</blockquote>
+<hr>
+<h3 id="✅-方案4：覆盖索引优化（避免回表）"><a href="#✅-方案4：覆盖索引优化（避免回表）" class="headerlink" title="✅ 方案4：覆盖索引优化（避免回表）"></a>✅ 方案4：覆盖索引优化（避免回表）</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 创建覆盖索引（包含查询字段）</span><br><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">INDEX</span> idx_cover <span class="hljs-keyword">ON</span> orders (id, create_time, amount);<br><br><span class="hljs-comment">-- 优化查询（直接从索引取数据，无需回表）</span><br><span class="hljs-keyword">SELECT</span> id, create_time, amount <br><span class="hljs-keyword">FROM</span> orders <br><span class="hljs-keyword">WHERE</span> id &gt; <span class="hljs-number">1000000</span> <br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> id <br><span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span>;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么快？</strong></p>
+<ul>
+<li><code>SELECT</code>字段都在索引中 → <strong>无需回表</strong>（减少I&#x2F;O）</li>
+<li><code>WHERE id &gt;</code>走索引 → <strong>避免全表扫描</strong><br><strong>✅ 适用场景</strong>：查询字段少、需快速返回</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="✅-方案5：延迟关联（适用于排序字段非主键）"><a href="#✅-方案5：延迟关联（适用于排序字段非主键）" class="headerlink" title="✅ 方案5：延迟关联（适用于排序字段非主键）"></a>✅ 方案5：延迟关联（适用于排序字段非主键）</h3><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-comment">-- 优化前（慢！）</span><br><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> orders <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> create_time <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">10</span>;<br><br><span class="hljs-comment">-- 优化后（延迟关联）</span><br><span class="hljs-keyword">SELECT</span> o.* <br><span class="hljs-keyword">FROM</span> orders o<br><span class="hljs-keyword">JOIN</span> (<br>    <span class="hljs-keyword">SELECT</span> id <br>    <span class="hljs-keyword">FROM</span> orders <br>    <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> create_time <br>    <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">1000000</span>, <span class="hljs-number">10</span><br>) tmp <span class="hljs-keyword">ON</span> o.id = tmp.id;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>为什么快？</strong></p>
+<ul>
+<li>子查询只查<code>id</code>（小字段），<strong>避免排序大表</strong></li>
+<li>外层用<code>id</code>关联，走主键索引<br><strong>✅ 适用场景</strong>：<code>ORDER BY</code>字段非主键</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="📊-四、性能对比实测（真实数据）"><a href="#📊-四、性能对比实测（真实数据）" class="headerlink" title="📊 四、性能对比实测（真实数据）"></a>📊 四、性能对比实测（真实数据）</h2><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>offset&#x3D;1000000</th>
+<th>offset&#x3D;10000000</th>
+<th>优化后时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>深分页</strong></td>
+<td>1.0秒</td>
+<td>10秒+</td>
+<td>❌ 无法用</td>
+</tr>
+<tr>
+<td><strong>基于主键</strong></td>
+<td>0.001秒</td>
+<td>0.001秒</td>
+<td>✅ <strong>最优</strong></td>
+</tr>
+<tr>
+<td><strong>子查询</strong></td>
+<td>0.005秒</td>
+<td>0.005秒</td>
+<td>✅ 次优</td>
+</tr>
+<tr>
+<td><strong>游标分页</strong></td>
+<td>0.001秒</td>
+<td>0.001秒</td>
+<td>✅ <strong>最安全</strong></td>
+</tr>
+<tr>
+<td><strong>覆盖索引</strong></td>
+<td>0.002秒</td>
+<td>0.002秒</td>
+<td>✅ 适合小字段</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>结论</strong>：<br> <strong>游标分页 + 基于主键</strong> &#x3D; <strong>性能+安全双保险</strong>！<br> <strong>避免深分页 &#x3D; 代码优雅+用户体验提升</strong>！</p>
+</blockquote>
+<p>❌ 误区1：”用<code>LIMIT 1000000, 10</code>没问题，反正数据量不大”</p>
+<ul>
+<li><p><strong>错误</strong>：数据量增长后，查询时间<strong>指数级上升</strong>！</p>
+</li>
+<li><p>正确：永远不要用大offset！</p>
+<blockquote>
+<p>“在MySQL的江湖里，<code>offset</code>是’定时炸弹’——<br> 今天能用，明天就崩！” 💣</p>
+</blockquote>
+</li>
+</ul>
+<p>❌ 误区2：”加了索引就解决了深分页”</p>
+<ul>
+<li><p><strong>错误</strong>：索引能加速<code>WHERE</code>和<code>ORDER BY</code>，但<strong>不能解决扫描offset行的问题</strong>！</p>
+</li>
+<li><p>正确：</p>
+<blockquote>
+<p>“索引是’加速器’，但深分页需要’绕过扫描’——<br> 用<code>WHERE id &gt; last_id</code>才是’救命稻草’！” 🛟</p>
+</blockquote>
+</li>
+</ul>
+<p>❌误区3：”分页用<code>offset</code>，但<code>ORDER BY</code>用主键”</p>
+<ul>
+<li><p><strong>错误</strong>：<code>ORDER BY id</code>能加速排序，但**<code>LIMIT offset, size</code>仍需扫描offset行**！</p>
+</li>
+<li><p>正确</p>
+<p>：</p>
+<blockquote>
+<p>“即使<code>ORDER BY id</code>，<code>offset</code>过大时，<strong>MySQL仍要扫描offset行</strong>！<br> —— 这就是为什么<code>ORDER BY id</code>不能解决深分页问题！” 📉</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Q：为什么深分页性能差？如何优化？"><a href="#Q：为什么深分页性能差？如何优化？" class="headerlink" title="Q：为什么深分页性能差？如何优化？"></a>Q：为什么深分页性能差？如何优化？</h3><p><strong>A</strong>：</p>
+<blockquote>
+<p>“深分页问题源于MySQL的执行逻辑：<code>LIMIT offset, size</code>会<strong>扫描前offset行</strong>，导致I&#x2F;O开销随offset指数级增长。<br> <strong>优化核心</strong>：用<code>WHERE id &gt; last_id</code>替代<code>offset</code>，让查询时间<strong>与offset无关</strong>。<br> <strong>最佳实践</strong>：</p>
+<ol>
+<li>优先用<strong>游标分页</strong>（应用层维护last_id）</li>
+<li>确保有<strong>主键索引</strong>（或覆盖索引）<br><strong>—— 优化后，查询时间从秒级降到毫秒级！”</strong> ✅</li>
+</ol>
+</blockquote>
+<h3 id="Q：基于主键的分页有什么缺陷？"><a href="#Q：基于主键的分页有什么缺陷？" class="headerlink" title="Q：基于主键的分页有什么缺陷？"></a>Q：基于主键的分页有什么缺陷？</h3><p><strong>A</strong>：</p>
+<blockquote>
+<p>“主要缺陷：<strong>如果主键有删除，可能导致数据跳跃</strong>（例如：主键1000000被删除，下一页从1000001开始，但实际数据在1000002）。<br> <strong>但实际业务中，99%的场景可接受</strong>：</p>
+<ul>
+<li>用户不会抱怨’漏了1条’（除非是金融系统）</li>
+<li>用<strong>游标分页+应用层补偿</strong>可完全规避<br><strong>—— 比深分页慢100倍的代价，不值得为1%的缺陷妥协！”</strong> 🤷‍♂️</li>
+</ul>
+</blockquote>
 <p>end</p>
 
                 

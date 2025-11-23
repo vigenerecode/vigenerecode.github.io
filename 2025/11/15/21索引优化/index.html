@@ -19,17 +19,17 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
+    <meta name="description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="21优化">
 <meta property="og:url" content="http://example.com/2025/11/15/21%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划 使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使">
+<meta property="og:description" content="索引优化5.1. 性能分析（explain）很多现象需要在5.5才能演示成功。 5.1.1. explain是什么?模拟优化器查看执行计划使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的性能瓶颈 5.1.2. explain能干什么？ 表的读取顺序  那些索引可以使用  数据读取操作的操作类型  那些索引被实际使用">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/image-20251115214304209.png">
 <meta property="og:image" content="http://example.com/img/image-20251115232116929.png">
 <meta property="article:published_time" content="2025-11-15T14:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-17T13:44:43.355Z">
+<meta property="article:modified_time" content="2025-11-22T03:28:02.115Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary_large_image">
@@ -280,8 +280,7 @@
               <div class="markdown-body">
                 
                 <h1 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h1><h2 id="5-1-性能分析（explain）"><a href="#5-1-性能分析（explain）" class="headerlink" title="5.1. 性能分析（explain）"></a>5.1. 性能分析（explain）</h2><p>很多现象需要在5.5才能演示成功。</p>
-<h3 id="5-1-1-explain是什么"><a href="#5-1-1-explain是什么" class="headerlink" title="5.1.1. explain是什么?"></a>5.1.1. explain是什么?</h3><p><strong>模拟优化器查看执行计划</strong></p>
-<p>使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的<strong>性能瓶颈</strong></p>
+<h3 id="5-1-1-explain是什么"><a href="#5-1-1-explain是什么" class="headerlink" title="5.1.1. explain是什么?"></a>5.1.1. explain是什么?</h3><h3 id="模拟优化器查看执行计划"><a href="#模拟优化器查看执行计划" class="headerlink" title="模拟优化器查看执行计划"></a><strong>模拟优化器查看执行计划</strong></h3><p>使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是表结构的<strong>性能瓶颈</strong></p>
 <h3 id="5-1-2-explain能干什么？"><a href="#5-1-2-explain能干什么？" class="headerlink" title="5.1.2. explain能干什么？"></a>5.1.2. explain能干什么？</h3><ul>
 <li><p><font color='red'>表的读取顺序</font></p>
 </li>
