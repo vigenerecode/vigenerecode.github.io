@@ -1,0 +1,870 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Java集合基础 概念#数组与集合区别，用过哪些？数组和集合的区别：  数组是固定长度的数据结构，一旦创建长度就无法改变，而集合是动态长度的数据结构，可以根据需要动态增加或减少元素。 数组可以包含基本数据类型和对象，而集合只能包含对象。 数组可以直接访问元素，而集合需要通过迭代器或其他方法访问元素。  Java中的线程安全的集合是什么？在 java.util 包中的线程安全的类主要 2 个，其他都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="42Java集合基础">
+<meta property="og:url" content="http://example.com/2025/11/22/42Java%E9%9B%86%E5%90%88%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="Java集合基础 概念#数组与集合区别，用过哪些？数组和集合的区别：  数组是固定长度的数据结构，一旦创建长度就无法改变，而集合是动态长度的数据结构，可以根据需要动态增加或减少元素。 数组可以包含基本数据类型和对象，而集合只能包含对象。 数组可以直接访问元素，而集合需要通过迭代器或其他方法访问元素。  Java中的线程安全的集合是什么？在 java.util 包中的线程安全的类主要 2 个，其他都">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/1717481094793-b8ffe6ae-2ee6-4de5-b61b-8468e32bf269.webp">
+<meta property="og:image" content="http://example.com/img/1720684054342-1e3cb2a9-532e-40b8-b5cf-0043811391dc.png">
+<meta property="og:image" content="http://example.com/img/1720685862193-66a32b79-ddf0-46d5-87df-d2fc2b3d87cb.png">
+<meta property="og:image" content="http://example.com/img/1713514753772-9467a399-6b18-4a47-89d4-957adcc53cc0.webp">
+<meta property="og:image" content="http://example.com/img/1713514753786-cdca10bf-6eda-47f9-9bbe-0cc3beb67d76.webp">
+<meta property="og:image" content="http://example.com/img/1713514753885-d1529537-322c-49b1-beec-5d9953da5150.webp">
+<meta property="og:image" content="http://example.com/img/1719982934770-8587cb0a-6e1d-4007-9a22-bc1e41276491.png">
+<meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-25T13:21:36.645Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="Java集合">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/1717481094793-b8ffe6ae-2ee6-4de5-b61b-8468e32bf269.webp">
+  
+  
+  
+  <title>42Java集合基础 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="42Java集合基础"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-22 11:07" pubdate>
+          2025年11月22日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          41 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">42Java集合基础</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Java集合基础"><a href="#Java集合基础" class="headerlink" title="Java集合基础"></a>Java集合基础</h1><p><img src="/./../img/1717481094793-b8ffe6ae-2ee6-4de5-b61b-8468e32bf269.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="数组与集合区别，用过哪些？"><a href="#数组与集合区别，用过哪些？" class="headerlink" title="#数组与集合区别，用过哪些？"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/interview/collections.html#%E6%95%B0%E7%BB%84%E4%B8%8E%E9%9B%86%E5%90%88%E5%8C%BA%E5%88%AB-%E7%94%A8%E8%BF%87%E5%93%AA%E4%BA%9B">#</a>数组与集合区别，用过哪些？</h3><p>数组和集合的区别：</p>
+<ul>
+<li>数组是固定长度的数据结构，一旦创建长度就无法改变，而集合是动态长度的数据结构，可以根据需要动态增加或减少元素。</li>
+<li>数组可以包含基本数据类型和对象，而集合只能包含对象。</li>
+<li>数组可以直接访问元素，而集合需要通过迭代器或其他方法访问元素。</li>
+</ul>
+<h3 id="Java中的线程安全的集合是什么？"><a href="#Java中的线程安全的集合是什么？" class="headerlink" title="Java中的线程安全的集合是什么？"></a>Java中的线程安全的集合是什么？</h3><p>在 java.util 包中的线程安全的类主要 2 个，其他都是非线程安全的。</p>
+<ul>
+<li><strong>Vector</strong>：线程安全的动态数组，其内部方法基本都经过synchronized修饰，如果不需要线程安全，并不建议选择，毕竟同步是有额外开销的。Vector 内部是使用对象数组来保存数据，可以根据需要自动的增加容量，当数组已满时，会创建新的数组，并拷贝原有数组数据。</li>
+<li><strong>Hashtable</strong>：线程安全的哈希表，HashTable 的加锁方法是给每个方法加上 synchronized 关键字，这样锁住的是整个 Table 对象，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用，如果要保证线程安全的哈希表，可以用ConcurrentHashMap。</li>
+</ul>
+<p>java.util.concurrent 包提供的都是线程安全的集合：</p>
+<p>并发Map：</p>
+<ul>
+<li><strong>ConcurrentHashMap</strong>：它与 HashTable 的主要区别是二者加锁粒度的不同，在<strong>JDK1.7</strong>，ConcurrentHashMap加的是分段锁，也就是Segment锁，每个Segment 含有整个 table 的一部分，这样不同分段之间的并发操作就互不影响。在<strong>JDK 1.8</strong> ，它取消了Segment字段，直接在table元素上加锁，实现对每一行进行加锁，进一步减小了并发冲突的概率。对于put操作，如果Key对应的数组元素为null，则通过CAS操作（Compare and Swap）将其设置为当前值。如果Key对应的数组元素（也即链表表头或者树的根元素）不为null，则对该元素使用 synchronized 关键字申请锁，然后进行操作。如果该 put 操作使得当前链表长度超过一定阈值，则将该链表转换为红黑树，从而提高寻址效率。</li>
+<li><strong>ConcurrentSkipListMap</strong>：实现了一个基于SkipList（跳表）算法的可排序的并发集合，SkipList是一种可以在对数预期时间内完成搜索、插入、删除等操作的数据结构，通过维护多个指向其他元素的“跳跃”链接来实现高效查找。</li>
+</ul>
+<p>并发Set：</p>
+<ul>
+<li><strong>ConcurrentSkipListSet</strong>：是线程安全的有序的集合。底层是使用ConcurrentSkipListMap实现。</li>
+<li><strong>CopyOnWriteArraySet</strong>：是线程安全的Set实现，它是线程安全的无序的集合，可以将它理解成线程安全的HashSet。有意思的是，CopyOnWriteArraySet和HashSet虽然都继承于共同的父类AbstractSet；但是，HashSet是通过“散列表”实现的，而CopyOnWriteArraySet则是通过“动态数组(CopyOnWriteArrayList)”实现的，并不是散列表。</li>
+</ul>
+<p>并发List：</p>
+<ul>
+<li><strong>CopyOnWriteArrayList</strong>：它是 ArrayList 的线程安全的变体，其中所有写操作（add，set等）都通过对底层数组进行全新复制来实现，允许存储 null 元素。即当对象进行写操作时，使用了Lock锁做同步处理，内部拷贝了原数组，并在新数组上进行添加操作，最后将新数组替换掉旧数组；若进行的读操作，则直接返回结果，操作过程中不需要进行同步。</li>
+</ul>
+<p>并发 Queue：</p>
+<ul>
+<li><strong>ConcurrentLinkedQueue</strong>：是一个适用于高并发场景下的队列，它通过无锁的方式(CAS)，实现了高并发状态下的高性能。通常，ConcurrentLinkedQueue 的性能要好于 BlockingQueue 。</li>
+<li><strong>BlockingQueue</strong>：与 ConcurrentLinkedQueue 的使用场景不同，BlockingQueue 的主要功能并不是在于提升高并发时的队列性能，而在于简化多线程间的数据共享。BlockingQueue 提供一种读写阻塞等待的机制，即如果消费者速度较快，则 BlockingQueue 则可能被清空，此时消费线程再试图从 BlockingQueue 读取数据时就会被阻塞。反之，如果生产线程较快，则 BlockingQueue 可能会被装满，此时，生产线程再试图向 BlockingQueue 队列装入数据时，便会被阻塞等待。</li>
+</ul>
+<p>并发 Deque：</p>
+<ul>
+<li><strong>LinkedBlockingDeque</strong>：是一个线程安全的双端队列实现。它的内部使用链表结构，每一个节点都维护了一个前驱节点和一个后驱节点。LinkedBlockingDeque 没有进行读写锁的分离，因此同一时间只能有一个线程对其进行操作</li>
+<li><strong>ConcurrentLinkedDeque</strong>：ConcurrentLinkedDeque是一种基于链接节点的无限并发链表。可以安全地并发执行插入、删除和访问操作。当许多线程同时访问一个公共集合时，ConcurrentLinkedDeque是一个合适的选择。</li>
+</ul>
+<h1 id="List"><a href="#List" class="headerlink" title="List"></a>List</h1><h3 id="ArrayList-和-LinkedList-的应用场景？"><a href="#ArrayList-和-LinkedList-的应用场景？" class="headerlink" title="ArrayList 和 LinkedList 的应用场景？"></a>ArrayList 和 LinkedList 的应用场景？</h3><ul>
+<li>ArrayList适用于需要频繁访问集合元素的场景。它基于数组实现，可以通过索引快速访问元素，因此在按索引查找、遍历和随机访问元素的操作上具有较高的性能。当需要频繁访问和遍历集合元素，并且集合大小不经常改变时，推荐使用ArrayList</li>
+<li>LinkedList适用于频繁进行插入和删除操作的场景。它基于链表实现，插入和删除元素的操作只需要调整节点的指针，因此在插入和删除操作上具有较高的性能。当需要频繁进行插入和删除操作，或者集合大小经常改变时，可以考虑使用LinkedList。</li>
+</ul>
+<h3 id="ArrayList的扩容机制说一下"><a href="#ArrayList的扩容机制说一下" class="headerlink" title="ArrayList的扩容机制说一下"></a>ArrayList的扩容机制说一下</h3><p>ArrayList在添加元素时，如果当前元素个数已经达到了内部数组的容量上限，就会触发扩容操作。ArrayList的扩容操作主要包括以下几个步骤：</p>
+<ul>
+<li>计算新的容量：一般情况下，新的容量会扩大为原容量的1.5倍（在JDK 10之后，扩容策略做了调整），然后检查是否超过了最大容量限制。</li>
+<li>创建新的数组：根据计算得到的新容量，创建一个新的更大的数组。</li>
+<li>将元素复制：将原来数组中的元素逐个复制到新数组中。</li>
+<li>更新引用：将ArrayList内部指向原数组的引用指向新数组。</li>
+<li>完成扩容：扩容完成后，可以继续添加新元素。</li>
+</ul>
+<p>ArrayList的扩容操作涉及到数组的复制和内存的重新分配，所以在频繁添加大量元素时，扩容操作可能会影响性能。为了减少扩容带来的性能损耗，可以在初始化ArrayList时预分配足够大的容量，避免频繁触发扩容操作。</p>
+<h1 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h1><h3 id="了解的哈希冲突解决方法有哪些？"><a href="#了解的哈希冲突解决方法有哪些？" class="headerlink" title="了解的哈希冲突解决方法有哪些？"></a>了解的哈希冲突解决方法有哪些？</h3><ul>
+<li>链接法：使用链表或其他数据结构来存储冲突的键值对，将它们链接在同一个哈希桶中。</li>
+<li>开放寻址法：在哈希表中找到另一个可用的位置来存储冲突的键值对，而不是存储在链表中。常见的开放寻址方法包括线性探测、二次探测和双重散列。</li>
+<li>再哈希法（Rehashing）：当发生冲突时，使用另一个哈希函数再次计算键的哈希值，直到找到一个空槽来存储键值对。</li>
+<li>哈希桶扩容：当哈希冲突过多时，可以动态地扩大哈希桶的数量，重新分配键值对，以减少冲突的概率</li>
+</ul>
+<h3 id="HashMap是线程安全的吗？"><a href="#HashMap是线程安全的吗？" class="headerlink" title="HashMap是线程安全的吗？"></a>HashMap是线程安全的吗？</h3><p>如果要保证线程安全，可以通过这些方法来保证：</p>
+<ul>
+<li>多线程环境可以使用Collections.synchronizedMap同步加锁的方式，还可以使用HashTable，但是同步的方式显然性能不达标，而ConurrentHashMap更适合高并发场景使用。</li>
+<li>ConcurrentHashmap在JDK1.7和1.8的版本改动比较大，1.7使用Segment+HashEntry分段锁的方式实现，1.8则抛弃了Segment，改为使用CAS+synchronized+Node实现，同样也加入了红黑树，避免链表过长导致性能的问题。</li>
+</ul>
+<h3 id="hashmap的put过程介绍一下"><a href="#hashmap的put过程介绍一下" class="headerlink" title="hashmap的put过程介绍一下"></a>hashmap的put过程介绍一下</h3><p><img src="/./../img/1720684054342-1e3cb2a9-532e-40b8-b5cf-0043811391dc.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>HashMap HashMap的put()方法用于向HashMap中添加键值对，当调用HashMap的put()方法时，会按照以下详细流程执行（JDK8 1.8版本）：</p>
+<blockquote>
+<p>第一步：根据要添加的键的哈希码计算在数组中的位置（索引）。</p>
+</blockquote>
+<blockquote>
+<p>第二步：检查该位置是否为空（即没有键值对存在）</p>
+</blockquote>
+<ul>
+<li>如果为空，则直接在该位置创建一个新的Entry对象来存储键值对。将要添加的键值对作为该Entry的键和值，并保存在数组的对应位置。将HashMap的修改次数（modCount）加1，以便在进行迭代时发现并发修改。</li>
+</ul>
+<blockquote>
+<p>第三步：如果该位置已经存在其他键值对，检查该位置的第一个键值对的哈希码和键是否与要添加的键值对相同？</p>
+</blockquote>
+<ul>
+<li>如果相同，则表示找到了相同的键，直接将新的值替换旧的值，完成更新操作。</li>
+</ul>
+<blockquote>
+<p>第四步：如果第一个键值对的哈希码和键不相同，则需要遍历链表或红黑树来查找是否有相同的键：</p>
+</blockquote>
+<p>如果键值对集合是链表结构，从链表的头部开始逐个比较键的哈希码和equals()方法，直到找到相同的键或达到链表末尾。</p>
+<ul>
+<li>如果找到了相同的键，则使用新的值取代旧的值，即更新键对应的值。</li>
+<li>如果没有找到相同的键，则将新的键值对添加到链表的头部。</li>
+</ul>
+<p>如果键值对集合是红黑树结构，在红黑树中使用哈希码和equals()方法进行查找。根据键的哈希码，定位到红黑树中的某个节点，然后逐个比较键，直到找到相同的键或达到红黑树末尾。</p>
+<ul>
+<li>如果找到了相同的键，则使用新的值取代旧的值，即更新键对应的值。</li>
+<li>如果没有找到相同的键，则将新的键值对添加到红黑树中。</li>
+</ul>
+<blockquote>
+<p>第五步：检查链表长度是否达到阈值（默认为8）：</p>
+</blockquote>
+<ul>
+<li>如果链表长度超过阈值，且HashMap的数组长度大于等于64，则会将链表转换为红黑树，以提高查询效率。</li>
+</ul>
+<blockquote>
+<p>第六步：检查负载因子是否超过阈值（默认为0.75）：</p>
+</blockquote>
+<ul>
+<li>如果键值对的数量（size）与数组的长度的比值大于阈值，则需要进行扩容操作。</li>
+</ul>
+<blockquote>
+<p>第七步：扩容操作：</p>
+</blockquote>
+<ul>
+<li>创建一个新的两倍大小的数组。</li>
+<li>将旧数组中的键值对重新计算哈希码并分配到新数组中的位置。</li>
+<li>更新HashMap的数组引用和阈值参数。</li>
+</ul>
+<blockquote>
+<p>第八步：完成添加操作。</p>
+</blockquote>
+<p>此外，HashMap是非线程安全的，如果在多线程环境下使用，需要采取额外的同步措施或使用线程安全的ConcurrentHashMap。</p>
+<h3 id="为什么HashMap要用红黑树而不是平衡二叉树？"><a href="#为什么HashMap要用红黑树而不是平衡二叉树？" class="headerlink" title="为什么HashMap要用红黑树而不是平衡二叉树？"></a>为什么HashMap要用红黑树而不是平衡二叉树？</h3><ul>
+<li>平衡二叉树追求的是一种 <strong>“完全平衡”</strong> 状态：任何结点的左右子树的高度差不会超过 1，优势是树的结点是很平均分配的。这个要求实在是太严了，导致每次进行插入&#x2F;删除节点的时候，几乎都会破坏平衡树的第二个规则，进而我们都需要通过<strong>左旋</strong>和<strong>右旋</strong>来进行调整，使之再次成为一颗符合要求的平衡树。</li>
+<li>红黑树不追求这种完全平衡状态，而是追求一种 <strong>“弱平衡”</strong> 状态：整个树最长路径不会超过最短路径的 2 倍。优势是虽然牺牲了一部分查找的性能效率，但是能够换取一部分维持树平衡状态的成本。与平衡树不同的是，红黑树在插入、删除等操作，<strong>不会像平衡树那样，频繁着破坏红黑树的规则，所以不需要频繁着调整</strong>，这也是我们为什么大多数情况下使用红黑树的原因</li>
+</ul>
+<h3 id="hashmap-key可以为null吗？"><a href="#hashmap-key可以为null吗？" class="headerlink" title="hashmap key可以为null吗？"></a>hashmap key可以为null吗？</h3><p>可以为 null。</p>
+<ul>
+<li>hashMap中使用hash()方法来计算key的哈希值，当key为空时，直接另key的哈希值为0，不走key.hashCode()方法；</li>
+</ul>
+<p><img src="/./../img/1720685862193-66a32b79-ddf0-46d5-87df-d2fc2b3d87cb.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li>hashMap虽然支持key和value为null，但是null作为key只能有一个，null作为value可以有多个；</li>
+<li>因为hashMap中，如果key值一样，那么会覆盖相同key值的value为最新，所以key为null只能有一个。</li>
+</ul>
+<h3 id="重写HashMap的equal和hashcode方法需要注意什么？"><a href="#重写HashMap的equal和hashcode方法需要注意什么？" class="headerlink" title="重写HashMap的equal和hashcode方法需要注意什么？"></a>重写HashMap的equal和hashcode方法需要注意什么？</h3><p>HashMap使用Key对象的hashCode()和equals方法去决定key-value对的索引。当我们试着从HashMap中获取值的时候，这些方法也会被用到。如果这些方法没有被正确地实现，在这种情况下，两个不同Key也许会产生相同的hashCode()和equals()输出，HashMap将会认为它们是相同的，然后覆盖它们，而非把它们存储到不同的地方。</p>
+<p>同样的，所有不允许存储重复数据的集合类都使用hashCode()和equals()去查找重复，所以正确实现它们非常重要。equals()和hashCode()的实现应该遵循以下规则：</p>
+<ul>
+<li>如果o1.equals(o2)，那么o1.hashCode() &#x3D;&#x3D; o2.hashCode()总是为true的。</li>
+<li>如果o1.hashCode() &#x3D;&#x3D; o2.hashCode()，并不意味着o1.equals(o2)会为true。</li>
+</ul>
+<h3 id="重写HashMap的equal方法不当会出现什么问题？"><a href="#重写HashMap的equal方法不当会出现什么问题？" class="headerlink" title="重写HashMap的equal方法不当会出现什么问题？"></a>重写HashMap的equal方法不当会出现什么问题？</h3><p>HashMap在比较元素时，会先通过hashCode进行比较，相同的情况下再通过equals进行比较。</p>
+<p>所以 equals相等的两个对象，hashCode一定相等。hashCode相等的两个对象，equals不一定相等（比如散列冲突的情况）</p>
+<p>重写了equals方法，不重写hashCode方法时，可能会出现equals方法返回为true，而hashCode方法却返回false，这样的一个后果会导致在hashmap等类中存储多个一模一样的对象，导致出现覆盖存储的数据的问题，这与hashmap只能有唯一的key的规范不符合。</p>
+<h3 id="往hashmap存20个元素，会扩容几次？"><a href="#往hashmap存20个元素，会扩容几次？" class="headerlink" title="往hashmap存20个元素，会扩容几次？"></a>往hashmap存20个元素，会扩容几次？</h3><p>当插入 20 个元素时，HashMap 的扩容过程如下：</p>
+<p><strong>初始容量</strong>：16</p>
+<ul>
+<li>插入第 1 到第 12 个元素时，不需要扩容。</li>
+<li>插入第 13 个元素时，达到负载因子限制，需要扩容。此时，HashMap 的容量从 16 扩容到 32。</li>
+</ul>
+<p><strong>扩容后的容量</strong>：32</p>
+<ul>
+<li>插入第 14 到第 24 个元素时，不需要扩容。</li>
+</ul>
+<p>因此，总共会进行一次扩容。</p>
+<h3 id="列举HashMap在多线程下可能会出现的问题？"><a href="#列举HashMap在多线程下可能会出现的问题？" class="headerlink" title="列举HashMap在多线程下可能会出现的问题？"></a>列举HashMap在多线程下可能会出现的问题？</h3><ul>
+<li>JDK1.7中的 HashMap 使用头插法插入元素，在多线程的环境下，扩容的时候有可能导致环形链表的出现，形成死循环。因此，JDK1.8使用尾插法插入元素，在扩容时会保持链表元素原本的顺序，不会出现环形链表的问题。</li>
+<li>多线程同时执行 put 操作，如果计算出来的索引位置是相同的，那会造成前一个 key 被后一个 key 覆盖，从而导致元素的丢失。此问题在JDK 1.7和 JDK 1.8 中都存在。</li>
+</ul>
+<h3 id="HashMap的扩容机制介绍一下"><a href="#HashMap的扩容机制介绍一下" class="headerlink" title="HashMap的扩容机制介绍一下"></a>HashMap的扩容机制介绍一下</h3><p>hashMap默认的负载因子是0.75，即如果hashmap中的元素个数超过了总容量75%，则会触发扩容，扩容分为两个步骤：</p>
+<ul>
+<li><strong>第1步</strong>是对哈希表长度的扩展（2倍）</li>
+<li><strong>第2步</strong>是将旧哈希表中的数据放到新的哈希表中。</li>
+</ul>
+<p>因为我们使用的是2次幂的扩展(指长度扩为原来2倍)，所以，元素的位置要么是在原位置，要么是在原位置再移动2次幂的位置。</p>
+<p>如我们从16扩展为32时，具体的变化如下所示：</p>
+<p><img src="/./../img/1713514753772-9467a399-6b18-4a47-89d4-957adcc53cc0.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：</p>
+<p><img src="/./../img/1713514753786-cdca10bf-6eda-47f9-9bbe-0cc3beb67d76.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了（原有的值相当于是暴露出来了可以使用了），是0的话索引没变，是1的话索引变成“原索引+oldCap”。可以看看下图为16扩充为32的resize示意图：</p>
+<p><img src="/./../img/1713514753885-d1529537-322c-49b1-beec-5d9953da5150.webp" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>这个设计确实非常的巧妙，既省去了重新计算hash值的时间，而且同时，由于新增的1bit是0还是1可以认为是随机的，因此resize的过程，均匀的把之前的冲突的节点分散到新的bucket了。</p>
+<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><h3 id="ConcurrentHashMap用了悲观锁还是乐观锁"><a href="#ConcurrentHashMap用了悲观锁还是乐观锁" class="headerlink" title="ConcurrentHashMap用了悲观锁还是乐观锁?"></a>ConcurrentHashMap用了悲观锁还是乐观锁?</h3><p>悲观锁和乐观锁都有用到。</p>
+<p>添加元素时首先会判断容器是否为空：</p>
+<ul>
+<li>如果为空则使用 volatile 加 <strong>CAS （乐观锁）</strong> 来初始化。</li>
+<li>如果容器不为空，则根据存储的元素计算该位置是否为空。</li>
+<li>如果根据存储的元素计算结果为空，则利用 <strong>CAS（乐观锁）</strong> 设置该节点；</li>
+<li>如果根据存储的元素计算结果不为空，则使用 <strong>synchronized（悲观锁）</strong> ，然后，遍历桶中的数据，并替换或新增节点到桶中，最后再判断是否需要转为红黑树，这样就能保证并发访问时的线程安全了</li>
+</ul>
+<h3 id="HashTable-底层实现原理是什么？"><a href="#HashTable-底层实现原理是什么？" class="headerlink" title="HashTable 底层实现原理是什么？"></a>HashTable 底层实现原理是什么？</h3><p><img src="/./../img/1719982934770-8587cb0a-6e1d-4007-9a22-bc1e41276491.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li>Hashtable的底层数据结构主要是<strong>数组加上链表</strong>，数组是主体，链表是解决hash冲突存在的。</li>
+<li>HashTable是线程安全的，实现方式是<strong>Hashtable的所有公共方法均采用synchronized关键字</strong>，当一个线程访问同步方法，另一个线程也访问的时候，就会陷入阻塞或者轮询的状态。</li>
+</ul>
+<h1 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h1><h3 id="Set集合有什么特点？如何实现key无重复的？"><a href="#Set集合有什么特点？如何实现key无重复的？" class="headerlink" title="Set集合有什么特点？如何实现key无重复的？"></a>Set集合有什么特点？如何实现key无重复的？</h3><ul>
+<li><strong>set集合特点</strong>：Set集合中的元素是唯一的，不会出现重复的元素。</li>
+<li><strong>set实现原理</strong>：Set集合通过内部的数据结构（如哈希表、红黑树等）来实现key的无重复。（插入key，value为一个常量值present）</li>
+</ul>
+<h1 id="初始容量问题"><a href="#初始容量问题" class="headerlink" title="初始容量问题"></a>初始容量问题</h1><table>
+<thead>
+<tr>
+<th>集合类</th>
+<th>无参构造初始容量</th>
+<th>首次添加后容量</th>
+<th>最小允许显式容量</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ArrayList</td>
+<td>0</td>
+<td>10</td>
+<td>0</td>
+<td>Java 8+延迟初始化</td>
+</tr>
+<tr>
+<td>HashMap</td>
+<td>0</td>
+<td>16</td>
+<td>1</td>
+<td>容量总是2的幂</td>
+</tr>
+</tbody></table>
+<ol>
+<li><strong>HashMap容量规则</strong>：<ul>
+<li>容量总是2的幂</li>
+<li>指定容量0会被调整为1</li>
+<li>指定容量1-16都会被调整为16（首次添加元素时）</li>
+<li>实际容量计算：大于等于指定值的最小2的幂</li>
+</ul>
+</li>
+<li><strong>性能影响</strong>：<ul>
+<li>如果已知集合大小，最好在构造时指定合适的初始容量</li>
+<li>避免频繁扩容带来的性能开销</li>
+<li>ArrayList扩容时会增加50%的容量</li>
+<li>HashMap扩容会翻倍容量</li>
+</ul>
+</li>
+</ol>
+<h4 id="Vector-遗留类，线程安全"><a href="#Vector-遗留类，线程安全" class="headerlink" title="Vector (遗留类，线程安全)"></a><strong>Vector</strong> (遗留类，线程安全)</h4><ul>
+<li><strong>无延迟初始化</strong>：构造时立即分配数组</li>
+<li>默认容量10，扩容时翻倍（与ArrayList的1.5倍不同</li>
+</ul>
+<h4 id="PriorityQueue"><a href="#PriorityQueue" class="headerlink" title="PriorityQueue"></a><strong>PriorityQueue</strong></h4><ul>
+<li>无延迟初始化，构造时分配大小为11的数组</li>
+<li>为什么是11？历史原因，与堆数据结构特性有关</li>
+</ul>
+<h4 id="ArrayDeque"><a href="#ArrayDeque" class="headerlink" title="ArrayDeque"></a><strong>ArrayDeque</strong></h4><ul>
+<li>无延迟初始化</li>
+<li>为什么是16？优化循环数组操作，2的幂便于位运算</li>
+</ul>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java%E9%9B%86%E5%90%88/" class="print-no-link">#Java集合</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>42Java集合基础</div>
+      <div>http://example.com/2025/11/22/42Java集合基础/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">41Java对象基础</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/20/33redis%E5%9C%BA%E6%99%AF%E9%A2%98%E7%9B%AE/" title="33redis场景题">
+                        <span class="hidden-mobile">33redis场景题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

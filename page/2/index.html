@@ -227,13 +227,93 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/18/8/" target="_self">
+        <a href="/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/" target="_self">
+          31redis事务和日志
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/19/31redis%E4%BA%8B%E5%8A%A1%E5%92%8C%E6%97%A5%E5%BF%97/" target="_self">
+        <div>
+          事务Redis事务保证原子性吗,如何实现Redis原子性 (1)Redis事务保证原子性吗Redis事务不像MySQL那样的关系型数据库事务那样拥有事务回滚操作当Redis事务的所有命令都成功执行后才能保证原子性,若某一命令失败,则下一命令仍会继续执行.(2)Redis如何实现原子性背景引入Redis内核是单线程,按发送顺序执行,天然地命令串行,不会又并发安全问题.Redis能保证同一客户端地命令
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-19 16:07" pubdate>
+              2025-11-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/19/30redis%E5%9F%BA%E7%A1%80/" target="_self">
+          30redis基础
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/19/30redis%E5%9F%BA%E7%A1%80/" target="_self">
+        <div>
+          redisRedis为什么这么快(1)纯内存操作这是最最主要的原因Redis数据读写操作发生在内存中,访问速度是纳秒级别,而数据库频繁读写磁盘的速度是毫秒级别,两者相差多个数量级. (2)高效的IO模型Redis使用单线程事件循环配合IO多路复用技术,让单线程可以同时处理多个网络连接上的IO事件,避免了多线程模型中的上下文切换和锁竞争问题. 事件循环:无限循环,不断轮询并处理就绪的事件,直到Red
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-19 09:07" pubdate>
+              2025-11-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/redis/">#redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/18/6/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/8/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/6/" target="_self">
         <div>
           
         </div>
@@ -260,13 +340,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/11/18/6/" target="_self">
+        <a href="/2025/11/18/8/" target="_self">
           
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/6/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/18/8/" target="_self">
         <div>
           
         </div>
@@ -513,86 +593,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Mysql/">#Mysql</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
-          13对象内存和反射
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/15/13%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%92%8C%E5%8F%8D%E5%B0%84/" target="_self">
-        <div>
-          a对象如何存储 HotSpot是使用指针的方式来访问对象： Java堆中会存放指向类元数据的地址 Java栈中的reference存储的是指向堆中的对象的地址 类元数据 对象类型数据：存储类的元数据（如类的结构、方法、字段等信息）。  简单来说：元数据是”类的说明书”，告诉JVM”这个类长什么样、有什么方法、有什么字段”。  类的元数据包含哪些内容？（核心组成）   元数据类型 说明 示例
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-15 11:07" pubdate>
-              2025-11-15
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/11/14/12%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" target="_self">
-          12垃圾回收器
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/14/12%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" target="_self">
-        <div>
-          垃圾收集器如果说收集算法是内存回收的方法论，垃圾收集器就是内存回收的具体实现 在以下要分析收集器的时候，会涉及到并行，串行，并发的概念，做如下解释： 并行（Parallel）：指多条垃圾回收线程并行工作，但此时用户线程仍然处于等待状态 串行（serial）：相较于并行的概念而言，它是单线程执行，如果内存不够，则程序暂停，启动jvm垃圾回收器进行垃圾回收，回收完，再启动程序的线程 并发（concur
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-14 23:07" pubdate>
-              2025-11-14
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
             
           </div>
         

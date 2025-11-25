@@ -28,6 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/image-20240725232549832.png">
 <meta property="og:image" content="http://example.com/img/1755344031729-caab8f72-4605-475d-847a-95fe2a16cd19.webp">
+<meta property="og:image" content="http://example.com/img/1baff6929e63428ab4ce6ead35657953.jpeg">
 <meta property="og:image" content="http://example.com/img/1719035634188-584809ba-ea0b-48ff-a547-9ee4d1b4d365.png">
 <meta property="og:image" content="http://example.com/img/1719035634415-c436d60e-58a7-4dfc-9e69-db8e2f96d19c.png">
 <meta property="og:image" content="http://example.com/img/1720432496274-b95e1802-1ecd-4210-a987-733265534c64.png">
@@ -35,7 +36,7 @@
 <meta property="og:image" content="http://example.com/img/1719804939236-89f12a47-b851-4d06-a5f3-399e1119db57.png">
 <meta property="og:image" content="http://example.com/img/1719804939577-56390d43-28b7-4d20-accf-55c79a53142e.png">
 <meta property="article:published_time" content="2025-11-19T01:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-21T04:48:20.649Z">
+<meta property="article:modified_time" content="2025-11-25T01:00:22.748Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -232,7 +233,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.1k 字
+          7.6k 字
         
       </span>
     
@@ -243,7 +244,7 @@
         
         
         
-          60 分钟
+          64 分钟
         
       </span>
     
@@ -493,6 +494,17 @@
 </ul>
 </li>
 </ol>
+<p><img src="/./../img/1baff6929e63428ab4ce6ead35657953.jpeg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h4 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">dict</span>&#123;<br><br><br><br>    dictType *type;<br><br><br><br>    <span class="hljs-type">void</span> *privdata;<br><br><br><br>    dictht ht[<span class="hljs-number">2</span>];<br><br><br><br>    <span class="hljs-type">long</span> rehashidx;<br><br><br><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> iterators;<br><br>&#125; dict;<br></code></pre></td></tr></table></figure>
+
+<p>​    **ht[2]：**表示在一个Dict结构中，包含有两个dictht的结构，也就是我们说的两张哈希表。</p>
+<p>​    **rehashidx：**是dict在rehash时的偏移索引，具体如何工作在后边的rehash过程中会详细讲。</p>
+<h4 id="dictht"><a href="#dictht" class="headerlink" title="dictht"></a>dictht</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">dictht</span>&#123;<br>    dictEntry **table;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> size;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> sizemask;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> used;<br><br>&#125;dictht<br><br></code></pre></td></tr></table></figure>
+
+<p>​     ****table：<strong>指向实际hash存储。存储可以看做是一个数组，所以是*table表示。（源码中的</strong>table是一个二级指针，也就是指向dictEntry*的指针）。</p>
+<p>​    **size：**哈希表的大小。实际就是dictEntry有多少元素空间。</p>
+<p>​    **sizemask：**哈希表大小的掩码表示，总是等于size-1.这个属性和哈希值一起决定一个键应该被放到table数组的哪个索引上面，索引计算规则是index&#x3D;hash&amp;sizemask，前提是size的大小是二次方幂，这一点与JAVA哈希表底层计算索引是一样的原理。</p>
+<p>​    **used：**表示已经使用的节点数量。通过这个字段可以很方便地查询到目前dict元素总量。</p>
 <h3 id="Q1：为什么Redis的Hash在底层用字典（dict）而不是直接用哈希表？"><a href="#Q1：为什么Redis的Hash在底层用字典（dict）而不是直接用哈希表？" class="headerlink" title="Q1：为什么Redis的Hash在底层用字典（dict）而不是直接用哈希表？"></a>Q1：为什么Redis的Hash在底层用字典（dict）而不是直接用哈希表？</h3><p><strong>答</strong>：字典（dict）是Redis对哈希表的<strong>封装</strong>，提供了以下关键能力：</p>
 <ul>
 <li>两个哈希表实现增量式rehash</li>
@@ -534,12 +546,17 @@
 <li>迁移完成后，「哈希表 1 」的空间会被释放，并把「哈希表 2」 设置为「哈希表 1」，然后在「哈希表 2」 新创建一个空白的哈希表，为下次 rehash 做准备。</li>
 </ul>
 <h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>Redis 采用了<strong>渐进式 rehash</strong>，也就是将数据的迁移的工作不再是一次性迁移完成，而是分多次迁移。</p>
-<p>渐进式 rehash 步骤如下：</p>
-<ul>
-<li>给「哈希表 2」 分配空间；</li>
-<li><strong>在 rehash 进行期间，每次哈希表元素进行新增、删除、查找或者更新操作时，Redis 除了会执行对应的操作之外，还会顺序将「哈希表 1 」中索引位置上的所有 key-value 迁移到「哈希表 2」 上</strong>；</li>
-<li>随着处理客户端发起的哈希表操作请求数量越多，最终在某个时间点会把「哈希表 1 」的所有 key-value 迁移到「哈希表 2」，从而完成 rehash 操作。</li>
-</ul>
+<p>举个例子，如果ht[0]中已经使用的节点数量为500，那么扩容时ht[1]被分配的空间是1024而不是1000。这么做是为了维护扩容后表的大小始终是2次方幂。</p>
+<p>实现步骤</p>
+<ol>
+<li><strong>初始化新表与状态变量</strong> Redis 为 <em>ht[1]</em> 分配内存空间，并将 <em>rehashidx</em> 设置为 0，表示迁移开始。</li>
+<li><strong>分批迁移数据</strong> 每次对字典执行增删改查操作时，除了完成用户请求，还会迁移 <em>ht[0]</em> 中 <em>rehashidx</em> 指向的哈希桶到 <em>ht[1]</em>。迁移完成后，<em>rehashidx</em> 加 1。</li>
+<li><strong>主动迁移</strong> 为避免迁移因操作频率低而停滞，Redis 的定时任务会批量迁移多个哈希桶（如一次迁移 100 个）。</li>
+<li><strong>读写操作适配双表</strong> 查询、删除、更新操作会先查找 <em>ht[1]</em>，再查找 <em>ht[0]</em>；新增操作只写入 <em>ht[1]</em>，避免旧表产生新数据。</li>
+<li><strong>完成迁移</strong> 当 <em>rehashidx</em> 等于 <em>ht[0]</em> 的容量时，迁移完成。Redis 释放 <em>ht[0]</em> 的内存，将 <em>ht[1]</em> 赋值为 <em>ht[0]</em>，并重置 <em>ht[1]</em> 和 <em>rehashidx</em>。</li>
+</ol>
+<p>如果rehashidx刚好在一个已删除的空位置上，那么是直接返回还是尝试往下找？我们来看一下dictRehash函数的源码：</p>
+<p>​    可以看到，答案是会继续往下去找，但是有个上限是n*10，即最多再找这么多次，n是传进来的参数，调用的时候实际值为1，即最多往后再找10个，这么做是防止因为连续碰到空位置导致主线程操作被阻塞。</p>
 <h3 id="哈希表扩容的时候，有读请求怎么查？"><a href="#哈希表扩容的时候，有读请求怎么查？" class="headerlink" title="哈希表扩容的时候，有读请求怎么查？"></a>哈希表扩容的时候，有读请求怎么查？</h3><p>查找一个 key 的值的话，先会在「哈希表 1」 里面进行查找，如果没找到，就会继续到哈希表 2 里面进行找到。</p>
 <h2 id="介绍一下-Redis-中的-listpack"><a href="#介绍一下-Redis-中的-listpack" class="headerlink" title="介绍一下 Redis 中的 listpack"></a>介绍一下 Redis 中的 listpack</h2><p>quicklist 虽然通过控制 quicklistNode 结构里的压缩列表的大小或者元素个数，来减少连锁更新带来的性能影响，但是并没有完全解决连锁更新的问题。</p>
 <p>因为 quicklistNode 还是用了压缩列表来保存元素，压缩列表连锁更新的问题，来源于它的结构设计，所以要想彻底解决这个问题，需要设计一个新的数据结构。</p>
@@ -787,7 +804,7 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/18/8/" title="">
+                      <a href="/2025/11/18/6/" title="">
                         <span class="hidden-mobile"></span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>

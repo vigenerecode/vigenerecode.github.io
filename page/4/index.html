@@ -227,6 +227,86 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/11/13/04Threadlocal%E5%92%8Cpoll/" target="_self">
+          04Threadlocal和poll
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/04Threadlocal%E5%92%8Cpoll/" target="_self">
+        <div>
+          Threadlocal是什么是 Java 中提供的一种用于实现线程局部变量的工具类。它允许每个线程都拥有自己的独立副本，从而实现线程隔离，用于解决多线程中共享对象的线程安全问题。 通常，我们会使用 synchronzed 关键字 或者 lock 来控制线程对临界区资源的同步顺序，但这种加锁的方式会让未获取到锁的线程进行阻塞，很显然，这种方式的时间效率不会特别高。 线程安全问题的核心在于多个线程会对
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 19:07" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" target="_self">
+          并发容器
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/13/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/" target="_self">
+        <div>
+          a简介java.util 包下提供了一些容器类（集合框架），其中 Vector 和 Hashtable 是线程安全的，但实现方式比较粗暴，通过在方法上加「sychronized」关键字实现。 但即便是 Vector 这样线程安全的类，在应对多线程的复合操作时也需要在客户端继续加锁以保证原子性。  。 阻塞队列我们假设一种场景，生产者一直生产资源，消费者一直消费资源（后面会细讲，戳链接直达），资源存
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-11-13 16:12" pubdate>
+              2025-11-13
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/JUC/">#JUC</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/11/13/%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81API/" target="_self">
           队列的API
         </a>
@@ -527,86 +607,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/leetcode/">#leetcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/07/23/%E5%8A%9B%E6%89%A3146LRU%E7%BC%93%E5%AD%98/" target="_self">
-          146:LRU缓存
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/23/%E5%8A%9B%E6%89%A3146LRU%E7%BC%93%E5%AD%98/" target="_self">
-        <div>
-          说说怎么背这道题。 需要运用 双端队列和哈希表，这是一种复合数据结构，如python中的OrderedDict哈希表只是根据key,能找到对应的node,即&lt;key,node*&gt;双端队列是双值双指针的形式,key,value,*prev,*next哈希表的操作，API已经提供了，现在就是看自己创建双端队列，并看其需要哪些操作。python中API叫 move_to_end，所谓move
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-07-23 10:58" pubdate>
-              2025-07-23
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/leetcode/">#leetcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/07/20/List%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" target="_self">
-          List一些问题
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/07/20/List%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" target="_self">
-        <div>
-          引言在Java集合中，ArrayList是最常用到的数据结构，无论是在日常开发还是面试中，但是很多人对它的源码并不了解。下面提问几个问题，检验一下大家对ArrayList的了解程度。  ArrayList的初始容量是多少？（90%的人都会答错） ArrayList的扩容机制 并发修改ArrayList元素会有什么问题 如何快速安全的删除ArrayList中的元素  接下来一块分析一下ArrayLi
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-07-20 15:52" pubdate>
-              2025-07-20
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">#Java</a>
             
           </div>
         

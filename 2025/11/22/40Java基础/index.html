@@ -21,7 +21,7 @@
   
     <meta name="description" content="Java基础说一下Java的特点主要有以下的特点：  平台无关性：Java的“编写一次，运行无处不在”哲学是其最大的特点之一。Java编译器将源代码编译成字节码（bytecode），该字节码可以在任何安装了Java虚拟机（JVM）的系统上运行。 面向对象：Java是一门严格的面向对象编程语言，几乎一切都是对象。面向对象编程（OOP）特性使得代码更易于维护和重用，包括类（class）、对象（obje">
 <meta property="og:type" content="article">
-<meta property="og:title" content="40">
+<meta property="og:title" content="40Java、基础">
 <meta property="og:url" content="http://example.com/2025/11/22/40Java%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="Java基础说一下Java的特点主要有以下的特点：  平台无关性：Java的“编写一次，运行无处不在”哲学是其最大的特点之一。Java编译器将源代码编译成字节码（bytecode），该字节码可以在任何安装了Java虚拟机（JVM）的系统上运行。 面向对象：Java是一门严格的面向对象编程语言，几乎一切都是对象。面向对象编程（OOP）特性使得代码更易于维护和重用，包括类（class）、对象（obje">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251124203200249.png">
 <meta property="og:image" content="http://example.com/img/1720683675376-c5af6668-4538-479f-84e8-42d4143ab101.webp">
 <meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-24T13:30:31.720Z">
+<meta property="article:modified_time" content="2025-11-25T13:20:20.191Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary_large_image">
@@ -38,7 +38,7 @@
   
   
   
-  <title>40 - NoFlowCloud</title>
+  <title>40Java、基础 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -204,7 +204,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="40"></span>
+            <span id="subtitle" data-typed-text="40Java、基础"></span>
           
         </div>
 
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.4k 字
+          5.2k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          37 分钟
+          44 分钟
         
       </span>
     
@@ -275,7 +275,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">40</h1>
+            <h1 id="seo-header">40Java、基础</h1>
             
             
               <div class="markdown-body">
@@ -286,6 +286,12 @@
 <li><strong>面向对象</strong>：Java是一门严格的面向对象编程语言，几乎一切都是对象。面向对象编程（OOP）特性使得代码更易于维护和重用，包括类（class）、对象（object）、继承（inheritance）、多态（polymorphism）、抽象（abstraction）和封装（encapsulation）。</li>
 <li><strong>内存管理</strong>：Java有自己的垃圾回收机制，自动管理内存和回收不再使用的对象。这样，开发者不需要手动管理内存，从而减少内存泄漏和其他内存相关的问题</li>
 </ul>
+<p>劣势:</p>
+<p>(1)性能: 虽然靠JVM优化了很多性能,但相比C++,Rust这种原生编译语言,还是有一些性能开销.</p>
+<p>(2)启动时间长: 在微服务场景下, 启动可能不如Go快.</p>
+<p>(3)语法繁杂: 样板代码多,在没有lambda表达式之前更麻烦,  有了之后相比Python还是不够简洁.</p>
+<p>(4)内存消耗: JVM本身占内存,对资源有限的环境不太友好</p>
+<p>（6)开发效率低: 相比于动态语言如Python, Java需要更多代码,编译过程也可能拖慢开发节奏.</p>
 <h3 id="JVM、JDK、JRE三者关系？"><a href="#JVM、JDK、JRE三者关系？" class="headerlink" title="JVM、JDK、JRE三者关系？"></a>JVM、JDK、JRE三者关系？</h3><p>JVM是Java虚拟机，是Java程序运行的环境。</p>
 <p>JDK是Java开发工具包，是开发Java程序所需的工具集合。它包含了JVM、编译器（javac）、调试器（jdb）等开发工具，以及一系列的类库（如Java标准库和开发工具库）。JDK提供了开发、编译、调试和运行Java程序所需的全部工具和环境。</p>
 <p>JRE是Java运行时环境，是Java程序运行所需的最小环境。它包含了JVM和一组Java类库，用于支持Java程序的执行。JRE不包含开发工具，</p>
@@ -337,6 +343,35 @@
 <p>不管是读写效率，还是存储效率，基本类型都比包装类高效。</p>
 <h3 id="说一下-integer的缓存"><a href="#说一下-integer的缓存" class="headerlink" title="说一下 integer的缓存"></a>说一下 integer的缓存</h3><p>Java的Integer类内部实现了一个静态缓存池，用于存储特定范围内的整数值对应的Integer对象。</p>
 <p>默认情况下，这个范围是-128至127。当通过Integer.valueOf(int)方法创建一个在这个范围内的整数对象时，并不会每次都生成新的对象实例，而是复用缓存中的现有对象，会直接从内存中取出，不需要新建一个对象。</p>
+<h1 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h1><h2 id="成员变量和局部变量的区别"><a href="#成员变量和局部变量的区别" class="headerlink" title="成员变量和局部变量的区别"></a>成员变量和局部变量的区别</h2><p>(1)语法形式:</p>
+<p>成员变量 -&gt; 属于类,可以被public,static,private等修饰符所修饰</p>
+<p>局部变量  -&gt; 在代码块或方法中定义的变量或者方法的参数,不能被访问控制修饰符以及static修饰</p>
+<p>局部变量和成员变量都能被final所修饰</p>
+<p>(2)存储方式:</p>
+<p>局部变量 -&gt; 栈内存</p>
+<p>成员变量 -&gt; 若被static修饰,则该变量是类变量,存储于元空间或永久代中,若没有用static修饰,则存储于堆内存中的,与前者用对象头关联.</p>
+<p>(3)生命周期:</p>
+<p>局部变量 -&gt; 随方法的调用而产生,随方法调用结束而消亡</p>
+<p>成员变量-&gt; 随对象创建而存在,随对象被回收而消亡</p>
+<p>(4)默认值:</p>
+<p>局部变量 -&gt; 不会自动赋值,因此需要在使用前手动赋值</p>
+<p>成员变量 -&gt; 没有final修饰时,会自动以类型的默认值来赋值.有final修饰时,必须显式赋值.</p>
+<p>为什么成员变量有默认值?</p>
+<p>成员变量存储在堆内存中,这些内存区域在分配前可能被其它数据占用过,若没有默认值机制,新创建的成员变量会直接复用这些残留的随机数据.</p>
+<p>成员变量在运行时可以借助反射等方法赋值,但局部变量不行</p>
+<h2 id="静态变量有什么用"><a href="#静态变量有什么用" class="headerlink" title="静态变量有什么用"></a>静态变量有什么用</h2><p>(1)什么是静态变量:</p>
+<p>静态变量是被static关键字修饰的变量,可以被类的所有实例共享,无论一个类创建了多少个对象,它们都共享一份静态变量.</p>
+<p>(2)静态变量如何访问:</p>
+<p>通常是通过类名访问,也可以通过对象名访问(不推荐)</p>
+<p>(3)静态变量一般会被final修饰成常量,这样做的好处</p>
+<p>可见性保证</p>
+<pre><code class="hljs">		用final修饰后会加上写屏障,执行完写操作后将工作内存同步到主存,进而保证可见性.
+</code></pre>
+<p>防止误修改</p>
+<p>  用final修饰的静态变量,可以确保这些变量的值在初始化后不会被修改.</p>
+<p>性能优化</p>
+<p>  static final修饰的成员变量在类加载的准备阶段赋值(确定)</p>
+<p>静态变量的成员变量的访问不需要创建实例对象</p>
 <h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p><img src="/./../img/image-20251124135141773.png" srcset="/img/loading.gif" lazyload alt="image-20251124135141773"></p>
 <p><img src="/./../img/image-20251124203200249.png" srcset="/img/loading.gif" lazyload alt="image-20251124203200249"></p>
 <h3 id="面向对象的设计原则你知道有哪些吗"><a href="#面向对象的设计原则你知道有哪些吗" class="headerlink" title="面向对象的设计原则你知道有哪些吗"></a>面向对象的设计原则你知道有哪些吗</h3><p>面向对象编程中的六大原则：</p>
@@ -477,7 +512,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>40</div>
+      <div>40Java、基础</div>
       <div>http://example.com/2025/11/22/40Java基础/</div>
     </div>
     <div class="license-meta">
@@ -532,8 +567,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41">
-                        <span class="hidden-mobile">41</span>
+                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
+                        <span class="hidden-mobile">41Java对象基础</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
