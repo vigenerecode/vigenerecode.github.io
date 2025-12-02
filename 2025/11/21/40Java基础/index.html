@@ -22,15 +22,15 @@
     <meta name="description" content="Java基础说一下Java的特点主要有以下的特点：  平台无关性：Java的“编写一次，运行无处不在”哲学是其最大的特点之一。Java编译器将源代码编译成字节码（bytecode），该字节码可以在任何安装了Java虚拟机（JVM）的系统上运行。 面向对象：Java是一门严格的面向对象编程语言，几乎一切都是对象。面向对象编程（OOP）特性使得代码更易于维护和重用，包括类（class）、对象（obje">
 <meta property="og:type" content="article">
 <meta property="og:title" content="40Java、基础">
-<meta property="og:url" content="http://example.com/2025/11/22/40Java%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:url" content="http://example.com/2025/11/21/40Java%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="Java基础说一下Java的特点主要有以下的特点：  平台无关性：Java的“编写一次，运行无处不在”哲学是其最大的特点之一。Java编译器将源代码编译成字节码（bytecode），该字节码可以在任何安装了Java虚拟机（JVM）的系统上运行。 面向对象：Java是一门严格的面向对象编程语言，几乎一切都是对象。面向对象编程（OOP）特性使得代码更易于维护和重用，包括类（class）、对象（obje">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/image-20251124135141773.png">
 <meta property="og:image" content="http://example.com/img/image-20251124203200249.png">
 <meta property="og:image" content="http://example.com/img/1720683675376-c5af6668-4538-479f-84e8-42d4143ab101.webp">
-<meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-25T13:20:20.191Z">
+<meta property="article:published_time" content="2025-11-21T03:07:57.000Z">
+<meta property="article:modified_time" content="2025-12-02T10:10:01.630Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Java基础">
 <meta name="twitter:card" content="summary_large_image">
@@ -215,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-22 11:07" pubdate>
-          2025年11月22日 上午
+        <time datetime="2025-11-21 11:07" pubdate>
+          2025年11月21日 上午
         </time>
       </span>
     
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.2k 字
+          5.5k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          44 分钟
+          46 分钟
         
       </span>
     
@@ -488,6 +488,8 @@
 <ul>
 <li><strong>泛型中的类型在使用时指定，不需要强制类型转换</strong>（<strong>类型安全</strong>，编译器会<strong>检查类型</strong>）</li>
 </ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs csharp">import java.util.concurrent.locks.Condition;<br>import java.util.concurrent.locks.ReentrantLock;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Dogger</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> remaining = <span class="hljs-number">100</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">int</span> turn = <span class="hljs-number">0</span>; <span class="hljs-comment">// 0=旺财,1=二哈,2=柯基</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> final ReentrantLock <span class="hljs-keyword">lock</span> = <span class="hljs-keyword">new</span> ReentrantLock();<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> final Condition[] conditions = <span class="hljs-keyword">new</span> Condition[<span class="hljs-number">3</span>];<br><br>    <span class="hljs-keyword">static</span> &#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) &#123;<br>            conditions[i] = <span class="hljs-keyword">lock</span>.newCondition();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span>(<span class="hljs-params">String[] <span class="hljs-keyword">args</span></span>) throws InterruptedException</span> &#123;<br>        Thread t1 = <span class="hljs-keyword">new</span> Thread(() -&gt; eat(<span class="hljs-string">&quot;旺财&quot;</span>, <span class="hljs-number">0</span>));<br>        Thread t2 = <span class="hljs-keyword">new</span> Thread(() -&gt; eat(<span class="hljs-string">&quot;二哈&quot;</span>, <span class="hljs-number">1</span>));<br>        Thread t3 = <span class="hljs-keyword">new</span> Thread(() -&gt; eat(<span class="hljs-string">&quot;柯基&quot;</span>, <span class="hljs-number">2</span>));<br><br>        t1.start(); t2.start(); t3.start();<br>        t1.<span class="hljs-keyword">join</span>(); t2.<span class="hljs-keyword">join</span>(); t3.<span class="hljs-keyword">join</span>();<br><br>        System.<span class="hljs-keyword">out</span>.println(<span class="hljs-string">&quot;香肠分完啦！三条小狗开心地摇尾巴~&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">eat</span>(<span class="hljs-params">String name, <span class="hljs-built_in">int</span> id</span>)</span> &#123;<br>        <span class="hljs-built_in">int</span> eaten = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">lock</span>.<span class="hljs-keyword">lock</span>();<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">while</span> (remaining &gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// ✅ 关键1：等待自己的轮次，同时检查香肠是否还有</span><br>                <span class="hljs-keyword">while</span> (turn != id &amp;&amp; remaining &gt; <span class="hljs-number">0</span>) &#123;<br>                    conditions[id].<span class="hljs-keyword">await</span>();<br>                &#125;<br><br>                <span class="hljs-comment">// ✅ 关键2：香肠可能已被吃光（被唤醒后必须二次检查）</span><br>                <span class="hljs-keyword">if</span> (remaining &lt;= <span class="hljs-number">0</span>) <span class="hljs-keyword">break</span>;<br><br>                <span class="hljs-comment">// ✅ 关键3：吃香肠</span><br>                remaining--;<br>                eaten++;<br>                System.<span class="hljs-keyword">out</span>.printf(<span class="hljs-string">&quot;%s叼走1根香肠，现在还剩%d根%n&quot;</span>, name, remaining);<br><br>                <span class="hljs-comment">// ✅ 关键4：香肠分完时必须更新turn并唤醒所有！</span><br>                <span class="hljs-keyword">if</span> (remaining == <span class="hljs-number">0</span>) &#123;<br>                    <span class="hljs-comment">// 更新turn到无效值（-1），表示游戏结束</span><br>                    turn = <span class="hljs-number">-1</span>;<br>                    <span class="hljs-keyword">for</span> (Condition c : conditions) c.signalAll();<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-comment">// 正常轮转</span><br>                    turn = (turn + <span class="hljs-number">1</span>) % <span class="hljs-number">3</span>;<br>                    conditions[turn].signal();<br>                &#125;<br>            &#125;<br>        &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>            Thread.currentThread().interrupt();<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-keyword">lock</span>.unlock();<br>        &#125;<br>        System.<span class="hljs-keyword">out</span>.printf(<span class="hljs-string">&quot;%s一共吃了%d根，舔舔嘴巴说：香肠真香！%n&quot;</span>, name, eaten);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -513,7 +515,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>40Java、基础</div>
-      <div>http://example.com/2025/11/22/40Java基础/</div>
+      <div>http://example.com/2025/11/21/40Java基础/</div>
     </div>
     <div class="license-meta">
       
@@ -525,7 +527,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年11月22日</div>
+          <div>2025年11月21日</div>
         </div>
       
       
@@ -557,9 +559,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/22/100%E5%BF%AB%E7%8C%AB%E7%9F%AD%E5%89%A7/" title="100快猫短剧">
+                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">100快猫短剧</span>
+                        <span class="hidden-mobile">41Java对象基础</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -567,8 +569,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
-                        <span class="hidden-mobile">41Java对象基础</span>
+                      <a href="/2025/11/20/33redis%E5%9C%BA%E6%99%AF%E9%A2%98%E7%9B%AE/" title="33redis场景题">
+                        <span class="hidden-mobile">33redis场景题</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

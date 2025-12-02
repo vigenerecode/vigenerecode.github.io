@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://example.com/img/1719903580960-2490c9c0-616b-4b11-a290-4891c2d7511a.png">
 <meta property="og:image" content="http://example.com/img/image-20251120233155787.png">
 <meta property="article:published_time" content="2025-11-20T08:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-23T13:10:41.779Z">
+<meta property="article:modified_time" content="2025-11-26T14:48:48.679Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.5k 字
+          4.9k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          38 分钟
+          41 分钟
         
       </span>
     
@@ -474,6 +474,37 @@
 <li><strong>数据变化</strong>：ZSCAN<strong>不会重复返回或遗漏数据</strong><br><strong>—— 这是ZSCAN的核心优势，也是它适合高并发场景的原因！”</strong> ✅</li>
 </ol>
 </blockquote>
+<h1 id="脑裂"><a href="#脑裂" class="headerlink" title="脑裂"></a>脑裂</h1><p>脑裂问题的原因与影响</p>
+<p>脑裂通常由网络分区、哨兵误判或主从切换异常引起。其影响包括：</p>
+<ul>
+<li><strong>数据不一致</strong>：不同客户端连接到不同主节点，写入的数据可能冲突。</li>
+<li><strong>数据丢失</strong>：旧主节点恢复后，其数据可能被覆盖。</li>
+<li><strong>请求异常</strong>：部分客户端连接旧主节点，导致查询失败。</li>
+</ul>
+<p>解决脑裂的配置与优化</p>
+<p>Sentinel 模式下的优化</p>
+<ul>
+<li><strong>配置 quorum 和 down-after-milliseconds</strong>：</li>
+</ul>
+<p>sentinel monitor mymaster 192.168.1.100 6379 2</p>
+<p>sentinel down-after-milliseconds mymaster 5000</p>
+<ul>
+<li><strong>设置 min-replicas-to-write 和 min-replicas-max-lag</strong>：</li>
+</ul>
+<p>min-replicas-to-write 2</p>
+<p>min-replicas-max-lag 10</p>
+<ul>
+<li><strong>启用 protected-mode</strong>：</li>
+</ul>
+<p>protected-mode yes</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a><strong>解决方案</strong></h2><p>redis的配置文件中，存在两个参数</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">min-slaves-to-write 3<br>min-slaves-max-lag 10<br></code></pre></td></tr></table></figure>
+
+<p><strong>第一个参数表示连接到master的最少slave数量</strong><br><strong>第二个参数表示slave连接到master的最大延迟时间</strong><br>按照上面的配置，要求至少3个slave节点，且数据复制和同步的延迟不能超过10秒，否则的话master就会拒绝写请求，配置了这两个参数之后，如果发生集群脑裂，原先的master节点接收到客户端的写入请求会拒绝，就可以减少数据同步之后的数据丢失。</p>
+<p>注意：较新版本的redis.conf文件中的参数变成了</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">min-replicas-to-write 3<br>min-replicas-max-lag 10<br></code></pre></td></tr></table></figure>
+
+<p>redis中的异步复制情况下的数据丢失问题也能使用这两个参数</p>
 <p>end</p>
 
                 
@@ -544,9 +575,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/22/42Java%E9%9B%86%E5%90%88%E5%9F%BA%E7%A1%80/" title="42Java集合基础">
+                      <a href="/2025/11/21/40Java%E5%9F%BA%E7%A1%80/" title="40Java、基础">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">42Java集合基础</span>
+                        <span class="hidden-mobile">40Java、基础</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -554,7 +585,7 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/20/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/" title="32淘汰和集群">
+                      <a href="/2025/11/19/32%E6%B7%98%E6%B1%B0%E5%92%8C%E9%9B%86%E7%BE%A4/" title="32淘汰和集群">
                         <span class="hidden-mobile">32淘汰和集群</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>

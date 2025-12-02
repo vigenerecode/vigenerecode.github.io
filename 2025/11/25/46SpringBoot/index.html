@@ -1,0 +1,742 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="z自动配置Spring Boot 的自动装配是一个核心功能，它允许开发者快速集成和使用各种启动器（starter）和库，而无需进行繁琐的配置。自动装配的原理基于 Spring Framework 的条件注解和 Spring Boot 的启动器。 自动装配的工作流程 自动装配的过程从 Spring Boot 的主程序类开始，这个类通常使用 @SpringBootApplication 注解。这个注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="45Springboot">
+<meta property="og:url" content="http://example.com/2025/11/25/46SpringBoot/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="z自动配置Spring Boot 的自动装配是一个核心功能，它允许开发者快速集成和使用各种启动器（starter）和库，而无需进行繁琐的配置。自动装配的原理基于 Spring Framework 的条件注解和 Spring Boot 的启动器。 自动装配的工作流程 自动装配的过程从 Spring Boot 的主程序类开始，这个类通常使用 @SpringBootApplication 注解。这个注解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/1763817899877-f26d1175-73a1-4228-aba9-6023d139ee35.webp">
+<meta property="og:image" content="http://example.com/img/image-20251127134709987.png">
+<meta property="og:image" content="http://example.com/img/image-20251127173204721.png">
+<meta property="og:image" content="http://example.com/img/format,webp.webp">
+<meta property="og:image" content="http://example.com/img/format,webp-1764168677254-9.webp">
+<meta property="og:image" content="http://example.com/2025/11/25/img/image-20251127173252045.png">
+<meta property="og:image" content="http://example.com/2025/11/25/img/image-20251127173146276.png">
+<meta property="og:image" content="http://example.com/2025/11/25/img/image-20251127173738008.png">
+<meta property="og:image" content="http://example.com/img/image-20251127173319395.png">
+<meta property="og:image" content="http://example.com/img/format,webp-1764168677254-10.webp">
+<meta property="og:image" content="http://example.com/img/format,webp-1764168677254-11.webp">
+<meta property="og:image" content="http://example.com/img/format,webp-1764168677254-12.webp">
+<meta property="article:published_time" content="2025-11-25T03:07:57.000Z">
+<meta property="article:modified_time" content="2025-11-27T09:37:45.093Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="Java集合">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/1763817899877-f26d1175-73a1-4228-aba9-6023d139ee35.webp">
+  
+  
+  
+  <title>45Springboot - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="45Springboot"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-25 11:07" pubdate>
+          2025年11月25日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">45Springboot</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="z自动配置"><a href="#z自动配置" class="headerlink" title="z自动配置"></a>z自动配置</h1><p><strong>Spring Boot</strong> 的自动装配是一个核心功能，它允许开发者快速集成和使用各种启动器（starter）和库，而无需进行繁琐的配置。自动装配的原理基于 <strong>Spring Framework</strong> 的条件注解和 <strong>Spring Boot</strong> 的启动器。</p>
+<p>自动装配的工作流程</p>
+<p>自动装配的过程从 <strong>Spring Boot</strong> 的主程序类开始，这个类通常使用 <em>@SpringBootApplication</em> 注解。这个注解是一个组合注解，它包括 <em>@SpringBootConfiguration</em>、<em>@EnableAutoConfiguration</em> 和 <em>@ComponentScan</em>。这些注解共同工作，实现了自动装配的基础功能。</p>
+<ul>
+<li><em>@SpringBootConfiguration</em>：标识这是一个 <strong>Spring Boot</strong> 的配置类。</li>
+<li><em>@ComponentScan</em>：扫描并加载使用注解定义的 <strong>bean</strong>。</li>
+<li><em>@EnableAutoConfiguration</em>：告诉 <strong>Spring Boot</strong> 开始根据类路径下的 <strong>jar</strong> 包依赖以及各种配置类来自动配置项目。</li>
+</ul>
+<p><em>@EnableAutoConfiguration</em> 是自动装配的关键，它通过 <em>@Import(AutoConfigurationImportSelector.class)</em> 导入了 <em>AutoConfigurationImportSelector</em> 类。这个类负责读取 <em>META-INF&#x2F;spring.factories</em> 文件中的配置，并根据条件注解（如 <em>@ConditionalOnClass</em>、<em>@ConditionalOnBean</em> 等）决定哪些配置类应该被加载到 <strong>Spring</strong> 容器中。</p>
+<p>条件注解的作用</p>
+<p>条件注解是自动装配过程中的重要组成部分，它们决定了在什么条件下某个配置类或 <strong>bean</strong> 应该被创建和加载。例如，<em>@ConditionalOnClass</em> 注解确保只有当类路径下存在特定的类时，相关的自动配置类才会被激活。</p>
+<p>自动装配的优势</p>
+<p>自动装配的优势在于它极大地简化了项目的配置和依赖管理。开发者只需要添加相应的 <strong>starter</strong> 依赖，如 <em>spring-boot-starter-web</em>，就可以快速开始开发 <strong>Web</strong> 应用，无需手动配置 <strong>DispatcherServlet</strong> 或 <strong>Tomcat</strong>。</p>
+<p>自定义 Starter 的开发</p>
+<p>开发者还可以创建自己的 <strong>starter</strong>，以便在多个项目中重用配置和功能。自定义 <strong>starter</strong> 通常包括一个自动配置类，它使用 <em>@Configuration</em> 和条件注解来定义需要自动配置的 <strong>bean</strong>。此外，还需要在 <em>META-INF&#x2F;spring.factories</em> 文件中声明这个自动配置类，以便 <strong>Spring Boot</strong> 能够在启动时加载它。</p>
+<h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><h2 id="怎么理解SpringBoot中的约定大于配置"><a href="#怎么理解SpringBoot中的约定大于配置" class="headerlink" title="怎么理解SpringBoot中的约定大于配置"></a>怎么理解SpringBoot中的约定大于配置</h2><p>它通过预设标准化的默认行为与项目规范,大幅减少开发者的手动配置,从而提升开发效率</p>
+<p>(1)自动配化配置SpringBoot的自动化配置会基于项目依赖和运行环境,自动完成组件的初始化与集成.例如:引入spirng-boot-starter-web后,框架会自动检测Web开发依赖,进而配置内嵌Tomcat、Spring MVC的DispatcherServlet等组件</p>
+<p>(2)默认配置SpringBoot为数据库连接、Web服务、日志、安全等场景提供最佳实践级的默认配置</p>
+<p>Web应用默认内嵌Tomcat(8080);数据库连接默认采用性能优异的HikariCP连接池;日志默认通过logback输出Spring Data JPA默认开启事务管理,Spring Security提供基础HTTP安全防护</p>
+<p>(3)项目结构约定SpringBoot提倡分层化的项目结构约定,Controller,Service,Mapper等</p>
+<h2 id="说几个启动器-starter"><a href="#说几个启动器-starter" class="headerlink" title="说几个启动器(starter)"></a>说几个启动器(starter)</h2><p>spring-boot-starter-web: 这是最常见的起步依赖之一.它包含了Spring MVC和Tomcat嵌入式服务器,用于快速构建Web应用程序</p>
+<p>spring-boot-starter_security: 提供了Spring Security的基本配置,帮助开发者快速实现应用的安全性,包括认证和授权功能</p>
+<p>mybatis-spring-boot-starter: 这个Starter是由MyBatis团队提供的,用于简化在SpringBoot应用中集成MyBatis的过程,它自动配置了MyBatis的相关组件</p>
+<p>spring-boot-starter-jdbc: 提供了基本的JDBC支持,可以通过在配置文件中配置MySQL的连接信息完成与数据库的交互</p>
+<p>spring-boot-starter-data-redis: 用于集成Redis缓存和数据存储服务.</p>
+<p>spring-boot-starter-test: 包含了单元测试和集成测试所需的库.</p>
+<h1 id="ljjgkq"><a href="#ljjgkq" class="headerlink" title="ljjgkq"></a>ljjgkq</h1><p><img src="/./../img/1763817899877-f26d1175-73a1-4228-aba9-6023d139ee35.webp" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="/./../img/image-20251127134709987.png" srcset="/img/loading.gif" lazyload alt="image-20251127134709987"></p>
+<h3 id="现自己的SpringBoot-Starter"><a href="#现自己的SpringBoot-Starter" class="headerlink" title="现自己的SpringBoot Starter"></a>现自己的SpringBoot Starter</h3><p><img src="/./../img/image-20251127173204721.png" srcset="/img/loading.gif" lazyload alt="image-20251127173204721"></p>
+<h4 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;"></a>命名规范&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</h4><p>如果你快有孩子了，出生前你比较急的一定是起个名字。孩子的姓名标识着你和你爱人的血统，一定不会起隔壁老王的姓氏，肯定会招来异样的眼光。在<code>maven</code>中，<code>groupId</code>代表着姓氏，<code>artifactId</code>代表着名字。<code>Spring Boot</code>也是有一个命名的建议的。所以名字是不能够随随便便取得，可以按照官方的建议来取。</p>
+<blockquote>
+<p>What’s in a name<br>All official starters follow a similar naming pattern; spring-boot-starter- <em>, where</em> is a particular type of application. This naming structure is intended to help when you need to find a starter. The Maven integration in many IDEs lets you search dependencies by name. For example, with the appropriate Eclipse or STS plugin installed, you can press ctrl-space in the POM editor and type “spring-boot-starter” for a complete list.<br>As explained in the “Creating Your Own Starter” section, third party starters should not start with spring-boot, as it is reserved for official Spring Boot artifacts. Rather, a third-party starter typically starts with the name of the project. For example, a third-party starter project called thirdpartyproject would typically be named thirdpartyproject-spring-boot-starter.</p>
+</blockquote>
+<p>大概意思是<br>官方的 <code>starter</code> 的命名格式为 <code>spring-boot-starter-&#123;xxxx&#125;</code> 比如<code>spring-boot-starter-activemq</code><br>第三方我们自己的命名格式为 <code>&#123;xxxx&#125;-spring-boot-starter</code>。比如<code>mybatis-spring-boot-starter</code>。<br>如果我们忽略这种约定，是不是会显得我们写的东西不够“专业“。</p>
+<h4 id="自定义一个Starter"><a href="#自定义一个Starter" class="headerlink" title="自定义一个Starter"></a>自定义一个Starter</h4><p>下面我们就来实现一个自定义的发送短信的starter，命名为<code>sms-spring-boot-starter</code>。</p>
+<ol>
+<li>引入<code>pom</code></li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>       <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>       <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">optional</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">optional</span>&gt;</span><br>       <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>         <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.projectlombok<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>lombok<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.16.18<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>           <span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>provided<span class="hljs-tag">&lt;/<span class="hljs-name">scope</span>&gt;</span><br>       <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><p>编写配置文件</p>
+<p>发短信我们需要配置一些账号信息，不同的短信供应商，账户信息是不一样的，所以我们需要定义一个XXXXProperties 来自动装配这些账户信息。下面我们就以腾讯云和阿里云两家供应商为例；</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@ConfigurationProperties(prefix = &quot;sms&quot;)</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SmsProperties</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">SmsMessage</span> <span class="hljs-variable">aliyun</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SmsMessage</span>();<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">SmsMessage</span> <span class="hljs-variable">tencent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SmsMessage</span>();<br><br>    <span class="hljs-meta">@Data</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SmsMessage</span>&#123;<br><br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 用户名</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">private</span> String userName;<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 密码</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">private</span> String passWord;<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * 秘钥</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">private</span> String sign;<br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">private</span> String url;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;SmsMessage&#123;&quot;</span> +<br>                    <span class="hljs-string">&quot;userName=&#x27;&quot;</span> + userName + <span class="hljs-string">&#x27;\&#x27;&#x27;</span> +<br>                    <span class="hljs-string">&quot;, passWord=&#x27;&quot;</span> + passWord + <span class="hljs-string">&#x27;\&#x27;&#x27;</span> +<br>                    <span class="hljs-string">&quot;, sign=&#x27;&quot;</span> + sign + <span class="hljs-string">&#x27;\&#x27;&#x27;</span> +<br>                    <span class="hljs-string">&quot;, url=&#x27;&quot;</span> + url + <span class="hljs-string">&#x27;\&#x27;&#x27;</span> +<br>                    <span class="hljs-string">&#x27;&#125;&#x27;</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>如果需要在其他项目中使用发送短信功能的话，我们只需要在配置文件(application.ym）中配置SmsProperties 的属性信息就可以了。 比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java">sms:<br>  aliyun:<br>    pass-word: <span class="hljs-number">12345</span><br>    user-name: java金融<br>    sign: 阿里云<br>    url: http:<span class="hljs-comment">//aliyun.com/send</span><br>  tencent:<br>    pass-word: <span class="hljs-number">6666</span><br>    user-name: java金融<br>    sign: 腾讯云<br>    url: http:<span class="hljs-comment">//tencent.com/send</span><br></code></pre></td></tr></table></figure>
+
+<p>还记的<code>@ConfigurationProperties</code>注解里面是不是有个<code>prefix</code> 属性，我们配置的这个属性是<code>sms</code>，配置这个的主要一个作用的话是主要用来区别各个组件的参数。这里有个小知识点需要注意下当我们在配置文件输入sms我们的<code>idea</code>会提示这个<code>sms</code>有哪些属性可以配置，以及每个属性的注释都有标记，建议的话注释还是写英文，这样会显得你比较专业。<br><img src="/./../img/format,webp.webp" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>这个提示的话，是需要引入下面这个jar的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">optional</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">optional</span>&gt;</span><br>      <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>引入这个jar之后，我们编译之后就会在META-INF文件夹下面生成一个spring-configuration-metadata.json的文件。<br><img src="/./../img/format,webp-1764168677254-9.webp" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>我们可以看到这个文件其实 是根据SmsProperties类的成员属性来生成的。</p>
+<ol>
+<li>然后在编写短信自动配置类：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@EnableConfigurationProperties(value = SmsProperties.class)</span><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SmsAutoConfiguration</span>  &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     *  阿里云发送短信的实现类</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> smsProperties</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span></span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> AliyunSmsSenderImpl <span class="hljs-title function_">aliYunSmsSender</span><span class="hljs-params">(SmsProperties smsProperties)</span>&#123;<br>       <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AliyunSmsSenderImpl</span>(smsProperties.getAliyun());<br>    &#125;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 腾讯云发送短信的实现类</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> smsProperties</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span></span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> TencentSmsSenderImpl <span class="hljs-title function_">tencentSmsSender</span><span class="hljs-params">(SmsProperties smsProperties)</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TencentSmsSenderImpl</span>(smsProperties.getTencent());<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<img src="./../img/image-20251127173252045.png" srcset="/img/loading.gif" lazyload alt="image-20251127173252045" style="zoom:50%;" />
+
+<p>编写我们的发送短信实现类：（功能类）</p>
+<img src="./../img/image-20251127173146276.png" srcset="/img/loading.gif" lazyload alt="image-20251127173146276" style="zoom: 25%;" />
+
+<img src="./../img/image-20251127173738008.png" srcset="/img/loading.gif" lazyload alt="image-20251127173738008" style="zoom: 50%;" />
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliyunSmsSenderImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SmsSender</span> &#123;<br><br>    <span class="hljs-keyword">private</span> SmsMessage smsMessage;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">AliyunSmsSenderImpl</span><span class="hljs-params">(SmsMessage smsProperties)</span> &#123;<br>        <span class="hljs-built_in">this</span>.smsMessage = smsProperties;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">send</span><span class="hljs-params">(String message)</span> &#123;<br>        System.out.println(smsMessage.toString()+<span class="hljs-string">&quot;开始发送短信==》短信内容：&quot;</span>+message);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>让starter生效</li>
+</ol>
+<p>starter集成应用有两种方式：</p>
+<ul>
+<li>被动生效</li>
+</ul>
+<p>我们首先来看下我们熟悉的方式，通过SpringBoot的SPI的机制来去加载我们的starter。我们需要在META-INF下新建一个spring.factories文件key为org.springframework.boot.autoconfigure.EnableAutoConfiguration， value是我们的SmsAutoConfiguration 全限定名（记得去除前后的空格，否则会不生效）。</p>
+<p><img src="/./../img/image-20251127173319395.png" srcset="/img/loading.gif" lazyload alt="image-20251127173319395"></p>
+<p><img src="/./../img/format,webp-1764168677254-10.webp" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<ul>
+<li>主动生效</li>
+</ul>
+<p>在starter组件集成到我们的Spring Boot应用时需要主动声明启用该starter才生效，通过自定义一个@Enable注解然后在把自动配置类通过Import注解引入进来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Target(&#123;ElementType.TYPE&#125;)</span><br><span class="hljs-meta">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="hljs-meta">@Documented</span><br><span class="hljs-meta">@Import(&#123;SmsAutoConfiguration.class&#125;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> EnableSms &#123;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用的时候需要在启动类上面开启这个注解。<br><img src="/./../img/format,webp-1764168677254-11.webp" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<ol>
+<li><p>打包，部署到仓库<br>如果是本地的话，直接通过mvn install命令就可以了。<br>如果需要部署到公司的仓库话，这个就不说了。</p>
+</li>
+<li><p>新建一个新的SpringBoot项目引入我们刚写的starter</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">&lt;dependency&gt;<br>           &lt;groupId&gt;com.workit.sms&lt;/groupId&gt;<br>           &lt;artifactId&gt;sms-spring-boot-starter&lt;/artifactId&gt;<br>           &lt;version&gt;<span class="hljs-number">0.0</span><span class="hljs-number">.1</span>-SNAPSHOT&lt;/version&gt;<br>     &lt;/dependency&gt;<br></code></pre></td></tr></table></figure>
+
+<p>在项目配置文件配上短信账号信息<br><img src="/./../img/format,webp-1764168677254-12.webp" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>测试代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SpringBootApplication</span><br><span class="hljs-meta">@EnableSms</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AutoconfigApplication</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">ConfigurableApplicationContext</span> <span class="hljs-variable">applicationContext</span> <span class="hljs-operator">=</span> SpringApplication.run(AutoconfigApplication.class, args);<br>        <span class="hljs-type">AliyunSmsSenderImpl</span> <span class="hljs-variable">aliyunSmsSender</span> <span class="hljs-operator">=</span> applicationContext.getBean(AliyunSmsSenderImpl.class);<br>        aliyunSmsSender.send(<span class="hljs-string">&quot;用阿里云发送短信&quot;</span>);<br>        <span class="hljs-type">TencentSmsSenderImpl</span> <span class="hljs-variable">tencentSmsSender</span> <span class="hljs-operator">=</span> applicationContext.getBean(TencentSmsSenderImpl.class);<br>        tencentSmsSender.send(<span class="hljs-string">&quot;用腾讯云发送短信&quot;</span>);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">SmsMessage&#123;userName=<span class="hljs-string">&#x27;java金融&#x27;</span>, passWord=<span class="hljs-string">&#x27;12345&#x27;</span>, sign=<span class="hljs-string">&#x27;阿里云&#x27;</span>, url=<span class="hljs-string">&#x27;http://aliyun.com/send&#x27;</span>&#125;开始发送短信==》短信内容：用阿里云发送短信<br>SmsMessage&#123;userName=<span class="hljs-string">&#x27;java金融&#x27;</span>, passWord=<span class="hljs-string">&#x27;6666&#x27;</span>, sign=<span class="hljs-string">&#x27;腾讯云&#x27;</span>, url=<span class="hljs-string">&#x27;http://tencent.com/send&#x27;</span>&#125;开始发送短信==》短信内容：用腾讯云发送短信<br></code></pre></td></tr></table></figure>
+
+<p>至此的话我们自定义的一个starter就已经完成了，这个starter只是一个演示的demo，代码有点粗糙。重点看下这个实现原理就好。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/tjudzj/p/8758391.html">https://www.cnblogs.com/tjudzj/p/8758391.html</a></p>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java%E9%9B%86%E5%90%88/" class="print-no-link">#Java集合</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>45Springboot</div>
+      <div>http://example.com/2025/11/25/46SpringBoot/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/25/103kafka/" title="102问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">102问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/24/102%E9%97%AE%E9%A2%98/" title="102问题">
+                        <span class="hidden-mobile">102问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

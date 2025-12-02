@@ -21,20 +21,20 @@
   
     <meta name="description" content="Kcat短剧平台 - 系统架构与业务流程完整文档 目录 系统概述 整体技术架构 服务模块详解 核心业务流程 服务间交互关系 数据库设计 技术亮点与最佳实践 部署架构   一、系统概述1.1 项目背景Kcat短剧平台是一个基于微服务架构的短视频内容分发平台，专注于短剧内容的创作、审核、发布、播放与用户互动。系统采用RuoYi-Cloud脚手架构建，集成了工作流引擎、AI审核、视频处理、消息队列等现代">
 <meta property="og:type" content="article">
-<meta property="og:title" content="100快猫短剧">
+<meta property="og:title" content="101快猫短剧架构">
 <meta property="og:url" content="http://example.com/2025/11/23/101%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B%E6%96%87%E6%A1%A3/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="Kcat短剧平台 - 系统架构与业务流程完整文档 目录 系统概述 整体技术架构 服务模块详解 核心业务流程 服务间交互关系 数据库设计 技术亮点与最佳实践 部署架构   一、系统概述1.1 项目背景Kcat短剧平台是一个基于微服务架构的短视频内容分发平台，专注于短剧内容的创作、审核、发布、播放与用户互动。系统采用RuoYi-Cloud脚手架构建，集成了工作流引擎、AI审核、视频处理、消息队列等现代">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-11-23T04:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-25T06:55:16.431Z">
+<meta property="article:modified_time" content="2025-11-28T13:55:29.680Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="kcat">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>100快猫短剧 - NoFlowCloud</title>
+  <title>101快猫短剧架构 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="100快猫短剧"></span>
+            <span id="subtitle" data-typed-text="101快猫短剧架构"></span>
           
         </div>
 
@@ -234,7 +234,7 @@
         
         
         
-          110 分钟
+          109 分钟
         
       </span>
     
@@ -271,7 +271,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">100快猫短剧</h1>
+            <h1 id="seo-header">101快猫短剧架构</h1>
             
             
               <div class="markdown-body">
@@ -1671,7 +1671,7 @@
 </ol>
 <p><strong>优势</strong>:</p>
 <ul>
-<li>降低接口响应时间（异步处理）</li>
+<li>降低接口响应时间（异步处理） </li>
 <li>削峰填谷（高并发缓冲）</li>
 <li>最终一致性（数据库与缓存同步）</li>
 </ul>
@@ -1864,7 +1864,7 @@
 <h3 id="C-常见问题FAQ"><a href="#C-常见问题FAQ" class="headerlink" title="C. 常见问题FAQ"></a>C. 常见问题FAQ</h3><p><strong>Q1: Kafka消息积压怎么办？</strong><br>A: 增加消费者实例数、优化消费逻辑、增加分区数</p>
 <p><strong>Q2: Redis内存不足怎么办？</strong><br>A: 设置合理的过期时间、使用LRU淘汰策略、扩容Redis节点</p>
 <p><strong>Q3: Camunda流程实例查询慢？</strong><br>A: 定期归档历史数据、优化数据库索引、使用缓存</p>
-<p><strong>Q4: 视频转码失败怎么办？</strong><br>A: 检查腾讯云VOD配置、查看转码模板ID、增加重试机制</p>
+<p><strong>Q4: 视频转码失败怎么办？</strong><br>A: 检查腾讯云VOD配置、增加重试机制</p>
 <p><strong>Q5: 布隆过滤器误判怎么办？</strong><br>A: 降低误判率（增大内存）、配合缓存空对象使用</p>
 <hr>
 <h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>本文档详细描述了Kcat短剧平台的完整技术架构和业务流程，涵盖了4个核心微服务（user-service、content-service、interaction-service、camunda-service）的技术实现、服务交互、数据模型、部署架构等全方位内容。</p>
@@ -1912,7 +1912,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>100快猫短剧</div>
+      <div>101快猫短剧架构</div>
       <div>http://example.com/2025/11/23/101架构和流程文档/</div>
     </div>
     <div class="license-meta">
@@ -1967,8 +1967,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/22/100%E5%BF%AB%E7%8C%AB%E7%9F%AD%E5%89%A7/" title="100快猫短剧">
-                        <span class="hidden-mobile">100快猫短剧</span>
+                      <a href="/2025/11/23/42Java%E9%9B%86%E5%90%88%E5%9F%BA%E7%A1%80/" title="42Java集合基础">
+                        <span class="hidden-mobile">42Java集合基础</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
