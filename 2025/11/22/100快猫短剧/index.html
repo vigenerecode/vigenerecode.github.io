@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251123202113537.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202120347.png">
 <meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-02T16:39:15.282Z">
+<meta property="article:modified_time" content="2025-12-03T15:01:12.229Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="kcat">
 <meta name="twitter:card" content="summary_large_image">
@@ -298,7 +298,7 @@
 <li>最近项目、项目业务、业务技术（目的：给面试官感觉项目不错、技术栈挺ok、能问很多点）</li>
 </ol>
 <p>做了什么项目，项目技术栈（主要用了boot&#x2F;cloud&#x2F;缓存&#x2F;kafka），主要有哪些模块，自己做了哪些模块。模块的功能。功能的特色</p>
-<p><strong>做的短剧平台，其他公司来我们这买账号，我们提供微信小程序页，各个小公司部署自己的微信小程序，所有的短剧来自于我们公司平台。</strong> <strong>目前有</strong>10几家公司入住。</p>
+<p><strong>胖猫短剧平台</strong>是一个基于微服务架构的短视频内容分发平台，专注于短剧内容的创作、审核、发布、播放与用户互动。系统采用RuoYi-Cloud脚手架构建，集成了工作流引擎、AI审核、视频处理、消息队列等现代化技术栈。</p>
 <h1 id="1-介绍！！（背诵）"><a href="#1-介绍！！（背诵）" class="headerlink" title="1.介绍！！（背诵）"></a>1.介绍！！（背诵）</h1><p><strong>最近项目</strong>：最近做了一个短剧项目，项目主要功能有短剧审核、短剧发布、App首页信息流刷剧、用户行为系统、会员系统等。</p>
 <ol>
 <li>我负责了 短剧审核的整个流程（上架上传审核通过等流程）的开发：</li>
@@ -356,7 +356,7 @@
 <p>所有短剧实际上在一个 <strong>zset</strong> <strong>集合中</strong>。 每个短剧的分数目前就是点击量（点进短剧详情），点击是一个用户事件。点击以后会发送kafka消息，我们收到消息会更新缓存的同时，更新数据库。</p>
 <p>用户获取短剧内容分页查询，但是<strong>分页不走数据库</strong>，我们使用redis对list&#x2F;<strong>zset</strong>&#x2F;set 提供的 zrange&#x2F;<strong>cursor</strong>（区间访问办法）</p>
 <p>实现的分页。<strong>Cursor</strong> 有一个特点，不是说要10条redis就返回给用户10条。用户本质上是要新的一些数据，不一定返回10条，具体客户端此次请求要到的所有首页短剧信息流条目有多少以服务端为准。</p>
-<h4 id="重点：所有的数据都上缓存，缓存使用zset结构（redis需要复习）"><a href="#重点：所有的数据都上缓存，缓存使用zset结构（redis需要复习）" class="headerlink" title="重点：所有的数据都上缓存，缓存使用zset结构（redis需要复习）"></a>重点：所有的数据都上缓存，缓存<strong>使用zset</strong>结构（redis需要复习）</h4><p>，使用<strong>cursor</strong>的方式处理前端的分页查询。 查询完成，会给前端返回新的<strong>cursor</strong>位置，前端下一次发请求带上新位置，从这个位置开始获取一页数据；  缓存数据什么时候会更新？（主动&#x2F;被动更新模式）</p>
+<h4 id="重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）"><a href="#重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）" class="headerlink" title="重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）"></a>重点：所有的数据都上缓存，缓存<strong>使用zest</strong>结构（redis需要复习）</h4><p>，使用<strong>cursor</strong>的方式处理前端的分页查询。 查询完成，会给前端返回新的<strong>cursor</strong>位置，前端下一次发请求带上新位置，从这个位置开始获取一页数据；  缓存数据什么时候会更新？（主动&#x2F;被动更新模式）</p>
 <h4 id="集合中数据的变化有两种，暂时没有个性化推荐"><a href="#集合中数据的变化有两种，暂时没有个性化推荐" class="headerlink" title="集合中数据的变化有两种，暂时没有个性化推荐"></a><strong>集合中数据的变化有两种</strong>，暂时没有个性化推荐</h4><ol>
 <li><p>新发短剧，立即<strong>更新缓存</strong></p>
 </li>
