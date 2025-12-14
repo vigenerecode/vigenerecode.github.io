@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://example.com/img/1762276352159-26745f46-3657-4b95-9275-bd1645aa4c9d.webp">
 <meta property="og:image" content="http://example.com/img/image-20251126213013309.png">
 <meta property="article:published_time" content="2025-11-24T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-02T03:04:15.320Z">
+<meta property="article:modified_time" content="2025-12-14T08:42:15.735Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary_large_image">
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          4k 字
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          30 分钟
+          33 分钟
         
       </span>
     
@@ -307,7 +307,8 @@
 <p>适用于状态仅在当前线程内有效的场景(如HTTP请求内的临时数据)</p>
 <p>使用同步机制(兜底)</p>
 <p>判定Spring Bean是否线程安全1)先看作用域:prototype必定安全,singleton需进一步判定状态2)再看状态:无状态singleton安全,有状态singleton不安全3)解决方案优先级:无状态设计 &gt; ThreadLocal线程隔离 &gt; 同步机制</p>
-<h2 id="Bean的作用域有哪些"><a href="#Bean的作用域有哪些" class="headerlink" title="Bean的作用域有哪些"></a>Bean的作用域有哪些</h2><p>(1)作用域的概念</p>
+<h2 id="Bean的作用域有哪些"><a href="#Bean的作用域有哪些" class="headerlink" title="Bean的作用域有哪些"></a>Bean的作用域有哪些</h2><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p><a target="_blank" rel="noopener" href="https://jishuzhan.net/article/1949730988061405185">Java 设计模式之单例模式（详细解析） - 技术栈</a></p>
+<p>(1)作用域的概念</p>
 <p>Bean作用域本质定义了Spring容器管理Bean实例的规则</p>
 <p>容器会创建一个还是多个Bean</p>
 <p>Bean实例的生命周期何时开始、何时销毁</p>
@@ -417,6 +418,18 @@
 <li><strong>NEVER</strong>：要求方法不能在事务中执行。如果当前有事务，则抛出异常。适用于一些完全不允许在事务环境中执行的操作。</li>
 <li><strong>NESTED</strong>：如果当前存在事务，则在嵌套事务中执行；如果没有事务，则创建一个新事务。适用于需要在现有事务中执行的操作，但又希望能够单独回滚的场景。</li>
 </ol>
+<h1 id="Lazy注解解决循环依赖的底层原理"><a href="#Lazy注解解决循环依赖的底层原理" class="headerlink" title="@Lazy注解解决循环依赖的底层原理"></a>@Lazy注解解决循环依赖的底层原理</h1><p>@Lazy注解是Spring框架提供的一种解决循环依赖问题的方式。当两个或多个Bean之间存在循环依赖时，可以使用@Lazy注解延迟初始化其中一个Bean，从而打破循环依赖。</p>
+<p>具体原理如下：</p>
+<ol>
+<li>当Spring容器启动时，会解析并创建所有的Bean定义，但不会立即初始化Bean实例。</li>
+<li>当遇到循环依赖时，Spring会创建一个代理对象来代替其中一个Bean的实例。</li>
+<li>通过@Lazy注解，可以指定某个Bean在第一次被使用时才进行初始化，而不是在容器启动时立即初始化。</li>
+<li>当另一个Bean依赖于被@Lazy注解修饰的Bean时，Spring会返回一个代理对象，而不是实际的Bean实例。</li>
+<li>当代理对象被调用时，Spring会检查是否需要初始化被@Lazy注解修饰的Bean。</li>
+<li>如果需要初始化，Spring会解析并创建被@Lazy注解修饰的Bean，并将其注入到代理对象中。</li>
+<li>这样，循环依赖问题得到了解决，每个Bean都能够正确地获取到对方的实例。</li>
+</ol>
+<p>需要注意的是，@Lazy注解只能解决单例Bean之间的循环依赖问题，因为单例Bean在容器启动时就会被创建。对于原型（prototype）作用域的Bean，@Lazy注解不起作用，因为原型Bean每次获取时都会创建一个新的实例。</p>
 <p>ewnd</p>
 
                 

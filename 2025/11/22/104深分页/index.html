@@ -1,0 +1,716 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言最近遇到接口慢查询问题，仔细排查发现涉及mysql深度分页问题，于是便查阅各种资料寻求解决方案。这里总结一下可能会用到的解决方案。 我们日常做分页需求时，一般会用limit实现，但是当偏移量特别大的时候，查询效率就变得低下。本文将分4个方案，讨论如何优化MySQL大量数据的深分页问题。 limit深度分页为什么会变慢？先看下表结构： 12345678910CREATE TABLE accoun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="104深度分页">
+<meta property="og:url" content="http://example.com/2025/11/22/104%E6%B7%B1%E5%88%86%E9%A1%B5/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="前言最近遇到接口慢查询问题，仔细排查发现涉及mysql深度分页问题，于是便查阅各种资料寻求解决方案。这里总结一下可能会用到的解决方案。 我们日常做分页需求时，一般会用limit实现，但是当偏移量特别大的时候，查询效率就变得低下。本文将分4个方案，讨论如何优化MySQL大量数据的深分页问题。 limit深度分页为什么会变慢？先看下表结构： 12345678910CREATE TABLE accoun">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/c0f021c1799e4759a3615b813c44581btplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/05a3016b7ba64aa3a73dd3105b986666tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/7cb901db283140bd8cc0fe607f9e190atplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/ac07320c5d314de9a212a800f8dd2178tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/bf21b9cc399f428b9b9a68b9b8332f5atplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/e912334f229647afb1428cf70c1e42a5tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/d2fdba12596e4c82a6c22a433d89966ctplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/a9fba5ff58fc4ebcbb944d19bb254c47tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/1c07a09527654b51a68e6df21eb65f84tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/a522f71a595347348fcf23a2d6da93abtplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+<meta property="og:image" content="http://example.com/img/991e1afc21d4c4cd233a5c913d79cfc2.png">
+<meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
+<meta property="article:modified_time" content="2025-12-04T09:43:09.425Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="kcat">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/c0f021c1799e4759a3615b813c44581btplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg">
+  
+  
+  
+  <title>104深度分页 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="104深度分页"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-22 11:07" pubdate>
+          2025年11月22日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">104深度分页</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近遇到接口慢查询问题，仔细排查发现涉及mysql深度分页问题，于是便查阅各种资料寻求解决方案。这里总结一下可能会用到的解决方案。</p>
+<p>我们日常做分页需求时，一般会用limit实现，但是当偏移量特别大的时候，查询效率就变得低下。本文将分4个方案，讨论如何优化MySQL大量数据的深分页问题。</p>
+<h2 id="limit深度分页为什么会变慢？"><a href="#limit深度分页为什么会变慢？" class="headerlink" title="limit深度分页为什么会变慢？"></a>limit深度分页为什么会变慢？</h2><p>先看下表结构：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> account (<br>  id <span class="hljs-type">int</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> AUTO_INCREMENT <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">&#x27;主键Id&#x27;</span>,<br>  <span class="hljs-type">name</span> <span class="hljs-type">varchar</span>(<span class="hljs-number">255</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">&#x27;账户名&#x27;</span>,<br>  balance <span class="hljs-type">int</span>(<span class="hljs-number">11</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">&#x27;余额&#x27;</span>,<br>  create_time datetime <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">&#x27;创建时间&#x27;</span>,<br>  update_time datetime <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span> <span class="hljs-keyword">ON</span> <span class="hljs-keyword">UPDATE</span> <span class="hljs-built_in">CURRENT_TIMESTAMP</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">&#x27;更新时间&#x27;</span>,<br>  <span class="hljs-keyword">PRIMARY KEY</span> (id),<br>  KEY idx_name (<span class="hljs-type">name</span>),<br>  KEY idx_update_time (update_time) //索引<br>) ENGINE=InnoDB AUTO_INCREMENT=<span class="hljs-number">1570068</span> <span class="hljs-keyword">DEFAULT</span> CHARSET=utf8 ROW_FORMAT=REDUNDANT <span class="hljs-keyword">COMMENT</span>=<span class="hljs-string">&#x27;账户表&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>假设深分页的执行SQL如下：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">select</span> id,<span class="hljs-type">name</span>,balance <span class="hljs-keyword">from</span> account <span class="hljs-keyword">where</span> update_time&gt; <span class="hljs-string">&#x27;2020-09-19&#x27;</span> <span class="hljs-keyword">limit</span> <span class="hljs-number">100000</span>,<span class="hljs-number">10</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这个SQL的执行时间如下：</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/c0f021c1799e4759a3615b813c44581b~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/c0f021c1799e4759a3615b813c44581btplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="c0f021c1799e4759a3615b813c44581b~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>执行完需要<strong>0.742</strong>秒，深分页为什么会<strong>变慢</strong>呢？如果换成 <code>limit 0,10</code>，只需要<strong>0.006</strong>秒哦</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/05a3016b7ba64aa3a73dd3105b986666~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/05a3016b7ba64aa3a73dd3105b986666tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="05a3016b7ba64aa3a73dd3105b986666~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>我们先来看下这个SQL的执行流程：</p>
+<ol>
+<li>通过<strong>普通二级索引树</strong>idx_update_time，过滤update_time条件，找到满足条件的记录ID。</li>
+<li>通过ID，回到<strong>主键索引树</strong>，找到满足记录的行，然后取出展示的列（<strong>回表</strong>）</li>
+<li>扫描满足条件的100010行，然后扔掉前100000行，返回。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/7cb901db283140bd8cc0fe607f9e190a~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/7cb901db283140bd8cc0fe607f9e190atplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="7cb901db283140bd8cc0fe607f9e190a~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>SQL的执行流程</p>
+<p><strong>执行计划</strong>如下：</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/ac07320c5d314de9a212a800f8dd2178~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/ac07320c5d314de9a212a800f8dd2178tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="ac07320c5d314de9a212a800f8dd2178~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p><strong>SQL变慢原因有两个</strong>：</p>
+<ol>
+<li>limit语句会先扫描offset+n行，然后再丢弃掉前offset行，返回后n行数据。也就是说<code>limit 100000,10</code>，就会扫描100010行，而<code>limit 0,10</code>，只扫描10行。</li>
+<li><code>limit 100000,10</code> 扫描更多的行数，也意味着<strong>回表</strong>更多的次数。</li>
+</ol>
+<h2 id="通过子查询优化"><a href="#通过子查询优化" class="headerlink" title="通过子查询优化"></a>通过子查询优化</h2><p>因为以上的SQL，回表了100010次，实际上，我们只需要10条数据，也就是我们只需要10次回表其实就够了。因此，我们可以通过<strong>减少回表次数</strong>来优化。</p>
+<h3 id="回顾B-树结构"><a href="#回顾B-树结构" class="headerlink" title="回顾B+ 树结构"></a>回顾B+ 树结构</h3><p>那么，如何减少回表次数呢？我们先来复习下B+树索引结构哈~</p>
+<p>InnoDB中，索引分主键索引（聚簇索引）和二级索引</p>
+<ul>
+<li>主键索引，叶子节点存放的是整行数据</li>
+<li>二级索引，叶子节点存放的是<strong>主键的值</strong>。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/bf21b9cc399f428b9b9a68b9b8332f5a~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/bf21b9cc399f428b9b9a68b9b8332f5atplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="bf21b9cc399f428b9b9a68b9b8332f5a~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<h3 id="把条件转移到主键索引树"><a href="#把条件转移到主键索引树" class="headerlink" title="把条件转移到主键索引树"></a>把条件转移到主键索引树</h3><p>如果我们把查询条件，转移回到主键索引树，那就不就可以减少回表次数啦。转移到主键索引树查询的话，查询条件得改为<code>主键id</code>了，之前SQL的<code>update_time</code>这些条件咋办呢？抽到<strong>子查询</strong>那里嘛~</p>
+<p>子查询那里怎么抽的呢？因为二级索引叶子节点是有主键ID的，所以我们直接根据<code>update_time</code>来查主键ID即可，同时我们把 <code>limit 100000</code>的条件，也转移到子查询，完整SQL如下：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">select</span> id,<span class="hljs-type">name</span>,balance <span class="hljs-keyword">FROM</span> account <span class="hljs-keyword">where</span> id &gt;= (<span class="hljs-keyword">select</span> a.id <span class="hljs-keyword">from</span> account a <span class="hljs-keyword">where</span> a.update_time &gt;= <span class="hljs-string">&#x27;2020-09-19&#x27;</span> <span class="hljs-keyword">limit</span> <span class="hljs-number">100000</span>, <span class="hljs-number">1</span>) <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span>;（可以加下时间条件到外面的主查询）<br></code></pre></td></tr></table></figure>
+
+<p>查询效果一样的，执行时间只需要0.038秒！</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/e912334f229647afb1428cf70c1e42a5~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/e912334f229647afb1428cf70c1e42a5tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="e912334f229647afb1428cf70c1e42a5~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>我们来看下执行计划</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/d2fdba12596e4c82a6c22a433d89966c~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/d2fdba12596e4c82a6c22a433d89966ctplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="d2fdba12596e4c82a6c22a433d89966c~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>由执行计划得知，子查询 table a查询是用到了<code>idx_update_time</code>索引。首先在索引上拿到了聚集索引的主键ID,省去了回表操作，然后第二查询直接根据第一个查询的 ID往后再去查10个就可以了!</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/a9fba5ff58fc4ebcbb944d19bb254c47~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/a9fba5ff58fc4ebcbb944d19bb254c47tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="a9fba5ff58fc4ebcbb944d19bb254c47~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>因此，这个方案是可以的~</p>
+<h2 id="INNER-JOIN-延迟关联"><a href="#INNER-JOIN-延迟关联" class="headerlink" title="INNER JOIN 延迟关联"></a>INNER JOIN 延迟关联</h2><p>延迟关联的优化思路，<strong>跟子查询的优化思路其实是一样的</strong>：都是把条件转移到主键索引树，然后减少回表。不同点是，延迟关联使用了inner join代替子查询。</p>
+<p>优化后的SQL如下：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">SELECT</span>  acct1.id,acct1.name,acct1.balance <span class="hljs-keyword">FROM</span> account acct1 <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> (<span class="hljs-keyword">SELECT</span> a.id <span class="hljs-keyword">FROM</span> account a <span class="hljs-keyword">WHERE</span> a.update_time &gt;= <span class="hljs-string">&#x27;2020-09-19&#x27;</span> <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> a.update_time <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">100000</span>, <span class="hljs-number">10</span>) <span class="hljs-keyword">AS</span>  acct2 <span class="hljs-keyword">on</span> acct1.id= acct2.id;<br></code></pre></td></tr></table></figure>
+
+<p>查询效果也是杠杆的，只需要0.034秒</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/1c07a09527654b51a68e6df21eb65f84~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/1c07a09527654b51a68e6df21eb65f84tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="1c07a09527654b51a68e6df21eb65f84~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>执行计划如下：</p>
+<p><a target="_blank" rel="noopener" href="http://refain.top/img/a522f71a595347348fcf23a2d6da93ab~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg"><img src="/./../img/a522f71a595347348fcf23a2d6da93abtplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0.jpg" srcset="/img/loading.gif" lazyload alt="a522f71a595347348fcf23a2d6da93ab~tplv-k3u1fbpfcp-zoom-in-crop-mark_1512_0_0_0"></a></p>
+<p>查询思路就是，先通过<code>idx_update_time</code>二级索引树查询到满足条件的主键ID，再与原表通过主键ID内连接，这样后面直接走了主键索引了，同时也减少了回表。</p>
+<h2 id="标签记录法-游标"><a href="#标签记录法-游标" class="headerlink" title="标签记录法(游标)"></a>标签记录法(游标)</h2><p>limit 深分页问题的本质原因就是：<strong>偏移量（offset）越大，mysql就会扫描越多的行，然后再抛弃掉。这样就导致查询性能的下降</strong>。</p>
+<p>其实我们可以采用<strong>标签记录</strong>法，就是标记一下上次查询到哪一条了，下次再来查的时候，从该条开始往下扫描。<strong>就好像看书一样，上次看到哪里了，你就折叠一下或者夹个书签，下次来看的时候，直接就翻到啦</strong>。</p>
+<p>假设上一次记录到100000，则SQL可以修改为：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">select</span>  id,<span class="hljs-type">name</span>,balance <span class="hljs-keyword">FROM</span> account <span class="hljs-keyword">where</span> id &gt; <span class="hljs-number">100000</span> <span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> id <span class="hljs-keyword">limit</span> <span class="hljs-number">10</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这样的话，后面无论翻多少页，性能都会不错的，因为命中了<code>id</code>索引。但是你，这种方式<strong>有局限性</strong>：需要一种类似连续自增的字段。</p>
+<h2 id="使用between…and…"><a href="#使用between…and…" class="headerlink" title="使用between…and…"></a>使用between…and…</h2><p>很多时候，可以将<code>limit</code>查询转换为已知位置的查询，这样MySQL通过范围扫描<code>between...and</code>，就能获得到对应的结果。</p>
+<p>如果知道边界值为100000，100010后，就可以这样优化：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">select</span>  id,<span class="hljs-type">name</span>,balance <span class="hljs-keyword">FROM</span> account <span class="hljs-keyword">where</span> id <span class="hljs-keyword">between</span> <span class="hljs-number">100000</span> <span class="hljs-keyword">and</span> <span class="hljs-number">100010</span> <span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> id <span class="hljs-keyword">desc</span>;<br></code></pre></td></tr></table></figure>
+
+<h1 id="3层b-树"><a href="#3层b-树" class="headerlink" title="3层b+树"></a>3层b+树</h1><p>接下来，通过以下计算步骤，就可以统计出两层的B+数大概可以存储多少条记录数据——</p>
+<p>一、先计算一个节点的字节大小：16kb * 1024 &#x3D; 16384 字节。</p>
+<p>二、16384 字节 &#x2F; 14 字节 &#x3D; 1170 ，意味着，根节点有1170个页地址指针，然后，每个页地址指针指向的叶子节点可以存放16条数据。</p>
+<p>三、那么，根据“根节点页地址指针数量 * 单个叶子节点记录行数”，计算1170 * 16 &#x3D; 18720 条记录，可见，两层B+数可以存放18720条记录，当然，这个数字是存在出入的，只是作为参考。</p>
+<p>既然已经知道两层B+数可以存放18720条数据，那么，三层不就可以进一步算出了吗？</p>
+<p>简单画一个三层B+数的存放数据计算逻辑——</p>
+<p><img src="/./../img/991e1afc21d4c4cd233a5c913d79cfc2.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>一、根节点最多有1170个指针数；</p>
+<p>二、说明第二层最多会有1170个子节点，同时，每个子节点里最多有1170个指针数；</p>
+<p>三、那么，第三层叶节点数量，可以通过 “第二层最多有1170个节点数量 * 每个节点里最多有1170个指针数量”，也就是1170 * 1170</p>
+<p>四、最后，计算第三层所有叶子数量 * 各个叶子节点存放的16条数据；</p>
+<p>最后，1170 * 1170 * 16 &#x3D; 21902400，得出两千万左右条数据。</p>
+<p>综上所述，若面试当中遇到这样问题，可以按照这个流程计算回答。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/kcat/" class="print-no-link">#kcat</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>104深度分页</div>
+      <div>http://example.com/2025/11/22/104深分页/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/22/100%E5%BF%AB%E7%8C%AB%E7%9F%AD%E5%89%A7/" title="100快猫短剧">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">100快猫短剧</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
+                        <span class="hidden-mobile">41Java对象基础</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

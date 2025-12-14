@@ -27,14 +27,15 @@
 <meta property="og:description" content="简历写法当前市场：  微信小程序一堆的短剧、剧场类项目；这类项目唯一盈利点（付费解锁全集、月度&#x2F;年度会员）； 靠投广告，吸引用户看，开通付费  应用市场一堆 短剧、剧场类项目；App的盈利点   (1)   大量的用户看广告，收广告的钱 (1)  先做一个简单的自我介绍，说一下最近的项目 面试官你好。Xxxxx  最近项目、项目业务、业务技术（目的：给面试官感觉项目不错、技术栈挺ok、能">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2025/11/22/img/image-20251124153836533.png">
-<meta property="og:image" content="file:///C:/Users/STACKF~1/AppData/Local/Temp/msohtmlclip1/01/clip_image010.jpg">
+<meta property="og:image" content="http://example.com/img/image-20251123202120347.png">
+<meta property="og:image" content="http://example.com/img/image-20251123202120347.png">
 <meta property="og:image" content="http://example.com/img/image-20251123201922337.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202003700.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202106270.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202113537.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202120347.png">
 <meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-03T15:01:12.229Z">
+<meta property="article:modified_time" content="2025-12-14T09:28:19.757Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="kcat">
 <meta name="twitter:card" content="summary_large_image">
@@ -335,7 +336,7 @@
 <h2 id="1-视频转码"><a href="#1-视频转码" class="headerlink" title="1. 视频转码"></a>1. 视频转码</h2><p>由于腾讯云视频转码是一个后台任务，不一定什么时候执行完。我们和腾讯云转码的联动是由xxl-job进行驱动。视频发布以后，启动转码任务，这个转码任务提交给xxl-job进行调度；</p>
 <h3 id="1-我们对xxl-job-做了二次改造；"><a href="#1-我们对xxl-job-做了二次改造；" class="headerlink" title="1.我们对xxl-job 做了二次改造；"></a>1.我们对xxl-job 做了二次改造；</h3><p>由于xxl-job的任务，默认是在他的控制台进行手动配置然后定时触发。我们现在需要的是，视频一上传，自动给xxl-job提交任务，调用vod转码，因此需要完成自动提交任务功能</p>
 <h4 id="需要对接口进行分析构造请求"><a href="#需要对接口进行分析构造请求" class="headerlink" title="需要对接口进行分析构造请求"></a>需要对接口进行分析构造请求</h4><p>所以我们先在 xxl-job 中开通一个 robot 账号。模拟机器人登录xxl-job。然后模拟给xxl-job 发请求（需要分析xxl-job-admin 哪些功能都发什么请求，需要解析出来，</p>
-<p>比如：<img src="./../img/image-20251124153836533.png" srcset="/img/loading.gif" lazyload alt="image-20251124153836533" style="zoom:50%;" /></p>
+<p>比如：                                         <img src="./../img/image-20251124153836533.png" srcset="/img/loading.gif" lazyload alt="image-20251124153836533" style="zoom:50%;" /></p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> HttpCookie <span class="hljs-title">robotLogin</span><span class="hljs-params">()</span></span>&#123;<br>    Map&lt;<span class="hljs-type">String</span>,Object&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();<br>    map.<span class="hljs-built_in">put</span>(<span class="hljs-string">&quot;userName&quot;</span>,xxlJobConfig.<span class="hljs-built_in">getUsername</span>());<br>    map.<span class="hljs-built_in">put</span>(<span class="hljs-string">&quot;password&quot;</span>,xxlJobConfig.<span class="hljs-built_in">getPassword</span>());<br>    <span class="hljs-comment">//1、发送请求，模拟登录 xxl-job</span><br>    HttpResponse response = HttpUtil.<span class="hljs-built_in">createPost</span>(<br>        xxlJobConfig.<span class="hljs-built_in">getAdminAddresses</span>()+<span class="hljs-string">&quot;/auth/doLogin&quot;</span>)<br>        .form(map)<br>        .<span class="hljs-built_in">execute</span>();<br><br>    <span class="hljs-comment">//2、拿到响应的cookie</span><br>    List&lt;HttpCookie&gt; cookies = response.<span class="hljs-built_in">getCookies</span>();<br>    <span class="hljs-keyword">return</span> cookies.<span class="hljs-built_in">get</span>(<span class="hljs-number">0</span>);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> HttpResponse <span class="hljs-title">triggerJob</span><span class="hljs-params">(HttpCookie cookie, Map&lt;<span class="hljs-type">String</span>,Object&gt; map)</span></span>&#123;<br>    <span class="hljs-type">String</span> url = xxlJobConfig.<span class="hljs-built_in">getAdminAddresses</span>()+<span class="hljs-string">&quot;/jobinfo/trigger&quot;</span>;<br>    HttpResponse response = HttpUtil.<span class="hljs-built_in">createPost</span>(url)<br>        .form(map)<br>        .<span class="hljs-built_in">cookie</span>(cookie)<br>        .<span class="hljs-built_in">execute</span>();<br>    <span class="hljs-keyword">return</span> response;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>构造对应的请求数据，然后模拟后台操作）。 去启动一个转码任务。转码任务被调度以后， 会给腾讯云提交两个任务流，分别是信息流任务和画质流任务。信息流主要低码率视频，通过网络能快速传输，方便用户上下滑动切换的时候，视频可以流畅播放。画质流主要是多画质转码（480p、720p、1080p）。 任务流什么时候运行完不一定。</p>
@@ -353,25 +354,29 @@
 <p><strong>由于这个接口第一次找数据库要的数据很多，第一次必须开启异步多线程同时获取各种数据</strong></p>
 <p>所有短剧都是上缓存的。Redis中维护了缓存列表；</p>
 <p>每天晚上<strong>xxl-job</strong>定时任务调度给某一个机器，把<strong>全量短剧</strong>上线到缓存中（分页查询数据库保存数据到redis）；</p>
-<p>所有短剧实际上在一个 <strong>zset</strong> <strong>集合中</strong>。 每个短剧的分数目前就是点击量（点进短剧详情），点击是一个用户事件。点击以后会发送kafka消息，我们收到消息会更新缓存的同时，更新数据库。</p>
+<p>所有短剧实际上在一个 <strong>zset</strong> <strong>集合中</strong>。 每个短剧的分数目前就是点赞量，点赞是一个用户事件。点击以后会发送kafka消息，我们收到消息会更新缓存的同时，更新数据库。</p>
 <p>用户获取短剧内容分页查询，但是<strong>分页不走数据库</strong>，我们使用redis对list&#x2F;<strong>zset</strong>&#x2F;set 提供的 zrange&#x2F;<strong>cursor</strong>（区间访问办法）</p>
 <p>实现的分页。<strong>Cursor</strong> 有一个特点，不是说要10条redis就返回给用户10条。用户本质上是要新的一些数据，不一定返回10条，具体客户端此次请求要到的所有首页短剧信息流条目有多少以服务端为准。</p>
 <h4 id="重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）"><a href="#重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）" class="headerlink" title="重点：所有的数据都上缓存，缓存使用zest结构（redis需要复习）"></a>重点：所有的数据都上缓存，缓存<strong>使用zest</strong>结构（redis需要复习）</h4><p>，使用<strong>cursor</strong>的方式处理前端的分页查询。 查询完成，会给前端返回新的<strong>cursor</strong>位置，前端下一次发请求带上新位置，从这个位置开始获取一页数据；  缓存数据什么时候会更新？（主动&#x2F;被动更新模式）</p>
-<h4 id="集合中数据的变化有两种，暂时没有个性化推荐"><a href="#集合中数据的变化有两种，暂时没有个性化推荐" class="headerlink" title="集合中数据的变化有两种，暂时没有个性化推荐"></a><strong>集合中数据的变化有两种</strong>，暂时没有个性化推荐</h4><ol>
+<p><strong>集合中数据的变化有两种</strong>，暂时没有个性化推荐</p>
+<ol>
 <li><p>新发短剧，立即<strong>更新缓存</strong></p>
 </li>
 <li><p>每晚定时任务，更新<strong>短剧缓存</strong></p>
 </li>
 </ol>
-<h3 id="2-短剧详情：（详情页）"><a href="#2-短剧详情：（详情页）" class="headerlink" title="2. 短剧详情：（详情页）"></a>2. 短剧详情：（详情页）</h3><h5 id="特色：缓存切面（缓存各大问题方案-分布式锁-全部集成）-Redisson"><a href="#特色：缓存切面（缓存各大问题方案-分布式锁-全部集成）-Redisson" class="headerlink" title="特色：缓存切面（缓存各大问题方案 + 分布式锁 全部集成） + Redisson"></a>特色：缓存切面（缓存各大问题方案 + 分布式锁 全部集成） + Redisson</h5><p>演员、介绍、图片…</p>
+<h3 id="2-短剧详情：（详情页）"><a href="#2-短剧详情：（详情页）" class="headerlink" title="2. 短剧详情：（详情页）"></a>2. 短剧详情：（详情页）</h3><p>特色：缓存切面（缓存各大问题方案 + 分布式锁 全部集成） + Redisson</p>
+<p>演员、介绍、图片…</p>
 <p><strong>缓存逻辑，短剧详细信息默认先查缓存</strong>，缓存中没有就准备回源。为了解决缓存的问题（穿透、击穿、雪崩）引入了一系列方案</p>
 <h3 id="3-短剧剧集列表：每个短剧所有集信息（列表页）"><a href="#3-短剧剧集列表：每个短剧所有集信息（列表页）" class="headerlink" title="3. 短剧剧集列表：每个短剧所有集信息（列表页）"></a>3. 短剧剧集列表：每个短剧所有集信息（列表页）</h3><p><strong>缓存逻辑，短剧详细信息默认先查缓存</strong></p>
+<p><img src="/./../img/image-20251123202120347.png" srcset="/img/loading.gif" lazyload alt="image-20251123202120347"></p>
 <h3 id="4-【自定义】：抽取了缓存注解和缓存切面"><a href="#4-【自定义】：抽取了缓存注解和缓存切面" class="headerlink" title="4. 【自定义】：抽取了缓存注解和缓存切面"></a>4. 【自定义】：抽取了缓存注解和缓存切面</h3><p><strong>我们抽取了两个通用的功能切面和注解：缓存注解和分布式锁注解</strong></p>
 <p><strong>@CacheData</strong> 自定义注解：  Spring Cache 提供的缓存注解，仅仅是简单的把数据放到缓存。没有 <strong>布隆过滤器、分布式锁、穿透、击穿、雪崩</strong>的解决方案</p>
 <figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs processing">    @<span class="hljs-title function_">Around</span>(<span class="hljs-string">&quot;@annotation(com.lfy.kcat.user.cache.CacheData)&quot;</span>)<br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">Object</span> <span class="hljs-title function_">around</span>(ProceedingJoinPoint joinPoint)<br>        <span class="hljs-keyword">throws</span> Throwable &#123;<br>        <span class="hljs-comment">//1、先看缓存中有没有；获取到当前方法标注的注解，看是用哪个cacheKey</span><br>        MethodSignature signature = (MethodSignature) joinPoint.<span class="hljs-property">getSignature</span>();<br><br>        <span class="hljs-comment">//2、获取当前方法标注的注解的详情</span><br>        CacheData cacheDataAnn = signature.<span class="hljs-property">getMethod</span>().<span class="hljs-property">getDeclaredAnnotation</span>(CacheData.<span class="hljs-property">class</span>);<br>        <span class="hljs-built_in">String</span> cacheKey = cacheDataAnn.<span class="hljs-property">cacheKey</span>();<br><br>        <span class="hljs-comment">//3、获取方法当时调用时的参数</span><br>        <span class="hljs-built_in">Object</span>[] args = joinPoint.<span class="hljs-property">getArgs</span>();<br><br>        <span class="hljs-comment">//4、根据方法的参数拼串得到 cacheKey 的全值</span><br>        cacheKey = cacheKey + args[<span class="hljs-number">0</span>];<br><br>        <span class="hljs-comment">//5、获取当前方法的返回值类型</span><br>        Class returnType = signature.<span class="hljs-property">getReturnType</span>();<br><br>        <span class="hljs-comment">//TODO 从缓存中获取数据</span><br>        <span class="hljs-built_in">Object</span> data = redisService.<span class="hljs-property">getData</span>(cacheKey, returnType);<br>        <span class="hljs-keyword">if</span>(data != <span class="hljs-literal">null</span>)&#123;<br>            <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面，缓存命中，cacheKey：&#123;&#125;&quot;</span>,cacheKey);<br>            <span class="hljs-keyword">return</span> data;<br>        &#125;<br><br>        <span class="hljs-comment">//能走到这里，说明缓存没有； 准备回源；</span><br>        <span class="hljs-built_in">String</span> bloomFilterName = cacheDataAnn.<span class="hljs-property">bloomFilterName</span>();<br>        <span class="hljs-keyword">if</span> (!StringUtils.<span class="hljs-property">isEmpty</span>(bloomFilterName)) &#123;<br>            <span class="hljs-comment">//使用布隆进行过滤</span><br>            <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面，缓存未命中，准备回源之前，问布隆：&#123;&#125;&quot;</span>,bloomFilterName);<br>            RBloomFilter&lt;<span class="hljs-built_in">Object</span>&gt; <span class="hljs-built_in">filter</span> = redissonClient.<span class="hljs-property">getBloomFilter</span>(bloomFilterName);<br><br>            <span class="hljs-comment">//获取到方法的第一个参数；</span><br>            <span class="hljs-built_in">Object</span> bfEntityId = joinPoint.<span class="hljs-property">getArgs</span>()[<span class="hljs-number">0</span>];<br>            <span class="hljs-type">boolean</span> contains = <span class="hljs-built_in">filter</span>.<span class="hljs-property">contains</span>(bfEntityId);<br>            <span class="hljs-keyword">if</span> (!contains) &#123;<br>                <span class="hljs-comment">//说明布隆过滤器中没有， 直接返回</span><br>                <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面，问 &#123;&#125; 布隆，布隆说没有：&#123;&#125;&quot;</span>,bloomFilterName,bfEntityId);<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-comment">//布隆过滤器（防止缓存穿透）、分布式锁（防止缓存击穿）</span><br>        <span class="hljs-comment">//布隆说有，准备回源; 加分布式锁</span><br>        <span class="hljs-comment">// lock:home:dramas:episodes:1967494716564226050</span><br>        <span class="hljs-built_in">String</span> lockKey = <span class="hljs-string">&quot;lock:&quot;</span>+cacheKey;<br>        RLock lock = redissonClient.<span class="hljs-property">getLock</span>(lockKey);<br>        <span class="hljs-keyword">try</span> &#123;<br><br>            <span class="hljs-type">boolean</span> b = lock.<span class="hljs-property">tryLock</span>();<br>            <span class="hljs-keyword">if</span> (b) &#123;<br>                <span class="hljs-comment">//TODO 得到锁的人，执行回源</span><br>                <span class="hljs-built_in">Object</span> proceed = joinPoint.<span class="hljs-property">proceed</span>();<br>                <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面回源完成... &#123;&#125;&quot;</span>, proceed);<br>                redisService.<span class="hljs-property">saveData</span>(cacheKey, proceed);<br>                <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面回源完成并保存到缓存中&quot;</span>);<br>                <span class="hljs-keyword">return</span> proceed;<br>            &#125;<span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-comment">//TODO 没有得到锁的人，等待2s，去缓存中直接拿</span><br>                <span class="hljs-built_in">log</span>.<span class="hljs-property">info</span>(<span class="hljs-string">&quot;缓存切面，没有得到锁，等待2s，去缓存中直接拿&quot;</span>);<br>                Thread.<span class="hljs-property">sleep</span>(<span class="hljs-number">2000</span>);<br>                <span class="hljs-keyword">return</span> redisService.<span class="hljs-property">getData</span>(cacheKey,returnType);<br>            &#125;<br>        &#125;<span class="hljs-keyword">finally</span> &#123;<br>            lock.<span class="hljs-property">unlock</span>();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p><strong>@RedisLock</strong>(key&#x3D;”lock”) 自定义注解：</p>
-<h3 id="redis设计模型"><a href="#redis设计模型" class="headerlink" title="redis设计模型"></a>redis设计模型</h3><p><img src="file:///C:/Users/STACKF~1/AppData/Local/Temp/msohtmlclip1/01/clip_image010.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>redis设计模型</p>
+<p><img src="/./../img/image-20251123202120347.png" srcset="/img/loading.gif" lazyload alt="image-20251123202120347"></p>
 <h2 id="3-互动服务（两点）"><a href="#3-互动服务（两点）" class="headerlink" title="3. 互动服务（两点）"></a>3. 互动服务（两点）</h2><p>在这一个模块，我们构建一个全用户事件感知系统，实现的是最终一致性方案，针对性的设计了缓存数据模型，并且缓存优先进行读写</p>
 <p><strong>观看期间产生的所有用户事件</strong>： 由消息队列实现最终一致性进行处理。</p>
 <p>用户事件是一个高频操作：单说<strong>播放进度</strong>，就是前端每秒会给我们<strong>汇报进度</strong>。高频操作。</p>
@@ -414,11 +419,11 @@
 <p>c.      TaskService 主要做任务领取、完成相关</p>
 <p>d.     HistoryService 主要做历史流程、历史变量相关</p>
 <p>e.     xxxService</p>
-<p>核心：</p>
+<p><strong>核心：</strong></p>
 <ol>
-<li><p>业务流程的设计和推进（网关【排他、包含、并行】）</p>
+<li><p><strong>业务流程的设计和推进（网关【排他、包含、并行】）</strong></p>
 </li>
-<li><p>业务推进期间共享一些数据，数据使用<strong>流程变量</strong>；</p>
+<li><p><strong>业务推进期间共享一些数据，数据使用流程变量；</strong></p>
 </li>
 </ol>
 <p>(1)  为什么用<strong>流程变量</strong>而不用redis共享数据呀？</p>
@@ -524,18 +529,12 @@
 <li><p><strong>T</strong>：<strong>主要AI审核和对接腾讯云视频转码平台</strong></p>
 </li>
 <li><p><strong>A</strong>：</p>
-<ol>
-<li><p><strong>AI审核主要编写 python 调用 bert 情感分类模型的API</strong></p>
-<ol>
-<li><p>本地部署ollama，使用专业的bert模型进行短剧标题，描述的情感分类判断。以作为后续的审核辅助</p>
-</li>
+<ol start="2">
 <li><p>本地部署ollama，使用deepseekr1基本模型，基于提示词模板，进行结构化输出指定的json；</p>
 </li>
 <li><p>判断正向是否合法，负面是否不合法</p>
 <ol>
 <li>json结构：二分类：{negative: 0.7, positive:0.3},  {sad: 0.666, happy: 0.217, xxx}</li>
-</ol>
-</li>
 </ol>
 </li>
 <li><p>为了实<strong>现稳定转码，和人工兜底处理</strong>。引入了 xxl-job，将转码任务交给 xxl-job 调度给某个机器，并且设置失败重试规则。 这样的好处是，即使多次失败后，任务还在xxl-job中有保存。手动修复相关问题后还可以继续手工启动任务；（主要核心思路，xxl-job原生只支持在控制台提交定时任务。现在需要AI审核通过以后，自动提交转码任务。所以默认robot机器人账号登录xxl-job，触发一个一次性任务启动）</p>
@@ -661,8 +660,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
-                        <span class="hidden-mobile">41Java对象基础</span>
+                      <a href="/2025/11/22/104%E6%B7%B1%E5%88%86%E9%A1%B5/" title="104深度分页">
+                        <span class="hidden-mobile">104深度分页</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

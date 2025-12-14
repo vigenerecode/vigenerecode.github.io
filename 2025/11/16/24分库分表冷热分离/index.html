@@ -1,0 +1,938 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="第01章 高性能架构模式互联网业务兴起之后，海量用户加上海量数据的特点，单个数据库服务器已经难以满足业务需要，必须考虑数据库集群的方式来提升性能。 高性能数据库集群的： 1、第一种方式是**“读写分离”** 2、第二种方式是**“数据库分片”**。 读写分离和分库分表详解 | JavaGuide 1 读写分离架构读写分离原理： 读写分离的基本原理是将数据库读写操作分散到不同的节点上，下面是其基本架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="24分库分表和冷热分离">
+<meta property="og:url" content="http://example.com/2025/11/16/24%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="第01章 高性能架构模式互联网业务兴起之后，海量用户加上海量数据的特点，单个数据库服务器已经难以满足业务需要，必须考虑数据库集群的方式来提升性能。 高性能数据库集群的： 1、第一种方式是**“读写分离”** 2、第二种方式是**“数据库分片”**。 读写分离和分库分表详解 | JavaGuide 1 读写分离架构读写分离原理： 读写分离的基本原理是将数据库读写操作分散到不同的节点上，下面是其基本架">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/image-20251116203009108.png">
+<meta property="og:image" content="http://example.com/img/image-20251126004714274.png">
+<meta property="article:published_time" content="2025-11-16T10:07:57.000Z">
+<meta property="article:modified_time" content="2025-12-04T11:33:20.962Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="Mysql">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/image-20251116203009108.png">
+  
+  
+  
+  <title>24分库分表和冷热分离 - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="24分库分表和冷热分离"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-16 18:07" pubdate>
+          2025年11月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">24分库分表和冷热分离</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="第01章-高性能架构模式"><a href="#第01章-高性能架构模式" class="headerlink" title="第01章 高性能架构模式"></a>第01章 高性能架构模式</h1><p>互联网业务兴起之后，海量用户加上海量数据的特点，单个数据库服务器已经难以满足业务需要，必须考虑数据库集群的方式来提升性能。</p>
+<p>高性能数据库集群的：</p>
+<p>1、第一种方式是**“读写分离”**</p>
+<p>2、第二种方式是**“数据库分片”**。</p>
+<p><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/read-and-write-separation-and-library-subtable.html#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E8%A1%A8">读写分离和分库分表详解 | JavaGuide</a></p>
+<h2 id="1-读写分离架构"><a href="#1-读写分离架构" class="headerlink" title="1 读写分离架构"></a>1 读写分离架构</h2><p><strong>读写分离原理：</strong> 读写分离的基本原理是将数据库读写操作分散到不同的节点上，下面是其基本架构图：</p>
+<p><strong>读写分离的基本实现：</strong></p>
+<ul>
+<li><p>主库负责处理事务性的增删改操作，从库负责处理查询操作，能够有效的避免由数据更新导致的行锁，使得整个系统的查询性能得到极大的改善。</p>
+</li>
+<li><p>读写分离是根据 SQL 语义的分析，将读操作和写操作分别路由至主库与从库。</p>
+</li>
+<li><p>通过一主多从的配置方式，可以将查询请求均匀的分散到多个数据副本，能够进一步的提升系统的处理能力。</p>
+</li>
+<li><p>使用多主多从的方式，不但能够提升系统的吞吐量，还能够提升系统的可用性，可以达到在任何一个数据库宕机，甚至磁盘物理损坏的情况下仍然不影响系统的正常运行。</p>
+</li>
+</ul>
+<p><strong>下图展示了根据业务需要，将用户表的写操作和读操路由到不同的数据库的方案：</strong></p>
+<h2 id="2-数据库分片架构"><a href="#2-数据库分片架构" class="headerlink" title="2 数据库分片架构"></a>2 数据库分片架构</h2><p><strong>读写分离的问题：</strong></p>
+<p>读写分离分散了数据库读写操作的压力，但没有分散存储压力，为了满足业务数据存储的需求，就需要<strong>将存储分散到多台数据库服务器上</strong>。</p>
+<p><strong>数据分片：</strong></p>
+<p>将存放在单一数据库中的数据分散地存放至多个数据库或表中，以达到提升性能瓶颈以及可用性的效果。 数据分片的有效手段是对关系型数据库进行<strong>分库和分表</strong>。数据分片的拆分方式又分为<strong>垂直分片和水平分片</strong>。</p>
+<h3 id="2-1-垂直分片"><a href="#2-1-垂直分片" class="headerlink" title="2.1 垂直分片"></a>2.1 垂直分片</h3><p><strong>垂直分库：</strong></p>
+<p>按照业务拆分的方式称为垂直分片，又称为纵向拆分，它的核心理念是<strong>专库专用</strong>。 在拆分之前，一个数据库由多个数据表构成，每个表对应着不同的业务。而拆分之后，则是按照业务<strong>将表进行归类，分布到不同的数据库</strong>中，从而将压力分散至不同的数据库。</p>
+<p>垂直拆分可以缓解数据量和访问量带来的问题，但无法根治。如果垂直拆分之后，<strong>表中的数据量依然超过单节点所能承载的阈值，则需要水平分片来进一步处理。</strong></p>
+<p><strong>垂直分表：</strong></p>
+<p><strong>垂直分表适合将表中某些不常用的列，或者是占了大量空间的列拆分出去。</strong></p>
+<p>假设我们是一个婚恋网站，用户在筛选其他用户的时候，主要是用 age 和 sex 两个字段进行查询，而 nickname 和 description 两个字段主要用于展示，一般不会在业务查询中用到。description 本身又比较长，因此我们可以将这两个字段独立到另外一张表中，这样在查询 age 和 sex 时，就能带来一定的性能提升。</p>
+<p>垂直分表引入的复杂性主要体现在表操作的数量要增加。例如，原来只要一次查询就可以获取 name、age、sex、nickname、description，现在需要两次查询，一次查询获取 name、age、sex，另外一次查询获取 nickname、description。</p>
+<h3 id="2-2-水平分片"><a href="#2-2-水平分片" class="headerlink" title="2.2 水平分片"></a>2.2 水平分片</h3><p>水平分片又称为横向拆分。 相对于垂直分片，它不再将数据根据业务逻辑分类，而是通过某个字段（或某几个字段），根据某种规则将<strong>数据</strong>分散至多个库或表中**，**每个分片仅包含数据的一部分。 例如：根据主键分片，偶数主键的记录放入 0 库（或表），奇数主键的记录放入 1 库（或表），如下图所示。</p>
+<blockquote>
+<p><strong>阿里巴巴Java开发手册：</strong><br>【推荐】单表行数超过 <strong>500 万行</strong>或者单表容量<strong>超过 2GB</strong>，才推荐进行分库分表。<br>说明：如果预计三年后的数据量根本达不到这个级别，请不要在创建表时就分库分表。</p>
+</blockquote>
+<h2 id="3-实现方式"><a href="#3-实现方式" class="headerlink" title="3 实现方式"></a>3 实现方式</h2><p>Apache ShardingSphere（程序级别和中间件级别）</p>
+<p>MyCat（数据库中间件）</p>
+<h1 id="第02章-ShardingSphere"><a href="#第02章-ShardingSphere" class="headerlink" title="第02章 ShardingSphere"></a>第02章 ShardingSphere</h1><h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><p>官网：<a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/index_zh.html">https://shardingsphere.apache.org/index_zh.html</a></p>
+<p>文档：<a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/5.1.1/cn/overview/" title="https:&#x2F;&#x2F;shardingsphere.apache.org&#x2F;document&#x2F;5.1.1&#x2F;cn&#x2F;overview&#x2F;">https://shardingsphere.apache.org/document/5.1.1/cn/overview/</a></p>
+<p>Apache ShardingSphere 由 JDBC、Proxy 和 Sidecar（规划中）这 3 款既能够独立部署，又支持混合部署配合使用的产品组成。</p>
+<h2 id="2、ShardingSphere-JDBC"><a href="#2、ShardingSphere-JDBC" class="headerlink" title="2、ShardingSphere-JDBC"></a>2、ShardingSphere-JDBC</h2><p><strong>程序代码封装</strong></p>
+<p>定位为轻量级 Java 框架，<strong>在 Java 的 JDBC 层提供的额外服务</strong>。 它使用客户端直连数据库，<strong>以 jar 包形式提供服务</strong>，无需额外部署和依赖，可理解为增强版的 JDBC 驱动，完全兼容 JDBC 和各种 ORM 框架。</p>
+<h2 id="3、ShardingSphere-Proxy"><a href="#3、ShardingSphere-Proxy" class="headerlink" title="3、ShardingSphere-Proxy"></a>3、ShardingSphere-Proxy</h2><p><strong>中间件封装</strong></p>
+<p>定位为透明化的<strong>数据库代理端</strong>，提供封装了数据库二进制协议的服务端版本，用于完成对异构语言的支持。 目前提供 MySQL 和 PostgreSQL版本，它可以使用任何兼容 MySQL&#x2F;PostgreSQL 协议的访问客户端（如：MySQL Command Client, MySQL Workbench, Navicat 等）操作数据，对 DBA 更加友好。</p>
+<h1 id="第03章-MySQL主从同步"><a href="#第03章-MySQL主从同步" class="headerlink" title="第03章 MySQL主从同步"></a>第03章 MySQL主从同步</h1><h2 id="一、Binlog基础"><a href="#一、Binlog基础" class="headerlink" title="一、Binlog基础"></a>一、Binlog基础</h2><h3 id="1-什么是Binlog"><a href="#1-什么是Binlog" class="headerlink" title="1. 什么是Binlog"></a>1. 什么是Binlog</h3><p>Binlog（Binary Log）是MySQL Server层生成的二进制日志，<strong>记录了数据库中所有对数据的修改操作</strong>，包括INSERT、UPDATE、DELETE等DML操作，以及CREATE、ALTER等DDL操作。MySQL 在完成一条更新操作后，Server 层还会生成一条 binlog，等之后事务提交的时候，会将该事物执行过程中产生的所有 binlog 统一写 入 binlog 文件，</p>
+<p>binlog 是追加写，写满一个文件，就创建一个新的文件继续写，不会覆盖以前的日志，保存的是全量的日志，用于备份恢复、主从复制；</p>
+<h3 id="2-Binlog的三种格式"><a href="#2-Binlog的三种格式" class="headerlink" title="2. Binlog的三种格式"></a>2. Binlog的三种格式</h3><table>
+<thead>
+<tr>
+<th>格式</th>
+<th>说明</th>
+<th>适用场景</th>
+<th>优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>STATEMENT</strong></td>
+<td>记录执行的SQL语句</td>
+<td>简单操作、不涉及函数</td>
+<td>优点：日志文件小；缺点：某些函数可能导致主从不一致</td>
+</tr>
+<tr>
+<td><strong>ROW</strong></td>
+<td>记录数据行的变化（修改前后的值）</td>
+<td>涉及函数、存储过程、非确定性操作</td>
+<td>优点：数据一致性好；缺点：日志文件大</td>
+</tr>
+<tr>
+<td><strong>MIXED</strong></td>
+<td>自动选择STATEMENT或ROW</td>
+<td>大多数场景</td>
+<td>优点：灵活；缺点：复杂</td>
+</tr>
+</tbody></table>
+<h3 id="3-Binlog的关键作用"><a href="#3-Binlog的关键作用" class="headerlink" title="3. Binlog的关键作用"></a>3. Binlog的关键作用</h3><ul>
+<li><strong>数据备份与恢复</strong>：通过binlog可以将数据库恢复到特定时间点</li>
+<li><strong>主从复制</strong>：主服务器将binlog同步到从服务器，实现数据一致性</li>
+<li><strong>数据审计</strong>：提供数据库操作历史的详尽记录</li>
+<li><strong>数据同步</strong>：支持多级复制、级联复制等架构</li>
+</ul>
+<h2 id="二、MySQL主从复制原理"><a href="#二、MySQL主从复制原理" class="headerlink" title="二、MySQL主从复制原理"></a>二、MySQL主从复制原理</h2><h3 id="1-核心原理"><a href="#1-核心原理" class="headerlink" title="1. 核心原理"></a>1. 核心原理</h3><p>主从复制是基于<strong>二进制日志</strong>的机制，实现数据从主服务器（Master）到从服务器（Slave）的同步。整个过程依赖于”三个线程”和”两种日志”：</p>
+<p><strong>三个线程</strong>：</p>
+<ol>
+<li><strong>Binlog Dump线程</strong>（主服务器）：负责读取主服务器的binlog并发送给从服务器</li>
+<li><strong>I&#x2F;O Thread</strong>（从服务器）：从主服务器获取binlog并写入中继日志（relay log）</li>
+<li><strong>SQL Thread</strong>（从服务器）：执行relay log中的操作，实现数据同步</li>
+</ol>
+<p><strong>两种日志</strong>：</p>
+<ol>
+<li><strong>binlog</strong>（主服务器）：真实业务操作的”事实记录”</li>
+<li><strong>relay log</strong>（从服务器）：从服务器本地的缓存日志，用来重放</li>
+</ol>
+<blockquote>
+<p>📌 <strong>关键点</strong>：主库commit &#x3D; binlog写成功。这意味着binlog是主库事务成功的唯一证据。</p>
+</blockquote>
+<h2 id="1、MySQL主从同步原理"><a href="#1、MySQL主从同步原理" class="headerlink" title="1、MySQL主从同步原理"></a>1、MySQL主从同步原理</h2><p><img src="/./../img/image-20251116203009108.png" srcset="/img/loading.gif" lazyload alt="image-20251116203009108"></p>
+<p><strong>基本原理：</strong></p>
+<p>slave会从master读取binlog来进行数据同步</p>
+<p>MySQL的二进制日志（Binary Log，简称Binlog）是MySQL数据库引擎提供的一种记录数据库变更的日志文件。它记录了对MySQL数据库进行的所有写操作，包括插入、更新、删除等，但不包括查询操作</p>
+<p><strong>具体步骤：</strong></p>
+<ul>
+<li><p>step1：master将数据改变记录到二进制日志（binary log）中。</p>
+</li>
+<li><p>step2：当slave上执行 start slave 命令之后，slave会创建一个IO 线程用来连接master，请求master中的binlog。</p>
+</li>
+<li><p>step3：当slave连接master时，master会创建一个 log dump 线程，用于发送 binlog 的内容。在读取 binlog 的内容的操作中，会对主节点上的 binlog 加锁，当读取完成并发送给从服务器后解锁。</p>
+</li>
+<li><p>step4：IO 线程接收主节点 binlog dump 进程发来的更新之后，保存到 中继日志（relay log） 中。</p>
+</li>
+<li><p>step5：slave的SQL线程，读取relay log日志，并解析成具体操作，从而实现主从操作一致，最终数据一致。</p>
+</li>
+</ul>
+<h2 id="2-一主多从配置"><a href="#2-一主多从配置" class="headerlink" title="2 一主多从配置"></a>2 一主多从配置</h2><p>服务器规划：使用docker方式创建，主从服务器IP一致，端口号不一致 三个服务器都有相同的数据库db_user</p>
+<ul>
+<li>主服务器：容器名<code>fy-mysql-master</code>，端口<code>3309</code></li>
+<li>从服务器：容器名<code>fy-mysql-slave1</code>，端口<code>3307</code></li>
+<li>从服务器：容器名<code>fy-mysql-slave2</code>，端口<code>3308</code></li>
+</ul>
+<p><strong>注意：</strong> 如果此时防火墙是开启的，<code>则先关闭防火墙，并重启docker</code>，否则后续安装的MySQL无法启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#关闭docker</span><br>systemctl stop docker<br><span class="hljs-comment">#关闭防火墙</span><br>systemctl stop firewalld<br><span class="hljs-comment">#启动docker</span><br>systemctl start docker<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-1-准备主服务器-已完成"><a href="#2-1-准备主服务器-已完成" class="headerlink" title="2.1 准备主服务器(已完成)"></a>2.1 准备主服务器(已完成)</h3><ul>
+<li><p><strong>step1：在docker中创建并启动MySQL主服务器：</strong><code>端口3309</code></p>
+<p>就用之前搭建好的fy-mysql8</p>
+</li>
+<li><p><strong>step2：创建MySQL主服务器配置文件：</strong></p>
+</li>
+</ul>
+<p>默认情况下MySQL的binlog日志是自动开启的，可以通过如下配置定义一些可选配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /var/lib/docker/volumes/mysql8_conf/_data/<br></code></pre></td></tr></table></figure>
+
+<p>配置如下内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell">[mysqld]<br>server-id=1<br>log-bin=mysql-bin<br>binlog-ignore-db=mysql<br>binlog-ignore-db=infomation_schema<br>binlog-ignore-db=performance_schema<br>binlog-ignore-db=sys<br><br>binlog_format=ROW<br></code></pre></td></tr></table></figure>
+
+<p>重启MySQL容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker restart fy-mysql8<br></code></pre></td></tr></table></figure>
+
+<p>binlog格式说明：</p>
+<ul>
+<li><p>binlog_format&#x3D;STATEMENT：日志记录的是主机数据库的<code>写指令</code>，性能高，但是now()之类的函数以及获取系统参数的操作会出现主从数据不同步的问题。</p>
+</li>
+<li><p>binlog_format&#x3D;ROW（默认）：日志记录的是主机数据库的<code>写后的数据</code>，批量操作时性能较差，解决now()或者  user()或者  @@hostname 等操作在主从机器上不一致的问题。</p>
+</li>
+<li><p>binlog_format&#x3D;MIXED：是以上两种level的混合使用，有函数用ROW，没函数用STATEMENT，但是无法识别系统变量</p>
+</li>
+<li><p><strong>step3：主机中查询master状态：</strong></p>
+</li>
+</ul>
+<p>执行完此步骤后<code>不要再操作主服务器MYSQL</code>，防止主服务器状态值变化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs mysql">#进入容器：env LANG=C.UTF-8 避免容器中显示中文乱码<br>docker exec -it fy-mysql8  /bin/bash<br><br>#进入容器内的mysql命令行<br>mysql -uroot -p1234<br>#修改默认密码校验方式<br>ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED WITH mysql_native_password BY &#x27;1234&#x27;;<br>flush privileges;<br><br># 查询master阶段的状态<br>SHOW MASTER STATUS;<br></code></pre></td></tr></table></figure>
+
+<p>记下<code>File</code>和<code>Position</code>的值。执行完此步骤后不要再操作主服务器MYSQL，防止主服务器状态值变化。</p>
+<h3 id="2-2-准备从服务器"><a href="#2-2-准备从服务器" class="headerlink" title="2.2 准备从服务器"></a>2.2 准备从服务器</h3><p>可以配置多台从机slave1、slave2…，这里以配置slave1为例</p>
+<ul>
+<li><strong>step1：在docker中创建并启动MySQL从服务器：</strong><code>端口3307</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 3307 slave01  先把slave01的配置都配好之后,再进行slave02的配置</span><br>docker run -d \<br>-p 3307:3306 \<br>-v mysql02_conf:/etc/mysql/conf.d \<br>-v mysql02_data:/var/lib/mysql \<br>-e MYSQL_ROOT_PASSWORD=1234 \<br>--name slave01 \<br>mysql:8.0.30<br><span class="hljs-comment"># 3308 slave02  slave01配置之后,同样的流程进行slave02的配置</span><br>docker run -d \<br>-p 3308:3306 \<br>-v mysql03_conf:/etc/mysql/conf.d \<br>-v mysql03_data:/var/lib/mysql \<br>-e MYSQL_ROOT_PASSWORD=1234 \<br>--name slave02 \<br>mysql:8.0.30<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>step2：创建MySQL从服务器配置文件：</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /var/lib/docker/volumes/mysql02_conf/_data/<br><span class="hljs-built_in">touch</span> my.cnf<br></code></pre></td></tr></table></figure>
+
+<p>配置如下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">[mysqld]<br>server-id=2<br>relay-log=mysql-relay<br></code></pre></td></tr></table></figure>
+
+<p>重启MySQL容器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker restart slave01<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>step3：在从机上配置主从关系：</strong></li>
+</ul>
+<p>在<strong>从机</strong>上执行以下SQL操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">进入容器：</span><br>docker exec -it slave01  /bin/bash<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">进入容器内的mysql命令行</span><br>mysql -uroot -p1234<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">修改默认密码校验方式</span><br>ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED WITH mysql_native_password BY &#x27;1234&#x27;;<br>flush privileges;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">关闭从节点服务</span><br>stop slave;<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">设置主节点</span><br>CHANGE MASTER TO MASTER_HOST=&#x27;192.168.10.22&#x27;,MASTER_USER=&#x27;root&#x27;,MASTER_PASSWORD=&#x27;1234&#x27;,MASTER_PORT=3309,MASTER_LOG_FILE=&#x27;mysql-bin.000001&#x27;,MASTER_LOG_POS=606;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-启动主从同步"><a href="#2-3-启动主从同步" class="headerlink" title="2.3 启动主从同步"></a>2.3 启动主从同步</h3><p>启动从机的复制功能，执行SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">START</span> SLAVE;<br><br><span class="hljs-comment">-- 查看状态（不需要分号）</span><br><span class="hljs-keyword">SHOW</span> SLAVE STATUS\G<br></code></pre></td></tr></table></figure>
+
+<p><strong>两个关键进程：</strong> 下面两个参数都是Yes，则说明主从配置成功！</p>
+<h3 id="2-4-停止和重置"><a href="#2-4-停止和重置" class="headerlink" title="2.4 停止和重置"></a>2.4 停止和重置</h3><p>需要的时候，可以使用如下SQL语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-comment">-- 在从机上执行。功能说明：停止I/O 线程和SQL线程的操作。</span><br>stop slave; <br><br><span class="hljs-comment">-- 在从机上执行。功能说明：用于删除SLAVE数据库的relaylog日志文件，并重新启用新的relaylog文件。</span><br>reset slave;<br><br><span class="hljs-comment">-- 在主机上执行。功能说明：删除所有的binglog日志文件，并将日志索引文件清空，重新开始所有新的日志文件。</span><br><span class="hljs-comment">-- 用于第一次进行搭建主从库时，进行主库binlog初始化工作；</span><br>reset master;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-5-常见问题"><a href="#2-5-常见问题" class="headerlink" title="2.5 常见问题"></a><strong>2.5 常见问题</strong></h3><h4 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h4><p>启动主从同步后，常见错误是<code>Slave_IO_Running： No 或者 Connecting</code> 的情况，此时查看下方的 <code>Last_IO_ERROR</code>错误日志，根据日志中显示</p>
+<p>的错误信息在网上搜索解决方案即可</p>
+<p><strong>典型的错误例如：</strong><code>Last_IO_Error: Got fatal error 1236 from master when reading data from binary log: &#39;Client requested master to start replication from position &gt; file size&#39;</code></p>
+<p><strong>解决方案：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-comment">-- 在从机停止slave</span><br>SLAVE STOP;<br><br><span class="hljs-comment">-- 在主机查看mater状态</span><br><span class="hljs-keyword">SHOW</span> MASTER STATUS;<br><br><span class="hljs-comment">-- 在主机刷新日志</span><br>FLUSH LOGS;<br><br><span class="hljs-comment">-- 再次在主机查看mater状态（会发现File和Position发生了变化）</span><br><br><span class="hljs-keyword">SHOW</span> MASTER STATUS;<br><br><span class="hljs-comment">-- 修改从机连接主机的SQL，并重新连接即可</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h4><p>启动docker容器后提示 <code>WARNING: IPv4 forwarding is disabled. Networking will not work.</code></p>
+<p>此错误，虽然不影响主从同步的搭建，但是如果想从远程客户端通过以下方式连接docker中的MySQL则没法连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\Users\administrator&gt;mysql -h 192.168.10.22 -P 3306 -u root -p<br></code></pre></td></tr></table></figure>
+
+<p><strong>解决方案：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#修改配置文件：</span><br>vim /usr/lib/sysctl.d/00-system.conf<br><span class="hljs-comment">#追加</span><br>net.ipv4.ip_forward=1<br><span class="hljs-comment">#接着重启网络</span><br>systemctl restart network<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-6-测试实现主从同步"><a href="#2-6-测试实现主从同步" class="headerlink" title="2.6 测试实现主从同步"></a>2.6 测试实现主从同步</h3><p>在主机中执行以下SQL，在从机中查看数据库、表和数据是否已经被同步</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> DATABASE db_user;<br>USE db_user;<br><span class="hljs-keyword">CREATE TABLE</span> t_user (<br> id <span class="hljs-type">BIGINT</span> AUTO_INCREMENT,<br> uname <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">30</span>),<br> <span class="hljs-keyword">PRIMARY KEY</span> (id)<br>);<br><span class="hljs-keyword">INSERT INTO</span> t_user(uname) <span class="hljs-keyword">VALUES</span>(<span class="hljs-string">&#x27;leifengyang&#x27;</span>);<br><span class="hljs-keyword">INSERT INTO</span> t_user(uname) <span class="hljs-keyword">VALUES</span>(@<span class="hljs-variable">@hostname</span>);<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-1-配置文件内容"><a href="#2-1-配置文件内容" class="headerlink" title="2.1 配置文件内容"></a>2.1 配置文件内容</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">spring:</span><br>  <span class="hljs-attr">shardingsphere:</span><br>    <span class="hljs-attr">datasource:</span><br>      <span class="hljs-attr">names:</span> <span class="hljs-string">user,order0,order1</span><br>      <span class="hljs-attr">user:</span><br>        <span class="hljs-attr">type:</span> <span class="hljs-string">com.zaxxer.hikari.HikariDataSource</span><br>        <span class="hljs-attr">driverClassName:</span> <span class="hljs-string">com.mysql.jdbc.Driver</span><br>        <span class="hljs-attr">jdbcUrl:</span> <span class="hljs-string">jdbc:mysql://192.168.10.22:3301/db_user</span><br>        <span class="hljs-attr">username:</span> <span class="hljs-string">root</span><br>        <span class="hljs-attr">password:</span> <span class="hljs-number">1234</span><br>      <span class="hljs-attr">order0:</span><br>        <span class="hljs-attr">type:</span> <span class="hljs-string">com.zaxxer.hikari.HikariDataSource</span><br>        <span class="hljs-attr">driverClassName:</span> <span class="hljs-string">com.mysql.jdbc.Driver</span><br>        <span class="hljs-attr">jdbcUrl:</span> <span class="hljs-string">jdbc:mysql://192.168.10.22:3310/db_order</span><br>        <span class="hljs-attr">username:</span> <span class="hljs-string">root</span><br>        <span class="hljs-attr">password:</span> <span class="hljs-number">1234</span><br>      <span class="hljs-attr">order1:</span><br>        <span class="hljs-attr">type:</span> <span class="hljs-string">com.zaxxer.hikari.HikariDataSource</span><br>        <span class="hljs-attr">driverClassName:</span> <span class="hljs-string">com.mysql.jdbc.Driver</span><br>        <span class="hljs-attr">jdbcUrl:</span> <span class="hljs-string">jdbc:mysql://192.168.10.22:3311/db_order</span><br>        <span class="hljs-attr">username:</span> <span class="hljs-string">root</span><br>        <span class="hljs-attr">password:</span> <span class="hljs-number">1234</span><br>    <span class="hljs-attr">rules:</span><br>      <span class="hljs-attr">sharding:</span><br>        <span class="hljs-attr">tables:</span><br>          <span class="hljs-attr">t_user:</span><br>            <span class="hljs-attr">actualDataNodes:</span> <span class="hljs-string">user.t_user</span>  <span class="hljs-comment">#user是最上面数据源名称 必须一致</span><br>          <span class="hljs-attr">t_order:</span><br>            <span class="hljs-attr">actualDataNodes:</span> <span class="hljs-string">order0.t_order0,</span> <span class="hljs-string">order0.t_order1,order1.t_order0,order1.t_order1</span>    <span class="hljs-comment">#order0 order1是最上面数据源名称 必须一致</span><br>            <span class="hljs-attr">databaseStrategy:</span><br>              <span class="hljs-attr">standard:</span><br>                <span class="hljs-attr">shardingColumn:</span> <span class="hljs-string">user_id</span><br>                <span class="hljs-attr">shardingAlgorithmName:</span> <span class="hljs-string">order_bd_alg</span><br>            <span class="hljs-attr">tableStrategy:</span><br>              <span class="hljs-attr">standard:</span><br>                <span class="hljs-attr">sharding-column:</span> <span class="hljs-string">user_id</span><br>                <span class="hljs-attr">sharding-algorithm-name:</span> <span class="hljs-string">order_table_alg</span><br>        <span class="hljs-attr">sharding-algorithms:</span><br>          <span class="hljs-attr">order_bd_alg:</span><br>            <span class="hljs-attr">type:</span><br>              <span class="hljs-string">INLINE</span> <span class="hljs-comment">#分片算法一定要另起一行写</span><br>            <span class="hljs-attr">props:</span><br>              <span class="hljs-attr">algorithm-expression:</span> <span class="hljs-string">order$-&gt;&#123;user_id</span> <span class="hljs-string">%</span> <span class="hljs-number">2</span><span class="hljs-string">&#125;</span>  <span class="hljs-comment">#order是最上面数据源名称 必须一致</span><br>          <span class="hljs-attr">order_table_alg:</span><br>            <span class="hljs-attr">type:</span><br>              <span class="hljs-string">INLINE</span> <span class="hljs-comment">#分片算法一定要另起一行写</span><br>            <span class="hljs-attr">props:</span><br>              <span class="hljs-attr">algorithm-expression:</span> <span class="hljs-string">t_order$-&gt;&#123;user_id</span> <span class="hljs-string">%</span> <span class="hljs-number">2</span><span class="hljs-string">&#125;</span><br>    <span class="hljs-attr">props:</span> <span class="hljs-comment">#与rules对齐</span><br>      <span class="hljs-attr">sql-show:</span> <span class="hljs-literal">true</span><br><br></code></pre></td></tr></table></figure>
+
+<p>为了防止订单号重复 需要先 修改Order实体类的主键策略：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//@TableId(type = IdType.AUTO)//依赖数据库的主键自增策略</span><br><span class="hljs-meta">@TableId(type = IdType.ASSIGN_ID)</span><span class="hljs-comment">//分布式id</span><br></code></pre></td></tr></table></figure>
+
+<p>测试：保留上面配置中的一个分片表节点分别进行测试，检查每个分片节点是否可用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 水平分片：插入数据测试</span><br><span class="hljs-comment">     */</span><br><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInsertOrder</span><span class="hljs-params">()</span>&#123;<br><br>    <span class="hljs-type">Order</span> <span class="hljs-variable">order</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Order</span>();<br>    order.setOrderNo(<span class="hljs-string">&quot;leifengyang001&quot;</span>);<br>    order.setUserId(<span class="hljs-number">1L</span>);<br>    order.setAmount(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-number">100</span>));<br>    orderMapper.insert(order);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-行表达式"><a href="#2-3-行表达式" class="headerlink" title="2.3 行表达式"></a>2.3 行表达式</h3><p>优化上一步的分片表配置</p>
+<p><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/5.1.1/cn/features/sharding/concept/inline-expression/">https://shardingsphere.apache.org/document/5.1.1/cn/features/sharding/concept/inline-expression/</a></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">spring:</span><br>  <span class="hljs-attr">shardingsphere:</span><br>	<span class="hljs-attr">rules:</span><br>      <span class="hljs-attr">sharding:</span><br>        <span class="hljs-attr">tables:</span><br>          <span class="hljs-attr">t_user:</span><br>            <span class="hljs-attr">actual-data-nodes:</span> <span class="hljs-string">user.t_user</span><br>          <span class="hljs-attr">t_order:</span><br>            <span class="hljs-attr">actual-data-nodes:</span> <span class="hljs-string">order$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-分布式序列算法"><a href="#2-4-分布式序列算法" class="headerlink" title="2.4 分布式序列算法"></a>2.4 分布式序列算法</h3><p><strong>雪花算法：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/5.1.1/cn/features/sharding/concept/key-generator/">https://shardingsphere.apache.org/document/5.1.1/cn/features/sharding/concept/key-generator/</a></p>
+<p>水平分片需要关注全局序列，因为不能简单的使用基于数据库的主键自增。</p>
+<p>分库分表以后表的主键字段就不能使用自增策略，因为可能出现重复数据。</p>
+<p>分布式系统中的主键生成策略：</p>
+<p>1、uuid</p>
+<p>2、redis</p>
+<p>3、雪花算法(shardingsphere：SnowflakeKeyGenerateAlgorithm)</p>
+<p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95&spm=1001.2101.3001.7020">雪花算法</a>是推特开源的分布式ID生成算法，用于在不同的机器上生成唯一的ID的算法。该算法生成一个64bit的数字作为分布式ID，保证这个ID自增</p>
+<p>并且全局唯一。</p>
+<p>生成的64位ID结构如下：</p>
+<p>雪花算法是 64 位 的二进制，一共包含了四部分：</p>
+<p>1、1位是符号位，也就是最高位，始终是0，没有任何意义，因为要是唯一计算机二进制补码中就是负数，0才是正数。</p>
+<p>2、41位是时间戳，具体到毫秒，41位的二进制可以使用69年，如果时间计算基准年为1970年，那么到2039年就不能再用了，当前也可以指定一个基准年。</p>
+<p>3、10位是机器标识，可以全部用作机器ID，也可以用来标识机房ID + 机器ID，10位最多可以表示1024台机器。</p>
+<p>4、12位是计数序列号，也就是同一台机器上同一时间，理论上还可以同时生成不同的ID，12位的序列号能够区分出4096个ID。</p>
+<p>这里有两种方案：一种是基于MyBatisPlus的id策略；一种是ShardingSphere-JDBC的全局序列配置。</p>
+<p><code>基于MyBatisPlus的id策略：</code>将Order类的id设置成如下形式: 以上演示就是基于此种方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@TableId(type = IdType.ASSIGN_ID)</span><br><span class="hljs-keyword">private</span> Long id;<br></code></pre></td></tr></table></figure>
+
+<p><code>基于ShardingSphere-JDBC的全局序列配置</code>：和前面的MyBatisPlus的策略二选一</p>
+<p>我们在下一个多表关联案例中演示即可</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">spring:</span><br>    <span class="hljs-attr">rules:</span><br>      <span class="hljs-attr">sharding:</span><br>        <span class="hljs-attr">tables:</span><br>          <span class="hljs-attr">t_order:</span><br>            <span class="hljs-attr">key-generate-strategy:</span><br>              <span class="hljs-attr">column:</span> <span class="hljs-string">id</span><br>              <span class="hljs-attr">key-generator-name:</span> <span class="hljs-string">alg_snowflake</span><br>        <span class="hljs-attr">key-generators:</span><br>          <span class="hljs-attr">alg_snowflake:</span><br>            <span class="hljs-attr">type:</span> <span class="hljs-string">SNOWFLAKE</span><br>    <span class="hljs-attr">props:</span><br>      <span class="hljs-attr">sql-show:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<p>此时，需要将实体类中的id策略修改成以下形式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//当配置了shardingsphere-jdbc的分布式序列时，自动使用shardingsphere-jdbc的分布式序列</span><br><span class="hljs-comment">//当没有配置shardingsphere-jdbc的分布式序列时，自动依赖数据库的主键自增策略</span><br><span class="hljs-meta">@TableId(type = IdType.AUTO)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="如何避免主从延迟？"><a href="#如何避免主从延迟？" class="headerlink" title="[如何避免主从延迟？]"></a>[如何避免主从延迟？]</h3><p>读写分离对于提升数据库的并发非常有效，但是，同时也会引来一个问题：主库和从库的数据存在延迟，比如你写完主库之后，主库的数据同步到从库是需要时间的，这个时间差就导致了主库和从库的数据不一致性问题。这也就是我们经常说的 <strong>主从同步延迟</strong> 。</p>
+<p>如果我们的业务场景无法容忍主从同步延迟的话，应该如何避免呢（注意：我这里说的是避免而不是减少延迟）？</p>
+<p>这里提供两种我知道的方案（能力有限，欢迎补充），你可以根据自己的业务场景参考一下。</p>
+<h4 id="强制将读请求路由到主库处理"><a href="#强制将读请求路由到主库处理" class="headerlink" title="[强制将读请求路由到主库处理]"></a>[强制将读请求路由到主库处理]</h4><p>既然你从库的数据过期了，那我就直接从主库读取嘛！这种方案虽然会增加主库的压力，但是，实现起来比较简单，也是我了解到的使用最多的一种方式。</p>
+<p>比如 <code>Sharding-JDBC</code> 就是采用的这种方案。通过使用 Sharding-JDBC 的 <code>HintManager</code> 分片键值管理器，我们可以强制使用主库。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">HintManager</span> <span class="hljs-variable">hintManager</span> <span class="hljs-operator">=</span> HintManager.getInstance();<br>hintManager.setMasterRouteOnly();<br><span class="hljs-comment">// 继续JDBC操作</span><br></code></pre></td></tr></table></figure>
+
+<p>对于这种方案，你可以将那些必须获取最新数据的读请求都交给主库处理。</p>
+<h4 id="延迟读取"><a href="#延迟读取" class="headerlink" title="[延迟读取]"></a>[延迟读取]</h4><p>还有一些朋友肯定会想既然主从同步存在延迟，那我就在延迟之后读取啊，比如主从同步延迟 0.5s,那我就 1s 之后再读取数据。这样多方便啊！方便是方便，但是也很扯淡。</p>
+<p>不过，如果你是这样设计业务流程就会好很多：对于一些对数据比较敏感的场景，你可以在完成写请求之后，避免立即进行请求操作。比如你支付成功之后，跳转到一个支付成功的页面，当你点击返回之后才返回自己的账户。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="[总结]"></a>[总结]</h4><p>关于如何避免主从延迟，我们这里介绍了两种方案。实际上，延迟读取这种方案没办法完全避免主从延迟，只能说可以减少出现延迟的概率而已，实际项目中一般不会使用。</p>
+<p>总的来说，要想不出现延迟问题，一般还是要强制将那些必须获取最新数据的读请求都交给主库处理。如果你的项目的大部分业务场景对数据准确性要求不是那么高的话，这种方案还是可以选择的。</p>
+<h3 id="什么情况下会出现主从延迟？如何尽量减少延迟？"><a href="#什么情况下会出现主从延迟？如何尽量减少延迟？" class="headerlink" title="[什么情况下会出现主从延迟？如何尽量减少延迟？]"></a>[什么情况下会出现主从延迟？如何尽量减少延迟？]</h3><p>MySQL 主从同步延时是指从库的数据落后于主库的数据，这种情况可能由以下两个原因造成：</p>
+<ol>
+<li>从库 I&#x2F;O 线程接收 binlog 的速度跟不上主库写入 binlog 的速度，导致从库 relay log 的数据滞后于主库 binlog 的数据；</li>
+<li>从库 SQL 线程执行 relay log 的速度跟不上从库 I&#x2F;O 线程接收 binlog 的速度，导致从库的数据滞后于从库 relay log 的数据。</li>
+</ol>
+<p>那什么情况下会出现出从延迟呢？这里列举几种常见的情况：</p>
+<ol>
+<li><strong>从库机器性能比主库差</strong>：从库接收 binlog 并写入 relay log 以及执行 SQL 语句的速度会比较慢（也就是 T2-T1 和 T3-T2 的值会较大），进而导致延迟。解决方法是选择与主库一样规格或更高规格的机器作为从库，或者对从库进行性能优化，比如调整参数、增加缓存、使用 SSD 等。</li>
+<li><strong>从库处理的读请求过多</strong>：从库需要执行主库的所有写操作，同时还要响应读请求，如果读请求过多，会占用从库的 CPU、内存、网络等资源，影响从库的复制效率（也就是 T2-T1 和 T3-T2 的值会较大，和前一种情况类似）。解决方法是引入缓存（推荐）、使用一主多从的架构，将读请求分散到不同的从库，或者使用其他系统来提供查询的能力，比如将 binlog 接入到 Hadoop、Elasticsearch 等系统中。</li>
+<li><strong>大事务</strong>：运行时间比较长，长时间未提交的事务就可以称为大事务。由于大事务执行时间长，并且从库上的大事务会比主库上的大事务花费更多的时间和资源，因此非常容易造成主从延迟。解决办法是避免大批量修改数据，尽量分批进行。类似的情况还有执行时间较长的慢 SQL ，实际项目遇到慢 SQL 应该进行优化。</li>
+<li><strong>网络延迟</strong>：如果主从之间的网络传输速度慢，或者出现丢包、抖动等问题，那么就会影响 binlog 的传输效率，导致从库延迟。解决方法是优化网络环境，比如提升带宽、降低延迟、增加稳定性等。</li>
+<li><strong>单线程复制</strong>：MySQL5.5 及之前，只支持单线程复制。为了优化复制性能，MySQL 5.6 引入了 <strong>多线程复制</strong>，MySQL 5.7 还进一步完善了多线程复制。</li>
+<li><strong>复制模式</strong>：MySQL 默认的复制是异步的，必然会存在延迟问题。全同步复制不存在延迟问题，但性能太差了。半同步复制是一种折中方案，相对于异步复制，半同步复制提高了数据的安全性，减少了主从延迟（还是有一定程度的延迟）。MySQL 5.5 开始，MySQL 以插件的形式支持 <strong>semi-sync 半同步复制</strong>。并且，MySQL 5.7 引入了 <strong>增强半同步复制</strong> 。</li>
+</ol>
+<h3 id="常见的分片算法有哪些"><a href="#常见的分片算法有哪些" class="headerlink" title="常见的分片算法有哪些"></a>常见的分片算法有哪些</h3><p>分片算法主要解决了数据被水平分片之后，数据究竟该存放在哪个表的问题。</p>
+<p>常见的分片算法有：</p>
+<ul>
+<li><strong>哈希分片</strong>：求指定分片键的哈希，然后根据哈希值确定数据应被放置在哪个表中。哈希分片比较适合随机读写的场景，不太适合经常需要范围查询的场景。哈希分片可以使每个表的数据分布相对均匀，但对动态伸缩（例如新增一个表或者库）不友好。</li>
+<li><strong>范围分片</strong>：按照特定的范围区间（比如时间区间、ID 区间）来分配数据，比如 将 <code>id</code> 为 <code>1~299999</code> 的记录分到第一个表， <code>300000~599999</code> 的分到第二个表。范围分片适合需要经常进行范围查找且数据分布均匀的场景，不太适合随机读写的场景（数据未被分散，容易出现热点数据的问题）。</li>
+<li><strong>映射表分片</strong>：使用一个单独的表（称为映射表）来存储分片键和分片位置的对应关系。映射表分片策略可以支持任何类型的分片算法，如哈希分片、范围分片等。映射表分片策略是可以灵活地调整分片规则，不需要修改应用程序代码或重新分布数据。不过，这种方式需要维护额外的表，还增加了查询的开销和复杂度。</li>
+<li><strong>一致性哈希分片</strong>：将哈希空间组织成一个环形结构，将分片键和节点（数据库或表）都映射到这个环上，然后根据顺时针的规则确定数据或请求应该分配到哪个节点上，解决了传统哈希对动态伸缩不友好的问题。</li>
+<li><strong>地理位置分片</strong>：很多 NewSQL 数据库都支持地理位置分片算法，也就是根据地理位置（如城市、地域）来分配数据。</li>
+<li><strong>融合算法分片</strong>：灵活组合多种分片算法，比如将哈希分片和范围分片组合。</li>
+</ul>
+<h3 id="分库分表会带来什么问题呢-、"><a href="#分库分表会带来什么问题呢-、" class="headerlink" title="分库分表会带来什么问题呢)、"></a>分库分表会带来什么问题呢)、</h3><p>记住，你在公司做的任何技术决策，不光是要考虑这个技术能不能满足我们的要求，是否适合当前业务场景，还要重点考虑其带来的成本。</p>
+<p>引入分库分表之后，会给系统带来什么挑战呢？</p>
+<ul>
+<li><strong>join 操作</strong>：同一个数据库中的表分布在了不同的数据库中，导致无法使用 join 操作。这样就导致我们需要手动进行数据的封装，比如你在一个数据库中查询到一个数据之后，再根据这个数据去另外一个数据库中找对应的数据。不过，很多大厂的资深 DBA 都是建议尽量不要使用 join 操作。因为 join 的效率低，并且会对分库分表造成影响。对于需要用到 join 操作的地方，可以采用多次查询业务层进行数据组装的方法。不过，这种方法需要考虑业务上多次查询的事务性的容忍度。</li>
+<li><strong>事务问题</strong>：同一个数据库中的表分布在了不同的数据库中，如果单个操作涉及到多个数据库，那么数据库自带的事务就无法满足我们的要求了。这个时候，我们就需要引入分布式事务了。关于分布式事务常见解决方案总结，网站上也有对应的总结：<a target="_blank" rel="noopener" href="https://javaguide.cn/distributed-system/distributed-transaction.html">https://javaguide.cn/distributed-system/distributed-transaction.html</a> 。</li>
+<li><strong>分布式 ID</strong>：分库之后， 数据遍布在不同服务器上的数据库，数据库的自增主键已经没办法满足生成的主键唯一了。我们如何为不同的数据节点生成全局唯一主键呢？这个时候，我们就需要为我们的系统引入分布式 ID 了。关于分布式 ID 的详细介绍&amp;实现方案总结，可以看我写的这篇文章：<a target="_blank" rel="noopener" href="https://javaguide.cn/distributed-system/distributed-id.html">分布式 ID 介绍&amp;实现方案总结</a>。</li>
+<li><strong>跨库聚合查询问题</strong>：分库分表会导致常规聚合查询操作，如 group by，order by 等变得异常复杂。这是因为这些操作需要在多个分片上进行数据汇总和排序，而不是在单个数据库上进行。为了实现这些操作，需要编写复杂的业务代码，或者使用中间件来协调分片间的通信和数据传输。这样会增加开发和维护的成本，以及影响查询的性能和可扩展性。</li>
+<li>……</li>
+</ul>
+<p>另外，引入分库分表之后，一般需要 DBA 的参与，同时还需要更多的数据库服务器，这些都属于成本。</p>
+<h2 id="什么是数据冷热分离？"><a href="#什么是数据冷热分离？" class="headerlink" title="[什么是数据冷热分离？]"></a>[什么是数据冷热分离？]</h2><p>数据冷热分离是指根据数据的访问频率和业务重要性，将数据分为冷数据和热数据，冷数据一般存储在存储在低成本、低性能的介质中，热数据高性能存储介质中。</p>
+<h3 id="冷数据和热数据"><a href="#冷数据和热数据" class="headerlink" title="冷数据和热数据"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/data-cold-hot-separation.html#%E5%86%B7%E6%95%B0%E6%8D%AE%E5%92%8C%E7%83%AD%E6%95%B0%E6%8D%AE">冷数据和热数据</a></h3><p>热数据是指经常被访问和修改且需要快速访问的数据，冷数据是指不经常访问，对当前项目价值较低，但需要长期保存的数据。</p>
+<p>冷热数据到底如何区分呢？有两个常见的区分方法：</p>
+<ol>
+<li><strong>时间维度区分</strong>：按照数据的创建时间、更新时间、过期时间等，将一定时间段内的数据视为热数据，超过该时间段的数据视为冷数据。这种方法适用于数据的访问频率和时间有较强的相关性的场景。</li>
+<li><strong>访问频率区分</strong>：将高频访问的数据视为热数据，低频访问的数据视为冷数据。适合访问频率和数据本身有较强的相关性的场景。</li>
+</ol>
+<p>几年前的数据并不一定都是冷数据，例如一些优质文章发表几年后依然有很多人访问，大部分普通用户新发表的文章却基本没什么人访问。这两种区分冷热数据的方法各有优劣，实际项目中，可以将两者结合使用。</p>
+<h3 id="数据冷热分离的优缺点"><a href="#数据冷热分离的优缺点" class="headerlink" title="数据冷热分离的优缺点"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/data-cold-hot-separation.html#%E6%95%B0%E6%8D%AE%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9">数据冷热分离的优缺点</a></h3><ul>
+<li>优点：热数据的查询性能得到优化（用户的绝大部分操作体验会更好）、节约成本（可以冷热数据的不同存储需求，选择对应的数据库类型和硬件配置，比如将热数据放在 SSD 上，将冷数据放在 HDD 上）</li>
+<li>缺点：系统复杂性和风险增加（需要分离冷热数据，数据错误的风险增加）、统计效率低（统计的时候可能需要用到冷库的数据）。</li>
+</ul>
+<h2 id="冷数据如何迁移？"><a href="#冷数据如何迁移？" class="headerlink" title="冷数据如何迁移？"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/data-cold-hot-separation.html#%E5%86%B7%E6%95%B0%E6%8D%AE%E5%A6%82%E4%BD%95%E8%BF%81%E7%A7%BB">冷数据如何迁移？</a></h2><p>冷数据迁移方案：</p>
+<ol>
+<li>业务层代码实现：当有对数据进行写操作时，触发冷热分离的逻辑，判断数据是冷数据还是热数据，冷数据就入冷库，热数据就入热库。这种方案会影响性能且冷热数据的判断逻辑不太好确定，还需要修改业务层代码，因此一般不会使用。</li>
+<li>任务调度：可以利用 xxl-job 或者其他分布式任务调度平台定时去扫描数据库，找出满足冷数据条件的数据，然后批量地将其复制到冷库中，并从热库中删除。这种方法修改的代码非常少，非常适合按照时间区分冷热数据的场景。</li>
+<li>监听数据库的变更日志 binlog ：将满足冷数据条件的数据从 binlog 中提取出来，然后复制到冷库中，并从热库中删除。这种方法可以不用修改代码，但不适合按照时间维度区分冷热数据的场景。</li>
+</ol>
+<p>如果你的公司有 DBA 的话，也可以让 DBA 进行冷数据的人工迁移，一次迁移完成冷数据到冷库。然后，再搭配上面介绍的方案实现后续冷数据的迁移工作。</p>
+<h2 id="冷数据如何存储？"><a href="#冷数据如何存储？" class="headerlink" title="冷数据如何存储？"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/data-cold-hot-separation.html#%E5%86%B7%E6%95%B0%E6%8D%AE%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8">冷数据如何存储？</a></h2><p>冷数据的存储要求主要是容量大，成本低，可靠性高，访问速度可以适当牺牲。</p>
+<p>冷数据存储方案：</p>
+<ul>
+<li>中小厂：直接使用 MySQL&#x2F;PostgreSQL 即可（不改变数据库选型和项目当前使用的数据库保持一致），比如新增一张表来存储某个业务的冷数据或者使用单独的冷库来存放冷数据（涉及跨库查询，增加了系统复杂性和维护难度）</li>
+<li>大厂：Hbase（常用）、RocksDB、Doris、Cassandra</li>
+</ul>
+<p>如果公司成本预算足的话，也可以直接上 TiDB 这种分布式关系型数据库，直接一步到位。</p>
+<p><img src="/./../img/image-20251126004714274.png" srcset="/img/loading.gif" lazyload alt="image-20251126004714274"></p>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Mysql/" class="print-no-link">#Mysql</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>24分库分表和冷热分离</div>
+      <div>http://example.com/2025/11/16/24分库分表冷热分离/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/17/30redis%E5%9F%BA%E7%A1%80/" title="30redis基础">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">30redis基础</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/16/25Mysql%E9%9D%A2%E7%BB%8F%E8%A1%A5%E5%85%85/" title="25Mysql面经补充">
+                        <span class="hidden-mobile">25Mysql面经补充</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

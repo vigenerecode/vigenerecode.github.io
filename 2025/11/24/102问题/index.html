@@ -26,11 +26,17 @@
 <meta property="og:site_name" content="NoFlowCloud">
 <meta property="og:description" content="1.你们本地部署大模型具体的配置 参数是怎样的​	我们本地部署的是 Ollama + DeepSeek-R1 7B 的组合，主要作为审核和情感分析模型使用。​	部署环境是：​		8 核 CPU + 32G 内​		一块 3090 24G 显存的 GPU                   —–显卡的型号​		Ollama 启动参数中配置：​			num_gpu: 1​			num_ctx（上下文长">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/image-20251213213200145.png">
+<meta property="og:image" content="http://example.com/img/1765632538441-1.png">
 <meta property="og:image" content="http://example.com/img/image-20251129012055576.png">
 <meta property="og:image" content="http://example.com/img/image-20251129014202187.png">
 <meta property="og:image" content="http://example.com/2025/11/24/img/image-20251129012502349.png">
 <meta property="og:image" content="http://example.com/img/image-20251129012708756.png">
 <meta property="og:image" content="http://example.com/2025/11/24/img/image-20251129013324613.png">
+<meta property="og:image" content="http://example.com/img/1765635670923-4.png">
+<meta property="og:image" content="http://example.com/img/1765635670924-5.png">
+<meta property="og:image" content="http://example.com/img/1765635670924-6.png">
+<meta property="og:image" content="http://example.com/img/1765635670924-7.png">
 <meta property="og:image" content="http://example.com/img/WHCBJSZDADACW.png">
 <meta property="og:image" content="http://example.com/img/XOYRZSZDAAQCK.png">
 <meta property="og:image" content="http://example.com/img/WQBCJSZDADQAI.png">
@@ -43,11 +49,11 @@
 <meta property="og:image" content="http://example.com/img/FXH532JDABQCQ.png">
 <meta property="og:image" content="http://example.com/img/M2E6Z2JDABQB2.png">
 <meta property="article:published_time" content="2025-11-24T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-02T16:41:14.496Z">
+<meta property="article:modified_time" content="2025-12-13T14:21:34.295Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="kcat">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/img/image-20251129012055576.png">
+<meta name="twitter:image" content="http://example.com/img/image-20251213213200145.png">
   
   
   
@@ -240,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.7k 字
+          6.9k 字
         
       </span>
     
@@ -251,7 +257,7 @@
         
         
         
-          48 分钟
+          58 分钟
         
       </span>
     
@@ -299,7 +305,7 @@
 <h1 id="4-短信接口你们有做防刷吗"><a href="#4-短信接口你们有做防刷吗" class="headerlink" title="4 短信接口你们有做防刷吗"></a>4 短信接口你们有做防刷吗</h1><p>​	我们对短信验证码做了三层防刷策略：<br>​	频控：<br>​		同手机号 60 秒只能发 1 次<br>​		同 IP 1 小时最多发 15 次<br>​		Redis 用 INCR + EXPIRE 实现<br>​	行为校验：<br>​		前端接入滑块验证码<br>​	黑名单池：<br>​		自动记录异常频繁请求的 IP&#x2F;设备指纹<br>​		Redis + TTL 自动衰减</p>
 <h1 id="5-多次点击发布按钮，这一块有没有做什么安全措施"><a href="#5-多次点击发布按钮，这一块有没有做什么安全措施" class="headerlink" title="5.多次点击发布按钮，这一块有没有做什么安全措施"></a>5.多次点击发布按钮，这一块有没有做什么安全措施</h1><p>​	在短剧发布这种关键操作上做了两种幂等保护：<br>​		前端防重复点击：按钮 loading 状态锁定<br>​		后端防重复提交（核心）：<br>​	使用 Redis 分布式锁<br>​	Key &#x3D; publish:{tenantId}:{videoId}<br>​	TTL 设置 3 秒<br>​	这样同一用户连续点击多次发布，只会执行一次流程。<br>​	另外发布流程走 Camunda 工作流，本身也具备幂等校验，避免重复创建任务</p>
 <h1 id="6-miniio有没有做集群部署-是怎么实现上传的，有没有断点续传之类的"><a href="#6-miniio有没有做集群部署-是怎么实现上传的，有没有断点续传之类的" class="headerlink" title="6.miniio有没有做集群部署 是怎么实现上传的，有没有断点续传之类的"></a>6.miniio有没有做集群部署 是怎么实现上传的，有没有断点续传之类的</h1><p>​	MinIO 我们做了两种部署策略：<br>​		开发环境：单节点 MinIO<br>​		生产环境：MinIO 4 节点分布式集群<br>​	EC（纠删码）为 4&#x2F;2<br>​	&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;&#x2F;使用 Nginx 负载均衡访问<br>​	上传流程使用的是 MinIO 官方的 Multipart Upload（分片上传） 接口：<br>​		大文件自动分片<br>​		支持断点续传<br>​		上传完成后自动合并块<br>​	我们这块会自动重试失败的 Part，因此对网络波动比较友好</p>
-<h1 id="为什么要模拟-robot-账号登录-XXL-Job？不能直接调任务吗？"><a href="#为什么要模拟-robot-账号登录-XXL-Job？不能直接调任务吗？" class="headerlink" title="为什么要模拟 robot 账号登录 XXL-Job？不能直接调任务吗？"></a>为什么要模拟 robot 账号登录 XXL-Job？不能直接调任务吗？</h1><p>​	为什么不直接调用 XXL-Job 的 openAPI？<br>​	为什么要登录一个模拟账号？<br>​	XXL-Job 的任务你们是怎么触发的？<br>参考话术<br>​	我们不是从 XXL-JOB 控制台页面触发，而是通过它的 OpenAPI 接口触发任务执行。<br>​	robot 账号只是为了权限隔离，便于区分是系统自动触发还是人工触发。<br>​	我们不会模拟点按钮，而是直接发 trigger&#x2F;run API 调任务。</p>
+<h1 id="为什么要模拟-robot-账号登录-XXL-Job？不能直接调任务吗？"><a href="#为什么要模拟-robot-账号登录-XXL-Job？不能直接调任务吗？" class="headerlink" title="为什么要模拟 robot 账号登录 XXL-Job？不能直接调任务吗？"></a>为什么要模拟 robot 账号登录 XXL-Job？不能直接调任务吗？</h1><p>​	为什么不直接调用 XXL-Job 的 openAPI？<br>​	为什么要登录一个模拟账号？<br>​	XXL-Job 的任务你们是怎么触发的？<br>参考话术<br>​	我们不是从 XXL-JOB 控制台页面触发，而是通过它的 OpenAPI 接口触发任务执行。<br>​	robot 账号只是为了权限隔离，便于区分是系统自动触发还是人工上传等操作触发。<br>​	我们不会模拟点按钮，而是直接发 trigger&#x2F;run API 调任务。</p>
 <h1 id="单机-Map-保存审核结果，会不会有线程安全-多实例问题？"><a href="#单机-Map-保存审核结果，会不会有线程安全-多实例问题？" class="headerlink" title="单机 Map 保存审核结果，会不会有线程安全&#x2F;多实例问题？"></a>单机 Map 保存审核结果，会不会有线程安全&#x2F;多实例问题？</h1><p>参考话术<br>	Map 只在流程内部暂存，用于在同一Camunda 流程中传递，不用于跨节点通信。<br>	需要跨任务传递的，我们会放到 Camunda 流程变量 或 Redis。<br>	所以不会出现安全数据的问题。</p>
 <h1 id="本地大模型审核-腾讯云视频审核，如果其中一个失败怎么办？"><a href="#本地大模型审核-腾讯云视频审核，如果其中一个失败怎么办？" class="headerlink" title="本地大模型审核 + 腾讯云视频审核，如果其中一个失败怎么办？"></a>本地大模型审核 + 腾讯云视频审核，如果其中一个失败怎么办？</h1><p>​	如果大模型审核失败了呢？<br>​	如果腾讯云审核回调延迟怎么办？<br>​	两个审核不一致怎么处理？<br>参考话术：<br>​	我们的审核采用 容错 + 兜底策略：<br>​	本地大模型异常–&gt;走默认人工审核<br>​	腾讯云视频审核异常–&gt;XXL-Job 会自动重试<br>​	两者冲突–&gt;统一流入人工审核节点<br>​	不会出现审核中断的情况。</p>
 <h1 id="审核流程为何使用-Camunda？可不可以不用？"><a href="#审核流程为何使用-Camunda？可不可以不用？" class="headerlink" title="审核流程为何使用 Camunda？可不可以不用？"></a>审核流程为何使用 Camunda？可不可以不用？</h1><p>参考话术：<br>	视频审核是一个多阶段的流程：<br>	AI审核–&gt;视频内容审核–&gt;人工审核–&gt;审核结果汇总<br>	使用 Camunda 的目的是：<br>	把复杂流程可视化<br>	状态和节点可追溯<br>	人工审核可以暂停&#x2F;回退<br>	多个审核结果汇总更清晰<br>	如果不用工作流，自己维护状态机会非常混乱。
@@ -359,7 +365,52 @@
 <li>最终一致性（数据库与缓存同步）</li>
 </ul>
 <p>\</p>
-<h1 id="技术痛点"><a href="#技术痛点" class="headerlink" title="技术痛点"></a>技术痛点</h1><h2 id="1Repository-Service"><a href="#1Repository-Service" class="headerlink" title="1Repository****Service"></a>1<strong>Repository****Service</strong></h2><ul>
+<h1 id="技术痛点"><a href="#技术痛点" class="headerlink" title="技术痛点"></a>技术痛点</h1><p><strong>流程引擎负责推进流程的执行</strong>。流程引擎记录流程的执行历史；写代码可以永远只查询当前要做什么即可。</p>
+<ol>
+<li><h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1></li>
+<li><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a><strong>概念</strong></h2></li>
+</ol>
+<ul>
+<li><strong>流程（PROCESS）</strong> : 通过工具建模最终生成的BPMN文件，里面有整个<strong>流程的定义</strong></li>
+<li><strong>流程实例（Instance）</strong> ：流程启动后的实例</li>
+<li><strong>流程变量（Variables）</strong> ：<strong>流程任务之间传递的参数</strong></li>
+<li><strong>任务（TASK）</strong> ：流程中定义的每一个节点<ul>
+<li>用户任务：人工审核</li>
+<li>系统任务：代码任务</li>
+</ul>
+</li>
+<li><strong>流程部署</strong> ：将之前流程定义的 <code>.bpmn文件</code> 部署到<strong>工作流平台</strong></li>
+</ul>
+<p><strong>流程定义文件</strong> &#x3D;&#x3D;&#x3D;&gt; 部署工作流平台 &#x3D;&#x3D;&#x3D;&gt; 请假v-emp版本<strong>部署</strong> &#x3D;&#x3D;&#x3D;&gt; v1部署一个<strong>流程实例</strong></p>
+<p>​                                                    &#x3D;&#x3D;&#x3D;&gt; 请假v-leader版本<strong>部署</strong> &#x3D;&#x3D;&#x3D;&gt; v2部署一个<strong>流程实例</strong></p>
+<p>​                                                    &#x3D;&#x3D;&#x3D;&gt; 请假v-hr版本<strong>部署</strong> &#x3D;&#x3D;&#x3D;&gt; v3部署一个<strong>流程实例</strong></p>
+<ol>
+<li><h2 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a><strong>核心组件</strong></h2></li>
+</ol>
+<ul>
+<li><p><strong>Process Engine</strong> -流程引擎</p>
+</li>
+<li><p><strong>Web Applicatons</strong> - 基于web的管理页面</p>
+</li>
+<li><p><strong>调用****流程引擎服务</strong>有三种方式**：</p>
+<ul>
+<li>通过 Camunda Web 控制台界面</li>
+<li>通过官方 rest 接口操作 camunda 流程引擎，Camunda Platform REST API 官方说明文档：<a target="_blank" rel="noopener" href="https://docs.camunda.org/rest/camunda-bpm-platform/7.19/">Camunda Platform REST API</a></li>
+<li><strong><code>Java 代码调用 Camunda 提供的 Service 接口</code></strong>（如：org.camunda.bpm.engine.RuntimeService、org.camunda.bpm.engine.TaskService 等等）</li>
+</ul>
+<p><img src="/./../img/image-20251213213200145.png" srcset="/img/loading.gif" lazyload alt="image-20251213213200145"></p>
+</li>
+</ul>
+<ol>
+<li><h2 id="API介绍"><a href="#API介绍" class="headerlink" title="API介绍"></a>API介绍</h2></li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://docs.camunda.org/manual/latest/">https://docs.camunda.org/manual/latest/</a></p>
+<p><img src="/./../img/1765632538441-1.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-comment">//1、获取默认的流程引擎</span><br><span class="hljs-type">ProcessEngine</span> <span class="hljs-variable">processEngine</span> <span class="hljs-operator">=</span> ProcessEngines.getDefaultProcessEngine();<br><br><span class="hljs-type">RepositoryService</span> <span class="hljs-variable">repositoryService</span> <span class="hljs-operator">=</span> processEngine.getRepositoryService();<br><span class="hljs-type">RuntimeService</span> <span class="hljs-variable">runtimeService</span> <span class="hljs-operator">=</span> processEngine.getRuntimeService();<br><span class="hljs-type">TaskService</span> <span class="hljs-variable">taskService</span> <span class="hljs-operator">=</span> processEngine.getTaskService();<br><span class="hljs-type">IdentityService</span> <span class="hljs-variable">identityService</span> <span class="hljs-operator">=</span> processEngine.getIdentityService();<br><span class="hljs-type">FormService</span> <span class="hljs-variable">formService</span> <span class="hljs-operator">=</span> processEngine.getFormService();<br><span class="hljs-type">HistoryService</span> <span class="hljs-variable">historyService</span> <span class="hljs-operator">=</span> processEngine.getHistoryService();<br><span class="hljs-type">ManagementService</span> <span class="hljs-variable">managementService</span> <span class="hljs-operator">=</span> processEngine.getManagementService();<br><span class="hljs-type">FilterService</span> <span class="hljs-variable">filterService</span> <span class="hljs-operator">=</span> processEngine.getFilterService();<br><span class="hljs-type">ExternalTaskService</span> <span class="hljs-variable">externalTaskService</span> <span class="hljs-operator">=</span> processEngine.getExternalTaskService();<br><span class="hljs-type">CaseService</span> <span class="hljs-variable">caseService</span> <span class="hljs-operator">=</span> processEngine.getCaseService();<br><span class="hljs-type">DecisionService</span> <span class="hljs-variable">decisionService</span> <span class="hljs-operator">=</span> processEngine.getDecisionService();<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="1RepositoryService"><a href="#1RepositoryService" class="headerlink" title="1RepositoryService"></a>1RepositoryService</h2><ul>
 <li>管理流程定义（BPMN）、部署、模板等静态资源（Definition 层）</li>
 <li>主要负责<strong>部署流程、查询流程定义、读取模型文件</strong>等。</li>
 </ul>
@@ -392,9 +443,101 @@
 
 <h2 id="4人工初审"><a href="#4人工初审" class="headerlink" title="4人工初审"></a>4人工初审</h2><img src="./../img/image-20251129013324613.png" srcset="/img/loading.gif" lazyload alt="image-20251129013324613" style="zoom:67%;" />
 
+<p>任务API</p>
+<blockquote>
+<p>基于service的查询类，都可先构建一个 query，然后在附上查询条件</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs Java">List&lt;ProcessDefinition&gt; list = repositoryService.createProcessDefinitionQuery().list();<br>List&lt;Task&gt; list = taskService.createTaskQuery().taskAssignee(<span class="hljs-string">&quot;zhangsan&quot;</span>).list();<br>List&lt;ProcessInstance&gt; instances = runtimeService.createProcessInstanceQuery().listPage(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>);<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><h4 id="查询历史任务"><a href="#查询历史任务" class="headerlink" title="查询历史任务"></a>查询历史任务</h4></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java">List&lt;HistoricProcessInstance&gt; list = historyService.createHistoricProcessInstanceQuery().list();<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><h4 id="查询当前任务-分页"><a href="#查询当前任务-分页" class="headerlink" title="查询当前任务&#x2F;分页"></a><strong>查询当前任务&#x2F;分页</strong></h4></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java">List&lt;Task&gt; list = taskService.createTaskQuery().orderByTaskCreateTime().desc().list();<br></code></pre></td></tr></table></figure>
 
 
-<h2 id="5"><a href="#5" class="headerlink" title="5"></a>5</h2><h2 id="6"><a href="#6" class="headerlink" title="6"></a>6</h2><h1 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h1><p>ollama 暴露的 API 接口地址。SPring AI直接可以调用。上线了。云GPU服务器。</p>
+
+
+
+<h2 id="5流程变量"><a href="#5流程变量" class="headerlink" title="5流程变量"></a>5流程变量</h2><p>包括流程中产生的变量信息，包括控制流程流转的变量，网关、业务表单中填写的流程需要用到的变量等。很多地方都要用到</p>
+<ol>
+<li><h4 id="流程变量变量传递"><a href="#流程变量变量传递" class="headerlink" title="流程变量变量传递"></a><strong>流程变量变量传递</strong></h4></li>
+</ol>
+<p>变量最终会存在 <code>act_ru_variable</code> 这个表里面</p>
+<p>在绘制流程图的时候，如果是用户任务（userService） 可以设置变量，比如执行人，</p>
+<p><img src="/./../img/1765635670923-4.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h4 id="几种写法"><a href="#几种写法" class="headerlink" title="几种写法"></a><strong>几种写法</strong></h4></li>
+</ol>
+<ul>
+<li>写死，就比如 zhangsan</li>
+<li>表达式，比如上面写的 <code>$&#123;user&#125;</code>，这种需要传入参数，其实就是启动参数的时候传入，传入参数，可选值为一个<code>Map&lt;String, Object&gt;</code>，之后的流程可查看次参数，上面写的是 user， 所以map里面的key需要带着user，不然会报错。</li>
+</ul>
+<blockquote>
+<p>关于扩展变量，可在流程图绘制这么设定，传递方式还是一样，流程图里面在下面写：</p>
+</blockquote>
+<p><img src="/./../img/1765635670924-5.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<blockquote>
+<p>启动流程：传入变量</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-type">ProcessInstance</span> <span class="hljs-variable">instance</span> <span class="hljs-operator">=</span> runtimeService.startProcessInstanceByKey(key, <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;());<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>变量设置</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java">runtimeService.setVariable(instance.getId(), Constants.PATIENT_ID, relatedId);<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>变量查询</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-type">Object</span> <span class="hljs-variable">variable</span> <span class="hljs-operator">=</span> runtimeService.getVariable(instance.getId(), Constants.GENERAL_ID);<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>历史变量查询</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-type">HistoricVariableInstance</span> <span class="hljs-variable">variableInstance</span> <span class="hljs-operator">=</span> historyService.createHistoricVariableInstanceQuery().processInstanceId(bo.getId().toString()).<br>            variableName(Constants.PATIENT_ID).singleResult();<br><span class="hljs-comment">//变量值</span><br>variableInstance.getValue();<br><span class="hljs-comment">//变量名称</span><br>variableInstance.getName();<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><h3 id="两种任务"><a href="#两种任务" class="headerlink" title="两种任务"></a>两种任务</h3></li>
+</ol>
+<blockquote>
+<p>针对后端来说任务类型主要有两种。</p>
+</blockquote>
+<blockquote>
+<p><strong>用户任务-userTask</strong></p>
+<p>即需要用户参与的任务，因为工作流执行过程中需要涉及到审批、过审之类的需要用户参与的任务，这个时候需要用户参与，然后调用接口完成任务。</p>
+<p><strong>服务任务-serviceTask</strong></p>
+<p>即自动执行的任务，比如用户提交后，系统自动存储、修改状态等自动完成的任务。</p>
+</blockquote>
+<ol>
+<li><h4 id="Type"><a href="#Type" class="headerlink" title="Type"></a><strong>Type</strong></h4></li>
+</ol>
+<p>任务类型是关键，可根据配型配置实现调用 java的方法，spring 的bean方法等等。有这么几种类型</p>
+<p><img src="/./../img/1765635670924-6.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h4 id="推荐使用-–-Delegate-Expression"><a href="#推荐使用-–-Delegate-Expression" class="headerlink" title="推荐使用 – Delegate Expression !!!"></a><strong>推荐使用 – Delegate Expression !!!</strong></h4></li>
+</ol>
+<p>在系统任务中，因为是自动执行，所以实际应用中需要嵌入各种业务逻辑，可以在流程图设计中，按照下面方式调用java代码执行，在spring中配置同名的bean</p>
+<p><img src="/./../img/1765635670924-7.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>配置表达式，可以实现JavaDelegate接口使用类名配置</p>
+<ol>
+<li><strong>快捷写法如下</strong>，比较推荐下面这种，此种可灵活配置bean和spring结合使用，注入service等业务方法</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Bean</span>(<span class="hljs-string">&quot;t17&quot;</span>)<br><span class="hljs-title class_">JavaDelegate</span> <span class="hljs-title function_">t17</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">return</span> execution -&gt; &#123;<br>        <span class="hljs-title class_">Map</span>&lt;<span class="hljs-title class_">String</span>, <span class="hljs-title class_">Object</span>&gt; variables = execution.<span class="hljs-title function_">getVariables</span>();<br>        <span class="hljs-title class_">Task</span> task = taskService.<span class="hljs-title function_">createTaskQuery</span>().<span class="hljs-title function_">processInstanceId</span>(execution.<span class="hljs-title function_">getProcessInstanceId</span>()).<span class="hljs-title function_">singleResult</span>();<br>        <span class="hljs-comment">//业务逻辑</span><br>        task.<span class="hljs-title function_">setOwner</span>(<span class="hljs-title class_">String</span>.<span class="hljs-title function_">valueOf</span>(dentistId));<br>    &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>**Java Class ：**配置java类名，需要实现JavaDelegate接口，注意是全路径名，不可以使用Spring的bean配置！！！</li>
+</ol>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">T17Delegate</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">JavaDelegate</span> &#123;<br> <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">void</span> <span class="hljs-title function_">execute</span>(<span class="hljs-title class_">DelegateExecution</span> execution) throws <span class="hljs-title class_">Exception</span> &#123;<br>            <span class="hljs-title class_">String</span> taskId = execution.<span class="hljs-title function_">getId</span>();<br>            <span class="hljs-title class_">String</span> instanceId = execution.<span class="hljs-title function_">getProcessInstanceId</span>();<br>            <span class="hljs-title class_">Map</span>&lt;<span class="hljs-title class_">String</span>, <span class="hljs-title class_">Object</span>&gt; variables = execution.<span class="hljs-title function_">getVariables</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="扩展：-BPMN"><a href="#扩展：-BPMN" class="headerlink" title="扩展： BPMN"></a>扩展： BPMN</h2><blockquote>
+<p>BPMN：<strong>BPMN</strong>是由BPMI(The Business Process Management Initiative)开发的一套标准叫<strong>业务流程建模符号</strong>，于2004年5月对外发布了<strong>BPMN</strong> 1.0 规范。后BPMI并入到<strong>OMG组织</strong>，OMG于2011年推出BPMN 2.0标准，对BPMN进行了重新定义(Business Process Model and Notation)</p>
+</blockquote>
+<h1 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h1><p>ollama 暴露的 API 接口地址。SPring AI直接可以调用。上线了。云GPU服务器。</p>
 <p>各种模型调用、RAG、向量检索</p>
 <p>模型幻觉（微调模型会有幻觉） ok，没问题</p>
 <p>相似度算法、</p>
