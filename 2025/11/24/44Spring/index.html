@@ -28,10 +28,11 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/1759067833992-9936ea71-c0a7-4e29-b579-940a084aa935.webp">
 <meta property="og:image" content="http://example.com/img/1759927704153-9f139a3d-7ca1-4253-a83c-b655719f04ba.webp">
+<meta property="og:image" content="http://example.com/img/image-20251218142100417.png">
 <meta property="og:image" content="http://example.com/img/1762276352159-26745f46-3657-4b95-9275-bd1645aa4c9d.webp">
 <meta property="og:image" content="http://example.com/img/image-20251126213013309.png">
 <meta property="article:published_time" content="2025-11-24T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-14T08:42:15.735Z">
+<meta property="article:modified_time" content="2025-12-18T06:39:26.686Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary_large_image">
@@ -228,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k 字
+          5.1k 字
         
       </span>
     
@@ -239,7 +240,7 @@
         
         
         
-          33 分钟
+          43 分钟
         
       </span>
     
@@ -352,7 +353,24 @@
 <p>代理是一种经典设计模式,核心目的是为目标对象提供访问控制的中间层,从而解耦调用方与 目标对象的直接解耦在实现上,代理类和目标类需遵循相同的接口规范,确保代理能无缝转发对目标类方法的调用</p>
 <p>(2)区别</p>
 <p>静态代理由程序员手动编写或通过特定工具生成,在编译阶段就确定了代理关系仅代理单个类,代码结构固定动态代理在运行时通过反射机制动态生成代理类,无需提前编写固定代理代码.可同时代理一个接口下的多个实现类,灵活性高.</p>
-<h1 id="Spring进阶"><a href="#Spring进阶" class="headerlink" title="Spring进阶"></a><strong>Spring进阶</strong></h1><h2 id="Spring为什么用三级缓冲解决循环-一级、二级不行吗"><a href="#Spring为什么用三级缓冲解决循环-一级、二级不行吗" class="headerlink" title="Spring为什么用三级缓冲解决循环,一级、二级不行吗"></a>Spring为什么用三级缓冲解决循环,一级、二级不行吗</h2><p>(1)一级缓存</p>
+<h1 id="Spring进阶"><a href="#Spring进阶" class="headerlink" title="Spring进阶"></a><strong>Spring进阶</strong></h1><h2 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a>循环依赖</h2><ul>
+<li>第五步：<code>BeanB</code>属性注入时发现循环依赖。</li>
+</ul>
+<p>当Spring试图填充<code>BeanB</code>的属性时，检测到它需要注入<code>BeanA</code>。此时容器启动依赖查找：</p>
+<ol>
+<li>在一级缓存（存放完整Bean）中未找到<code>BeanA</code>；</li>
+<li>在二级缓存（存放已暴露的早期引用）中同样未命中；</li>
+<li>最终在三级缓存中定位到<code>BeanA</code>的工厂。</li>
+</ol>
+<p>Spring立即调用该工厂的<code>getObject()</code>方法。这个方法会执行关键决策：若<code>BeanA</code>需要AOP代理，则动态生成代理对象（即使<code>BeanA</code>还未初始化）；若无需代理，则直接返回原始对象。得到的这个早期引用（可能是代理）被放入二级缓存（<code>earlySingletonObjects</code>），同时从三级缓存清理工厂条目。最后，Spring将这个早期引用注入到<code>BeanB</code>的属性中。至此，<code>BeanB</code>成功持有<code>BeanA</code>的引用——尽管<code>BeanA</code>此时仍是个半成品。</p>
+<p><img src="/./../img/image-20251218142100417.png" srcset="/img/loading.gif" lazyload alt="image-20251218142100417"></p>
+<h3 id="Spring为什么用3级缓存解决循环依赖问题？用2级缓存不行吗？"><a href="#Spring为什么用3级缓存解决循环依赖问题？用2级缓存不行吗？" class="headerlink" title="Spring为什么用3级缓存解决循环依赖问题？用2级缓存不行吗？"></a>Spring为什么用3级缓存解决循环依赖问题？用2级缓存不行吗？</h3><p>Spring 必须用三级缓存解决循环依赖，核心是为了<strong>正确处理需要 AOP 代理的 Bean</strong>。如果只用二级缓存，会导致注入的对象形态错误，甚至破坏单例原则。</p>
+<p>举个例子：假设 Bean A 依赖 B，B 又依赖 A，且 A 需要被动态代理（比如加了 <code>@Transactional</code>）。如果只有二级缓存，当 B 创建时去注入 A，拿到的是 A 的原始对象。但 A 在后续初始化完成后才会生成代理对象，结果就是：B 拿着原始对象 A，而 Spring 容器里存的是代理对象 A —— 同一个 Bean 出现了两个不同实例，这直接违反了单例的核心约束。</p>
+<p>三级缓存中的 <code>ObjectFactory</code> 就是解决这个问题的关键。它不是直接缓存对象，而是存了一个能生产对象的工厂。当发生循环依赖时，调用这个工厂的 <code>getObject()</code> 方法，这时 Spring 会智能判断：如果这个 Bean 最终需要代理，就提前生成代理对象并放入二级缓存；如果不需要代理，就返回原始对象。这样一来，B 注入的 A 就是最终形态（可能是代理对象），后续 A 初始化完成后也不会再创建新代理，保证了对象全局唯一。</p>
+<p>简单说，三级缓存的本质是 <strong>“按需延迟生成正确引用”</strong> 。</p>
+<h3 id="Spring容器里存的是什么？"><a href="#Spring容器里存的是什么？" class="headerlink" title="Spring容器里存的是什么？"></a>Spring容器里存的是什么？</h3><p>在Spring容器中，存储的<strong>主要是Bean对象</strong>。</p>
+<p>Bean是Spring框架中的基本组件，用于表示应用程序中的各种对象。当应用程序启动时，Spring容器会根据配置文件或注解的方式创建和管理这些Bean对象。Spring容器会负责创建、初始化、注入依赖以及销毁Bean对象</p>
+<h2 id="Spring为什么用三级缓冲解决循环-一级、二级不行吗"><a href="#Spring为什么用三级缓冲解决循环-一级、二级不行吗" class="headerlink" title="Spring为什么用三级缓冲解决循环,一级、二级不行吗"></a>Spring为什么用三级缓冲解决循环,一级、二级不行吗</h2><p>(1)一级缓存</p>
 <p>一级缓存只能存储完全初始化的成品Bean或半成品Bean,显然上述步骤的某一步是缺失的,不能解决循环依赖问题</p>
 <p>(2)二级缓存</p>
 <p>如果将一级缓存存成品,二级存半成品可以吗问题出在初始化过程中的AOP代理导致对象不一致问题:当A将半成品的A暴露给B时,B将半成品的A属性注入,然后进行A的初始化,生成了A的代理对象,最终导致B中的A与最终的AProxy不一致加入三级缓存,通过工厂实现按需生成代理.</p>
@@ -430,6 +448,18 @@
 <li>这样，循环依赖问题得到了解决，每个Bean都能够正确地获取到对方的实例。</li>
 </ol>
 <p>需要注意的是，@Lazy注解只能解决单例Bean之间的循环依赖问题，因为单例Bean在容器启动时就会被创建。对于原型（prototype）作用域的Bean，@Lazy注解不起作用，因为原型Bean每次获取时都会创建一个新的实例。</p>
+<h3 id="SpringAOP的原理了解吗"><a href="#SpringAOP的原理了解吗" class="headerlink" title="SpringAOP的原理了解吗"></a>SpringAOP的原理了解吗</h3><p>Spring AOP的实现依赖于<strong>动态代理技术</strong>。动态代理是在运行时动态生成代理对象，而不是在编译时。它允许开发者在运行时指定要代理的接口和行为，从而实现在不修改源码的情况下增强方法的功能。</p>
+<p>Spring AOP支持两种动态代理：</p>
+<ul>
+<li><strong>基于JDK的动态代理</strong>：使用java.lang.reflect.Proxy类和java.lang.reflect.InvocationHandler接口实现。这种方式需要代理的类实现一个或多个接口。</li>
+<li><strong>基于CGLIB的动态代理</strong>：当被代理的类没有实现接口时，Spring会使用CGLIB库生成一个被代理类的子类作为代理。CGLIB（Code Generation Library）是一个第三方代码生成库，通过继承方式实现代理。</li>
+</ul>
+<h3 id="动态代理和静态代理的区别-1"><a href="#动态代理和静态代理的区别-1" class="headerlink" title="动态代理和静态代理的区别"></a>动态代理和静态代理的区别</h3><p>代理是一种常用的设计模式，目的是：为其他对象提供一个代理以控制对某个对象的访问，将两个类的关系解耦。代理类和委托类都要实现相同的接口，因为代理真正调用的是委托类的方法。</p>
+<p>区别：</p>
+<ul>
+<li>静态代理：由程序员创建或者是由特定工具创建，在代码编译时就确定了被代理的类是一个静态代理。静态代理通常只代理一个类；</li>
+<li>动态代理：在代码运行期间，运用反射机制动态创建生成。动态代理代理的是一个接口下的多个实现类。</li>
+</ul>
 <p>ewnd</p>
 
                 
@@ -500,9 +530,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/24/102%E9%97%AE%E9%A2%98/" title="102问题">
+                      <a href="/2025/11/24/102%E9%97%AE%E9%A2%98/" title="102各种问题">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">102问题</span>
+                        <span class="hidden-mobile">102各种问题</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

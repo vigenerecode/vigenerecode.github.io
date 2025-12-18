@@ -1,0 +1,979 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="無鎏雲">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="核心概念 代理（Brokers）  存储消息、收发消息的服务器，我们称为消息代理；  消息（Message）  Kafka 中的数据单元被称为消息，也被称为记录，可以把它看作数据库表中某一行的记录。  批次（Batch）  为了提高效率， 消息会分批次写入 Kafka，批次就代指的是一组消息。  主题（Topic）  消息的种类称为 主题（Topic）,可以说一个主题代表了一类消息。相当于是对消息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="105消息队列kafka">
+<meta property="og:url" content="http://example.com/2025/11/29/50%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97Kafka/index.html">
+<meta property="og:site_name" content="NoFlowCloud">
+<meta property="og:description" content="核心概念 代理（Brokers）  存储消息、收发消息的服务器，我们称为消息代理；  消息（Message）  Kafka 中的数据单元被称为消息，也被称为记录，可以把它看作数据库表中某一行的记录。  批次（Batch）  为了提高效率， 消息会分批次写入 Kafka，批次就代指的是一组消息。  主题（Topic）  消息的种类称为 主题（Topic）,可以说一个主题代表了一类消息。相当于是对消息">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/1765888016095-3.png">
+<meta property="og:image" content="http://example.com/img/1765888016091-1.png">
+<meta property="og:image" content="http://example.com/img/1765888016092-2.png">
+<meta property="og:image" content="http://example.com/img/1765889801564-59.png">
+<meta property="og:image" content="http://example.com/img/1765889801564-60.png">
+<meta property="og:image" content="http://example.com/img/1765889801564-61.png">
+<meta property="og:image" content="http://example.com/img/1765889363060-10.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-11.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-12.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-13.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-14.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-15.png">
+<meta property="og:image" content="http://example.com/img/1765889363061-16.png">
+<meta property="article:published_time" content="2025-11-29T03:07:57.000Z">
+<meta property="article:modified_time" content="2025-12-17T02:02:06.234Z">
+<meta property="article:author" content="無鎏雲">
+<meta property="article:tag" content="MQ">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/1765888016095-3.png">
+  
+  
+  
+  <title>105消息队列kafka - NoFlowCloud</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Noflowcloud-Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="105消息队列kafka"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-29 11:07" pubdate>
+          2025年11月29日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">105消息队列kafka</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1><ol>
+<li><h3 id="代理（Brokers）"><a href="#代理（Brokers）" class="headerlink" title="代理（Brokers）"></a>代理（Brokers）</h3></li>
+</ol>
+<p>存储消息、收发消息的<strong>服务器</strong>，我们称为消息代理；</p>
+<ol>
+<li><h3 id="消息（Message）"><a href="#消息（Message）" class="headerlink" title="消息（Message）"></a><strong>消息（Message）</strong></h3></li>
+</ol>
+<p>Kafka 中的数据单元被称为<code>消息</code>，也被称为<strong>记录</strong>，可以把它看作数据库表中某一行的记录。</p>
+<ol>
+<li><h3 id="批次（Batch）"><a href="#批次（Batch）" class="headerlink" title="批次（Batch）"></a>批次（Batch）</h3></li>
+</ol>
+<p>为了提高效率， 消息会<code>分批次</code>写入 Kafka，批次就代指的是一组消息。</p>
+<ol>
+<li><h3 id="主题（Topic）"><a href="#主题（Topic）" class="headerlink" title="主题（Topic）"></a>主题（Topic）</h3></li>
+</ol>
+<p>消息的种类称为 <code>主题</code>（Topic）,可以说一个<strong>主题</strong>代表了<strong>一类消息</strong>。相当于是对消息进行分类。<strong>主题</strong>就像是数据库中的表。</p>
+<ol>
+<li><h3 id="分区（Partition）"><a href="#分区（Partition）" class="headerlink" title="分区（Partition）"></a>分区（Partition）</h3></li>
+</ol>
+<p><strong>一个<strong><strong>主题</strong></strong>可以被分为若干个分区（partition）</strong>，同一个主题中的分区可以不在一个机器上，有可能会部署在多个机器上，由此来实现 kafka 的<code>伸缩性</code>，单一主题中的分区有序，但是无法保证主题中所有的分区有序</p>
+<p><img src="/./../img/1765888016095-3.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>一直追加的<strong>顺序写操作</strong>；</p>
+<ol>
+<li><h3 id="同步副本（In-Sync-Replicas）"><a href="#同步副本（In-Sync-Replicas）" class="headerlink" title="同步副本（In Sync Replicas）"></a>同步副本（In Sync Replicas）</h3></li>
+</ol>
+<blockquote>
+<p><strong>副本</strong>：每个分区可以有多个副本，也就是数据的备份。这样即使分区数据错误，副本也可以恢复过来</p>
+<p>**同步：**所有的消息必须发给主分区所在机器，副本分区同步主分区的数据</p>
+</blockquote>
+<p><img src="/./../img/1765888016091-1.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h3 id="消费者-消费者组（Consumer-Consumer-Group）"><a href="#消费者-消费者组（Consumer-Consumer-Group）" class="headerlink" title="消费者&amp;消费者组（Consumer &amp; Consumer Group）"></a>消费者&amp;消费者组（Consumer &amp; Consumer Group）</h3></li>
+</ol>
+<p>注意：<strong>消费者可以分组</strong>，一般一种微服务的所有消费者就是一组。</p>
+<ol>
+<li><strong>同组的消费者</strong>属于<strong>竞争关系</strong>，<strong>消息只能被一个消费者拿到</strong>；</li>
+<li><strong>不同组的消费者</strong>属于<strong>发布订阅关系</strong>。同一个主题的消息，<strong>广播给不同组的消费者</strong>。</li>
+<li><strong>消费者</strong>可以<strong>订阅多种主题的消息</strong>；</li>
+</ol>
+<p><img src="/./../img/1765888016092-2.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h3 id="偏移量（Offset）"><a href="#偏移量（Offset）" class="headerlink" title="偏移量（Offset）"></a>偏移量（Offset）</h3></li>
+</ol>
+<p>偏移量：<code>偏移量</code>（Consumer Offset）是一种元数据，它是一个不断递增的整数值，用来记录消费者发生重平衡时的位置，以便用来恢复数据。</p>
+<h1 id="创建主题"><a href="#创建主题" class="headerlink" title="创建主题"></a>创建主题</h1><ol>
+<li><h3 id="成功创建"><a href="#成功创建" class="headerlink" title="成功创建"></a>成功创建</h3></li>
+</ol>
+<blockquote>
+<ol>
+<li><strong>副本数量必须小于Broker数量</strong>。</li>
+<li><strong>分区数量无所谓</strong>，根据你自己对数据的预估，分成N个区，如果Broker只有一个，所有分区的数据都在这一个机器，如果Broker有多个，分区可以被分散到其他机器。从而形成一个压力分担的效果；</li>
+</ol>
+<p><strong>计算方式</strong>：  <strong>N Broker 最多允许 N 副本</strong>；</p>
+</blockquote>
+<h2 id="Kafka-高可用机制详解"><a href="#Kafka-高可用机制详解" class="headerlink" title="Kafka 高可用机制详解"></a><a target="_blank" rel="noopener" href="https://blog.csdn.net/Aaaaaaatwl/article/details/139859673">Kafka 高可用机制详解</a></h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Aaaaaaatwl/article/details/139859673">1</a><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/848162">2</a><a target="_blank" rel="noopener" href="https://juejin.cn/post/7494562378153263143">3</a></p>
+<p>Kafka 的高可用性通过多种设计实现，确保在节点故障或网络分区时仍能持续提供服务，同时保证数据的一致性和可靠性。</p>
+<p>Kafka 的 <strong>副本机制</strong> 是高可用的核心。每个分区（Partition）都有多个副本（Replica），其中一个是 <strong>Leader 副本</strong>，负责处理所有读写请求，其余为 <strong>Follower 副本</strong>，负责从 Leader 同步数据。当 Leader 副本发生故障时，会从同步副本（ISR）中选举新的 Leader，确保服务不中断。</p>
+<p>Kafka 的 <strong>分区机制</strong> 提高了系统的扩展性和容错能力。一个主题（Topic）可以分为多个分区，分布在不同的 Broker 上，即使某个 Broker 宕机，也不会影响其他分区的正常运行。</p>
+<p>Kafka 使用 <strong>ISR（In-Sync Replicas）机制</strong> 来保证数据一致性。ISR 是与 Leader 保持同步的副本集合，只有在 ISR 中的副本才有资格被选为新的 Leader。未同步的副本会被移出 ISR，避免数据不一致。</p>
+<p><strong>Leader 选举</strong> 是 Kafka 高可用的关键。当 Leader 副本失效时，Kafka 会从 ISR 中选举新的 Leader。选举过程由 Controller 节点负责，Controller 是通过 ZooKeeper 或 KRaft 选举出来的，确保整个集群的协调和管理。</p>
+<p>Kafka 的 <strong>消费者组（Consumer Group）</strong> 提供了高可用的消费机制。消费者组中的消费者共同消费一个主题的分区数据，当某个消费者失效时，其分区会被重新分配给其他消费者，保证消费不中断。</p>
+<p>Kafka 的 <strong>重平衡机制</strong> 在消费者组发生变更时重新分配分区，确保高可用性和伸缩性。然而，重平衡期间消费者无法读取消息，可能导致短暂的不可用。</p>
+<p>通过以上机制，Kafka 实现了高可用性和高可靠性，能够在节点故障、网络分区等情况下保持服务稳定，同时确保数据的一致性和安全性。</p>
+<h1 id="消费者组"><a href="#消费者组" class="headerlink" title="消费者组"></a>消费者组</h1><h3 id="5个消费者，4个分区"><a href="#5个消费者，4个分区" class="headerlink" title="5个消费者，4个分区"></a>5个消费者，4个分区</h3><p>每个分区所产生的消息能够被每个消费者群组中的消费者消费，如果向消费者群组中增加更多的消费者，那么多余的消费者将会闲置，</p>
+<p><img src="/./../img/1765889801564-59.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>向群组中增加消费者是横向伸缩消费能力的主要方式。总而言之，我们可以通过增加消费组的消费者来进行<code>水平扩展提升消费能力</code>。<strong>这也是为什么建议创建主题时使用比较多的分区数</strong>，这样可以在消费负载高的情况下增加消费者来提升性能。另外，消费者的数量不应该比分区数多，因为多出来的消费者是空闲的，没有任何帮助。</p>
+<ol>
+<li><h3 id="多个消费者组"><a href="#多个消费者组" class="headerlink" title="多个消费者组"></a>多个消费者组</h3></li>
+</ol>
+<p>Kafka 一个很重要的特性就是，<strong>只需写入一次消息，可以支持任意多的应用读取这个消息</strong>。换句话说，**每个应用都可以读到全量的消息。**为了使得每个应用都能读到全量消息，应用需要有不同的消费组。对于上面的例子，假如我们新增了一个新的消费组 G2，而这个消费组有两个消费者，那么就演变为下图这样</p>
+<p><img src="/./../img/1765889801564-60.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>在这个场景中，消费组 G1 和消费组 G2 都能收到 T1 主题的全量消息，在逻辑意义上来说它们属于不同的应用。</p>
+<p><strong>总结起来就是如果应用需要读取全量消息，那么请为该应用设置一个消费组；如果该应用消费能力不足，那么可以考虑在这个消费组里增加消费者</strong>。</p>
+<ol>
+<li><h2 id="分区重平衡"><a href="#分区重平衡" class="headerlink" title="分区重平衡"></a><strong>分区重平衡</strong></h2></li>
+</ol>
+<p>从上面的<code>消费者演变图</code>中可以知道这么一个过程：最初是一个消费者订阅一个主题并消费其全部分区的消息，后来有一个消费者加入群组，随后又有更多的消费者加入群组，而新加入的消费者实例<code>分摊</code>了最初消费者的部分消息，这种把分区的所有权通过一个消费者转到其他消费者的行为称为<code>重平衡</code>，英文名也叫做 <code>Rebalance</code> 。如下图所示</p>
+<p><img src="/./../img/1765889801564-61.png" srcset="/img/loading.gif" lazyload alt="img-999"></p>
+<ol>
+<li><p><strong>重平衡是Kafka消费者组在成员发生变化时（消费者加入、离开或崩溃），重新分配分区给消费者的过程。</strong></p>
+</li>
+<li><p><strong>在重平衡期间，消费者组中的消费者实例都会停止消费，等待重平衡的完成。而且重平衡这个过程很慢。</strong></p>
+</li>
+<li><h3 id="触发重平衡的条件"><a href="#触发重平衡的条件" class="headerlink" title="触发重平衡的条件"></a>触发重平衡的条件</h3></li>
+<li><p><strong>消费者加入</strong>：新消费者加入消费者组</p>
+</li>
+<li><p><strong>消费者离开</strong>：消费者主动离开或崩溃</p>
+</li>
+<li><p><strong>订阅主题变化</strong>：订阅的主题分区数发生变化</p>
+</li>
+<li><p><strong>心跳超时</strong>：<strong>消费者</strong>未能按时发送心跳（默认五分钟）</p>
+</li>
+</ol>
+<p>消费者数量变化、主题变化</p>
+<ol>
+<li><h3 id="重平衡的具体过程"><a href="#重平衡的具体过程" class="headerlink" title="重平衡的具体过程"></a>重平衡的具体过程</h3></li>
+</ol>
+<p>当Kafka 集群要触发重平衡机制时，大致的步骤如下: <strong>1.暂停消费:</strong> 在重平衡开始之前，Kafka 会暂停所有消费者的拉取操作，以确保不会出现重平衡期间的消息丢失或重复消费。 <strong>2.计算分区分配方案:</strong> Kafka 集群会根据当前消费者组的消费者数量和主题分区数量，计算出每个消费者应该分配的分区列表，以实现分区的负载均衡。 <strong>3.通知消费者:</strong> 一旦分区分配方案确定，Kafka 集群会将分配方案发送给每个消费者，告诉它们需要消费的分区列表，并请求它们重新加入消费者组。 <strong>4.重新分配分区:</strong> 在消费者重新加入消费者组后，Kafka 集群会将分区分配方案应用到实际的分区分配中，重新分配主题分区给各个消费者。 <strong>5.恢复消费:</strong> 最后，Kafka 会恢复所有消费者的拉取操作，允许它们消费分配给自己的分区。</p>
+<p>消费者连接上以后，从这个分区之前偏移量以后的消息继续消费</p>
+<ol>
+<li><h3 id="重平衡的影响"><a href="#重平衡的影响" class="headerlink" title="重平衡的影响"></a>重平衡的影响</h3></li>
+<li><p><strong>消费暂停</strong>：在重平衡期间，整个消费者组会停止消费</p>
+</li>
+<li><p><strong>性能影响</strong>：频繁重平衡会导致消费延迟和吞吐量下降</p>
+</li>
+<li><p><strong>重复消费</strong>：可能因为offset提交时机导致消息重复消费</p>
+</li>
+<li><h3 id="优化策略"><a href="#优化策略" class="headerlink" title="优化策略"></a>优化策略</h3></li>
+<li><p>合理设置会话超时：</p>
+</li>
+</ol>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs Properties"><span class="hljs-attr">session.timeout.ms</span>=<span class="hljs-string">30000  # 默认30秒</span><br><span class="hljs-attr">heartbeat.interval.ms</span>=<span class="hljs-string">3000  # 心跳间隔</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>使用静态组成员（Kafka 2.3+）</li>
+</ol>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Properties"><span class="hljs-attr">group.instance.id</span>=<span class="hljs-string">consumer-1  # 静态成员ID</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>增量重平衡（Kafka 2.4+）<ol>
+<li>只重新分配受影响的分区</li>
+<li><strong>减少整个组的停顿时间</strong></li>
+</ol>
+</li>
+<li><strong>避免频繁重启</strong>：使用优雅关闭</li>
+</ol>
+<h1 id="Kafka为何如此快"><a href="#Kafka为何如此快" class="headerlink" title="Kafka为何如此快"></a>Kafka为何如此快</h1><p><strong>Kafka 实现了</strong>**<code>零拷贝</code>**<strong>原理来快速移动数据</strong>，避免了内核之间的切换。Kafka 可以将数据记录分批发送，从生产者到文件系统（Kafka 主题日志）到消费者，可以端到端的查看这些批次的数据。</p>
+<p>批处理能够进行更有效的数据压缩并减少 I&#x2F;O 延迟，Kafka 采取<strong>顺序写入磁盘</strong>的方式，避免了随机磁盘寻址的浪费；</p>
+<p>总结一下其实就是四个要点</p>
+<ul>
+<li><strong>顺序写</strong></li>
+<li><strong>零拷贝</strong></li>
+<li><strong>消息压缩</strong></li>
+<li><strong>批处理</strong></li>
+</ul>
+<ol>
+<li><h3 id="顺序写"><a href="#顺序写" class="headerlink" title="顺序写"></a>顺序写</h3></li>
+</ol>
+<p><img src="/./../img/1765889363060-10.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>append only 日志****末尾添加的机制</strong>,也就是每次有数据写入kafka,它是将数据message 添加到消息文件的末尾，从而实现磁盘顺序写的机制，</p>
+<p><img src="/./../img/1765889363061-11.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h3 id="零拷贝"><a href="#零拷贝" class="headerlink" title="零拷贝"></a>零拷贝</h3></li>
+</ol>
+<blockquote>
+<p><strong>DMA(Direct Memory Access，直接存储器访问)</strong> 是所有现代电脑的重要特色，它允许不同速度的硬件装置来沟通，而不需要依赖于 <strong>CPU 的大量中断负载</strong> 。通俗来讲，就是DMA 传输将数据从一个地址空间复制到另外一个地址空间，当CPU 初始化这个传输动作，传输动作本身是由 DMA 控制器来实行和完成，也就是两个硬件之间完成的，而没有CPU的参与，那么CPU就可以释放出来做别的事情，这样极大地提高了效率。</p>
+</blockquote>
+<p><img src="/./../img/1765889363061-12.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>传统拷贝</strong>：</p>
+<ol>
+<li>我们可以清楚的看到共产生了4次copy，从磁盘文件到Kernal的相互读写是支持DMA copy的，但即使是这样，从Kernal到User没有硬件的支持所以不支持DMA，还有两次CPU copy。</li>
+<li>Kafka只是把文件存放到磁盘之后通过网络发出去，中间并不需要修改什么数据，那read和write的两次CPU copy的操作完全是多余的。</li>
+</ol>
+<p><strong>零拷贝：</strong></p>
+<blockquote>
+<p><strong>Linux2.1</strong>内核开始引入了 <strong><code>sendfile</code></strong> 函数 (mmap)，用于将文件通过socket传送。</p>
+<p><strong>Linux2.4内核开始引入了 sendfile 函数; 零拷贝</strong></p>
+</blockquote>
+<p><img src="/./../img/1765889363061-13.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>操作系统</strong> &#x3D;&#x3D;&gt; JVM 提供零拷贝函数 &#x3D;&#x3D;&gt; Kafka调用函数;</p>
+<p>JVM 提供<strong>零拷贝函数</strong> : <code>NIO（New IO）</code>（Buffer、Selector、Channel）</p>
+<p>file.transferTo(file2)：底层直接零拷贝</p>
+<p><code>IO</code>：Input Output；</p>
+<ol>
+<li><h3 id="消息压缩"><a href="#消息压缩" class="headerlink" title="消息压缩"></a>消息压缩</h3></li>
+</ol>
+<blockquote>
+<p>压缩消息可以<strong>节省网络带宽</strong>。从而提高吞吐量</p>
+</blockquote>
+<p><img src="/./../img/1765889363061-14.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li><h3 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h3></li>
+</ol>
+<blockquote>
+<p>导致丢消息</p>
+</blockquote>
+<p><img src="/./../img/1765889363061-15.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><img src="/./../img/1765889363061-16.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p><strong>消息达到最大数量、或者最大内存、或者最长时间，都会被全部发出去</strong></p>
+<h1 id="kafka如何保证消息不丢失"><a href="#kafka如何保证消息不丢失" class="headerlink" title="kafka如何保证消息不丢失"></a><strong>kafka如何保证消息不丢失</strong></h1><ol>
+<li><h3 id="Producer端"><a href="#Producer端" class="headerlink" title="Producer端"></a><strong>Producer端</strong></h3></li>
+</ol>
+<p>要保证消息不丢失，第一点要做的就是要保证消息从producer端发送到了kafka的broker中，并且broker把消息保存了下来。 由于在发送消息的过程中有可能会发生<strong>网络故障，broker故障</strong>等原因导致消息发送失败，因此在producer端有两种方式来避免消息丢失。</p>
+<ol>
+<li><h4 id="接收发送消息回执"><a href="#接收发送消息回执" class="headerlink" title="接收发送消息回执"></a><strong>接收发送消息回执</strong></h4></li>
+</ol>
+<p>我们在使用kafka发送消息的时候，通常是使用<code>producer.send(msg)</code>方法，但是这个方法其实是一种异步发送，调用此方法发送消息的时候，虽然会立即返回，但是并不代表消息真的发送成功了。 1、*<em>所以可以使用同步发送消息，</em><em>**<code>producer.send(msg).get()</code><strong><strong>此方法会执行同步发生消息，并等待结果返回</strong>。 2、<strong>也可以使用带回调函数的异步方法，</strong></strong><code>producer.send(msg,callback)</code>**</em><em>，用回调函数来监听消息的发送结果，如果发送失败了，可以在回调函数里面进行重试。</em>*</p>
+<ol>
+<li><h4 id="producer参数配置"><a href="#producer参数配置" class="headerlink" title="producer参数配置"></a><strong>producer参数配置</strong></h4></li>
+</ol>
+<p>producer也提供了一些配置参数来避免消息丢失。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-comment">// 此配置表示，Leader和Follower全部成功接收消息后才确认收到消息，</span><br><span class="hljs-comment">// 可以最大限度保证消息不丢失，但是吞吐量会下降</span><br>acks = -<span class="hljs-number">1</span> <br><span class="hljs-comment">// producer 发送消息失败后，自动重试次数</span><br>retries = <span class="hljs-number">3</span><br><span class="hljs-comment">// 发送消息失败后的重试时间间隔</span><br>retry.backoff.ms = <span class="hljs-number">300</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><h3 id="Broker端"><a href="#Broker端" class="headerlink" title="Broker端"></a><strong>Broker端</strong></h3></li>
+</ol>
+<p>当消息发送到broker后，broker需要保证此消息不会丢失，我们都知道，kafka是会将消息持久化到磁盘中的。 但是kafka为了保持性能采用了，<strong><code>页缓存+异步刷盘</code></strong> 的形式将消息持久化到磁盘的。也就是批量定时将消息持久化到磁盘。 <strong>但是页缓存如果还没来的及将消息刷到磁盘，broker就挂了，还是会有消息丢失的风险，因此kafka又提供了partition的</strong><strong><code>ISR（同步副本机制）</code></strong>，即每一个patrtition都会有一个唯一的Leader和一到多个Follower，Leader专门处理一些事务类型的请求，Follower负责同步Leader的数据。当leader挂了后，会重新从Follower中选举出新的Leader，保证消息能够最终持久化。</p>
+<p>另外，在producer中的配置参数<code>acks</code>,配置不同的值，broker也是会做不同的处理的。</p>
+<blockquote>
+<p><strong><code>acks=0</code></strong>:表示Producer请求立即返回，不需要等待Leader的任何确认。这种方案有最高的吞吐率，但是不保证消息是否真的发送成功。 <strong><code>acks =-1</code></strong>: 表示分区Leader必须等待消息被成功写入到所有的ISR副本(同步副本)中才认为Producer请求成功。这种方案提供最高的消息持久性保证，但是理论上吞吐率也是最差的。 <strong><code>acks=1</code></strong>: 表示Leader副本必须应答此Producer请求并写入消息到本地日志，之后Producer请求被认为成功。如果此时Leader副本应答请求之后挂掉了，消息会丢失。这个方案，提供了不错的持久性保证和吞吐。</p>
+</blockquote>
+<ol>
+<li><h3 id="Consumer端"><a href="#Consumer端" class="headerlink" title="Consumer端"></a><strong>Consumer端</strong></h3></li>
+</ol>
+<p><strong>Consumer端，只要保证消息接收到不胡乱的提交offset就行</strong>，kafka本身也是会记录每个pratition的偏移量，但是为了业务的可靠性，最好在确认消费消息后，提交偏移量；默认是拿到消息，就自动提交偏移量</p>
+<p>为了避免消息丢失，建议使用**手动提交偏移量的方式，**防止消息的业务逻辑未处理完，提交偏移量后消费者挂了的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java">enable.auto.commit=<span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="kafka如何保证消息顺序消费"><a href="#kafka如何保证消息顺序消费" class="headerlink" title="kafka如何保证消息顺序消费"></a><strong>kafka如何保证消息顺序消费</strong></h1><p><strong><code>顺序发送</code></strong> <strong>+</strong> <strong><code>顺序存储</code></strong> <strong>+</strong> <strong><code>顺序消费</code></strong></p>
+<ol>
+<li><h3 id="顺序发送"><a href="#顺序发送" class="headerlink" title="顺序发送"></a>顺序发送</h3></li>
+</ol>
+<p>具体实现顺序发送消息有两种方式： <strong>1、在使用kafka时，对需要保证顺序消费的topic，只创建一个partition，这样消息就都会顺序的存储到这*一个partition中，也就能保证顺序消费了。</strong> <strong>2、当一个topic有多个partition时，对需要保证顺序的消息，都**<strong>发到指定的partition即可</strong></strong>，这样也能保证顺序消费。</p>
+<ol>
+<li><h3 id="顺序存储"><a href="#顺序存储" class="headerlink" title="顺序存储"></a><strong><code>顺序存储</code></strong></h3></li>
+</ol>
+<p>Kafka 会按照<strong>消息发送顺序进行顺序存储</strong>；但是一定是单发送者。</p>
+<p>多发送者不能保证消息抵达Kafka的顺序</p>
+<ol>
+<li><h3 id="顺序消费"><a href="#顺序消费" class="headerlink" title="顺序消费"></a>顺序消费</h3></li>
+</ol>
+<p>在消费端，要保证顺序消费，单线程处理消息即可</p>
+<h1 id="kafka如何保证消息不重复消费【幂等性】"><a href="#kafka如何保证消息不重复消费【幂等性】" class="headerlink" title="kafka如何保证消息不重复消费【幂等性】"></a><strong>kafka如何保证消息不重复消费【<strong><strong>幂等性</strong></strong>】</strong></h1><ol>
+<li><h3 id="什么情况下会导致消息被重复消费呢？"><a href="#什么情况下会导致消息被重复消费呢？" class="headerlink" title="什么情况下会导致消息被重复消费呢？"></a><strong>什么情况下会导致消息被重复消费呢？</strong></h3></li>
+<li><p><strong>生产者</strong>，生产者可能重复推送了一条消息到kafka，例如：某接口未做幂等处理，接口中会发送kafka消息</p>
+</li>
+<li><p>**kafka：**在消费者消费完消息后，提交offset时，kafka突然挂了，导致kafka认为此消息还未消费，又重新推送了该条消息，导致了重复消费消息。</p>
+</li>
+<li><p><strong>消费者</strong>，在消费者消费完消息后，提交offset时，Consumer突然宕机挂掉，这个时候，kafka未接收到已处理的offset值，当Consumer恢复后，<strong>会重新消费此部分消息</strong>。</p>
+</li>
+</ol>
+<p>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;  <strong>所有的都是消费端保证幂等性(消息执行的历史记录表)即可</strong> &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</p>
+<ol>
+<li>还有一种情况，Kafka 存在 <strong>Partition ReBalance</strong> 机制，会将多个 Partition 均衡分配给多个消费者。若 <strong>Consumer 在默认 5 分钟内未处理完一批消息</strong>，会触发 Rebalance 机制，导致 offset 自动提交失败，重新 Rebalance 后，消费者会从之前未提交的 offset 位置开始消费，从而造成消息重复消费。（消费者数量变化等也会导致重平衡）</li>
+</ol>
+<p>重平衡（有可能是<strong>消费者慢</strong>（假掉线），导致<strong>重平衡，offset没来及提交，kafka会重复投递消息给别的消费者</strong>）</p>
+<ol>
+<li><h3 id="如何避免重复消费"><a href="#如何避免重复消费" class="headerlink" title="如何避免重复消费"></a>如何避免重复消费</h3></li>
+</ol>
+<p>其实上面的<code>1、2、3、4</code>这些情况都可以用<strong>幂等机制</strong>来防止消息被重复消费。</p>
+<p><strong>为消息生成 一个唯一标识，并保存到 mysql 或 redis 中，处理消息前先到 mysql 或 redis 中判断该消息是否已被消费过</strong>。</p>
+<p>但是<strong>第4种</strong>情况，前提是要先优化<strong>消费端处理性能，<strong><strong><code>避免触发 Rebalance</code></strong></strong>。额外的方案</strong></p>
+<p>例如：</p>
+<ol>
+<li><code>采用异步方式处理消息</code></li>
+<li><code>缩短单个消息消费时长</code></li>
+<li><code>调整消息处理超时时间</code>(5min、10min)</li>
+<li><code>减少一次性从 Broker 拉取的数据条数等。</code>  10000条</li>
+</ol>
+<blockquote>
+<p>从0开始做；</p>
+</blockquote>
+<h1 id="服务降级熔断"><a href="#服务降级熔断" class="headerlink" title="服务降级熔断"></a>服务降级熔断</h1><h2 id="服务雪崩"><a href="#服务雪崩" class="headerlink" title="服务雪崩"></a>服务雪崩</h2><p>OK，我们从服务雪崩开始讲起！假设存在如下调用链</p>
+<p>而此时，<code>Service A</code>的流量波动很大，流量经常会突然性增加！那么在这种情况下，就算<code>Service A</code>能扛得住请求，<code>Service B</code>和<code>Service C</code>未必能扛得住这突发的请求。<br>此时，如果<code>Service C</code>因为抗不住请求，变得不可用。那么<code>Service B</code>的请求也会阻塞，慢慢耗尽<code>Service B</code>的线程资源，<code>Service B</code>就会变得不可用。紧接着，<code>Service A</code>也会不可用，这一过程如下图所示</p>
+<p>如上图所示，一个服务失败，导致整条链路的服务都失败的情形，我们称之为服务雪崩。</p>
+<p><code>ps：</code>谁发明的这个词，真是面试装13必备！</p>
+<p>那么，<strong>服务熔断</strong>和<strong>服务降级</strong>就可以视为解决服务雪崩的手段之一。</p>
+<h1 id="1-服务降级"><a href="#1-服务降级" class="headerlink" title="1. 服务降级"></a>1. 服务降级</h1><p>1.1 定义</p>
+<p>服务降级是指在系统部分功能出现异常或负载过高时，主动降低某些非核心功能的质量或直接停止这些功能，以保证核心功能的正常运行。其核心思想是“优先保障核心服务”。</p>
+<p>1.2目的</p>
+<ol>
+<li><strong>保障核心功能</strong>：在系统资源有限的情况下，优先保障对用户和业务最重要的功能。</li>
+<li><strong>提高系统可用性</strong>：通过降低非核心功能的质量，释放资源给核心功能，防止系统全面崩溃。</li>
+<li><strong>改善用户体验</strong>：即使在系统压力较大的情况下，也能为用户提供基本可用的服务。</li>
+</ol>
+<p>1.3 实现策略</p>
+<ol>
+<li><strong>功能降级</strong>：直接关闭一些不重要的功能或特性。例如，电商网站在大促期间可能会关闭一些复杂的推荐算法。</li>
+<li><strong>质量降级</strong>：降低服务的质量或精度。例如，降低图片的分辨率或减少数据的刷新频率。</li>
+<li><strong>异步处理</strong>：将一些实时性要求不高的功能改为异步处理，例如，将订单确认邮件的发送改为异步任务。</li>
+</ol>
+<p>1.4 实施步骤</p>
+<ol>
+<li><strong>识别核心与非核心功能</strong>：明确系统中的核心功能和非核心功能。</li>
+<li><strong>设定降级策略</strong>：为不同的非核心功能设定相应的降级策略。</li>
+<li><strong>监控与触发</strong>：通过监控系统的运行状态，自动或手动触发降级策略。</li>
+<li><strong>恢复机制</strong>：在条件允许的情况下，自动或手动恢复被降级的服务。</li>
+</ol>
+<h1 id="2-服务熔断"><a href="#2-服务熔断" class="headerlink" title="2. 服务熔断"></a>2. 服务熔断</h1><p>2.1 定义</p>
+<p>服务熔断是一种保护机制，用于防止系统在某些服务出现问题时，影响到整个系统的稳定性。其灵感来源于电力系统中的熔断器，当电路出现过载时，熔断器会自动切断电路以保护整个系统。</p>
+<p>2.2 目的</p>
+<ol>
+<li><strong>防止故障蔓延</strong>：当某个服务出现故障时，防止其影响扩大到其他服务。</li>
+<li><strong>快速失败和恢复</strong>：通过快速失败，减少资源消耗，并在服务恢复后快速恢复正常状态。</li>
+<li><strong>提高系统稳定性</strong>：通过隔离故障，保证其他服务的正常运行。</li>
+</ol>
+<p>2.3 实现策略</p>
+<ol>
+<li><strong>熔断器模式</strong>：实现熔断器的三种状态：关闭、打开和半开。<ul>
+<li><strong>关闭状态</strong>：正常请求通过。</li>
+<li><strong>打开状态</strong>：请求快速失败，直接返回错误。</li>
+<li><strong>半开状态</strong>：允许部分请求通过，以检测服务是否恢复。</li>
+</ul>
+</li>
+<li><strong>熔断条件</strong>：设定触发熔断的条件，例如请求失败率超过一定阈值。</li>
+<li><strong>恢复策略</strong>：设定从打开状态到半开状态的条件，例如经过一段时间后自动进入半开状态。</li>
+</ol>
+<p>2.4 实施步骤</p>
+<ol>
+<li><strong>设定熔断条件</strong>：根据业务需求设定触发熔断的条件。</li>
+<li><strong>实现熔断器逻辑</strong>：在服务调用链中实现熔断器的逻辑。</li>
+<li><strong>监控与调整</strong>：持续监控熔断器的状态，并根据实际情况调整熔断条件。</li>
+</ol>
+<h1 id="3-服务限流"><a href="#3-服务限流" class="headerlink" title="3. 服务限流"></a>3. 服务限流</h1><p>3.1 定义</p>
+<p>服务限流是指通过限制系统处理请求的速率，来保护系统资源，防止系统过载。限流策略通常用于防止突发流量对系统的冲击。</p>
+<p>3.2 目的</p>
+<ol>
+<li><strong>防止系统过载</strong>：通过限制请求速率，防止系统资源被耗尽。</li>
+<li><strong>保障服务稳定性</strong>：在高并发情况下，保证服务的稳定性和响应速度。</li>
+<li><strong>提高用户体验</strong>：通过平滑处理请求，避免因系统过载导致的服务不可用。</li>
+</ol>
+<p>3.3 实现策略</p>
+<ol>
+<li><strong>令牌桶算法</strong>：通过令牌的生成和消费来控制请求的速率。</li>
+<li><strong>漏桶算法</strong>：通过固定速率的请求处理，平滑突发流量。</li>
+<li><strong>计数器算法</strong>：在固定时间窗口内限制请求数量。</li>
+</ol>
+<p>3.4 实施步骤</p>
+<ol>
+<li><strong>确定限流目标</strong>：识别需要限流的服务或接口。</li>
+<li><strong>选择限流算法</strong>：根据业务需求选择合适的限流算法。</li>
+<li><strong>配置限流参数</strong>：设定限流的阈值和策略。</li>
+<li><strong>监控与优化</strong>：监控限流效果，并根据需要进行优化和调整。</li>
+</ol>
+<h1 id="4-综合应用"><a href="#4-综合应用" class="headerlink" title="4. 综合应用"></a>4. 综合应用</h1><p>在实际应用中，服务降级、服务熔断和服务限流常常结合使用，以应对复杂的系统问题和不确定性。通过合理的策略组合，可以有效提高系统的鲁棒性和可用性。</p>
+<ol>
+<li><strong>降级与限流结合</strong>：在流量高峰期，通过限流保护系统，并通过降级保证核心功能的可用性。</li>
+<li><strong>熔断与降级结合</strong>：当某个服务触发熔断后，通过降级策略保证其他服务的正常运行。</li>
+<li><strong>熔断与限流结合</strong>：在熔断器恢复过程中，通过限流控制请求速率，防止服务再次过载。</li>
+</ol>
+<p>为什么有了服务降级还需要服务熔断？</p>
+<p>这里我们总结了4个核心理由：</p>
+<ol>
+<li>避免资源浪费：当一个服务出现故障时，如果没有熔断机制，系统可能会持续不断地尝试调用这个失败的服务，导致请求积压和资源耗尽。服务熔断通过快速失败，避免了不必要的调用，节省了宝贵的系统资源。</li>
+<li>防止级联故障：在微服务架构中，服务之间通常相互依赖。如果一个服务出现问题，持续的失败调用可能会影响到依赖它的其他服务，导致级联故障。服务熔断器可以在问题初期及时切断受影响的服务调用，防止故障扩散到整个系统。</li>
+<li>加速系统恢复：通过熔断机制，系统能够更快地检测到服务的故障状态，并在熔断器打开后，等待一段时间再尝试恢复调用。这有助于目标服务有足够的时间进行自我修复，从而加速整个系统的恢复过程。</li>
+<li>提供更好的用户体验： 服务降级虽然能够保证核心功能的可用性，但在高负载或持续失败的情况下，用户可能会频繁遇到降级后的功能或默认响应，影响使用体验。服务熔断器通过控制调用频率和恢复策略，能够在保证必要降级的同时，减少对用户的负面影响。</li>
+</ol>
+<p>end</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/MQ/" class="print-no-link">#MQ</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>105消息队列kafka</div>
+      <div>http://example.com/2025/11/29/50消息队列Kafka/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>無鎏雲</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/29/104%E6%B7%B1%E5%88%86%E9%A1%B5/" title="104深度分页">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">104深度分页</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/25/46SpringBoot/" title="45Springboot">
+                        <span class="hidden-mobile">45Springboot</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

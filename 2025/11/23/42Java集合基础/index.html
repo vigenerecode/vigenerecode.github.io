@@ -27,6 +27,7 @@
 <meta property="og:description" content="Java集合基础 概念#数组与集合区别，用过哪些？数组和集合的区别：  数组是固定长度的数据结构，一旦创建长度就无法改变，而集合是动态长度的数据结构，可以根据需要动态增加或减少元素。 数组可以包含基本数据类型和对象，而集合只能包含对象。 数组可以直接访问元素，而集合需要通过迭代器或其他方法访问元素。  Java中的线程安全的集合是什么？在 java.util 包中的线程安全的类主要 2 个，其他都">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/1717481094793-b8ffe6ae-2ee6-4de5-b61b-8468e32bf269.webp">
+<meta property="og:image" content="http://example.com/img/80ca60fe3653d2f834b76c3173466c30.png">
 <meta property="og:image" content="http://example.com/img/1720684054342-1e3cb2a9-532e-40b8-b5cf-0043811391dc.png">
 <meta property="og:image" content="http://example.com/img/1720685862193-66a32b79-ddf0-46d5-87df-d2fc2b3d87cb.png">
 <meta property="og:image" content="http://example.com/img/1713514753772-9467a399-6b18-4a47-89d4-957adcc53cc0.webp">
@@ -34,7 +35,7 @@
 <meta property="og:image" content="http://example.com/img/1713514753885-d1529537-322c-49b1-beec-5d9953da5150.webp">
 <meta property="og:image" content="http://example.com/img/1719982934770-8587cb0a-6e1d-4007-9a22-bc1e41276491.png">
 <meta property="article:published_time" content="2025-11-23T02:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-27T00:36:03.198Z">
+<meta property="article:modified_time" content="2025-12-17T07:04:55.794Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="Java集合">
 <meta name="twitter:card" content="summary_large_image">
@@ -334,7 +335,8 @@
 <li>完成扩容：扩容完成后，可以继续添加新元素。</li>
 </ul>
 <p>ArrayList的扩容操作涉及到数组的复制和内存的重新分配，所以在频繁添加大量元素时，扩容操作可能会影响性能。为了减少扩容带来的性能损耗，可以在初始化ArrayList时预分配足够大的容量，避免频繁触发扩容操作。</p>
-<h1 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h1><h3 id="了解的哈希冲突解决方法有哪些？"><a href="#了解的哈希冲突解决方法有哪些？" class="headerlink" title="了解的哈希冲突解决方法有哪些？"></a>了解的哈希冲突解决方法有哪些？</h3><ul>
+<h1 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h1><h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><p><img src="/./../img/80ca60fe3653d2f834b76c3173466c30.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h3 id="了解的哈希冲突解决方法有哪些？"><a href="#了解的哈希冲突解决方法有哪些？" class="headerlink" title="了解的哈希冲突解决方法有哪些？"></a>了解的哈希冲突解决方法有哪些？</h3><ul>
 <li>链接法：使用链表或其他数据结构来存储冲突的键值对，将它们链接在同一个哈希桶中。</li>
 <li>开放寻址法：在哈希表中找到另一个可用的位置来存储冲突的键值对，而不是存储在链表中。常见的开放寻址方法包括线性探测、二次探测和双重散列。</li>
 <li>再哈希法（Rehashing）：当发生冲突时，使用另一个哈希函数再次计算键的哈希值，直到找到一个空槽来存储键值对。</li>
@@ -348,7 +350,7 @@
 <h3 id="hashmap的put过程介绍一下"><a href="#hashmap的put过程介绍一下" class="headerlink" title="hashmap的put过程介绍一下"></a>hashmap的put过程介绍一下</h3><p><img src="/./../img/1720684054342-1e3cb2a9-532e-40b8-b5cf-0043811391dc.png" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>HashMap HashMap的put()方法用于向HashMap中添加键值对，当调用HashMap的put()方法时，会按照以下详细流程执行（JDK8 1.8版本）：</p>
 <blockquote>
-<p>第一步：根据要添加的键的哈希码计算在数组中的位置（索引）。</p>
+<p>第一步：根据要添加的键的哈希码计算在数组中的位置（索引）。tab[i &#x3D; (n - 1) &amp; hash]</p>
 </blockquote>
 <blockquote>
 <p>第二步：检查该位置是否为空（即没有键值对存在）</p>

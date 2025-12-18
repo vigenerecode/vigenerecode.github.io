@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://example.com/img/image-20251123202113537.png">
 <meta property="og:image" content="http://example.com/img/image-20251123202120347.png">
 <meta property="article:published_time" content="2025-11-22T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-14T09:28:19.757Z">
+<meta property="article:modified_time" content="2025-12-17T02:09:09.898Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="kcat">
 <meta name="twitter:card" content="summary_large_image">
@@ -232,7 +232,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.8k 字
+          6.9k 字
         
       </span>
     
@@ -243,7 +243,7 @@
         
         
         
-          57 分钟
+          58 分钟
         
       </span>
     
@@ -311,6 +311,58 @@
 <li><p>最后负责了用户<strong>交互系统</strong>的整个开发流程（短剧点赞、收藏、评论、评论点赞、播放记录、播放进度等…），特色：将<strong>用户交互行为系统（互动服务）<strong>抽取成事件模式，每一种用户行为事件，都由Kafka进行统一保存，内容服务、互动服务、用户服务等服务模块来消费Kafka消息。完成数据库数据和缓存数据的最终一致性。缓存进行特别的设计（数据只看缓存，数据库相当于备份）。以前都是先读缓存，缓存没有就查库。我们现在由于</strong>用户互动行为</strong>频率太高了，所以全部的操作都去缓存中操作，由数据库进行同步。整个的一致性同步是<strong>靠</strong> <strong>Kafka</strong> <strong>消息消费抵达，我们进行双写</strong>。</p>
 </li>
 </ol>
+<h1 id="STAR话术（）"><a href="#STAR话术（）" class="headerlink" title="STAR话术（）"></a>STAR话术（）</h1><p><strong>STAR：</strong></p>
+<ol>
+<li><p><strong>S</strong>：需要开发开发完整的短剧上传-审核-转码-发布流程</p>
+<p>整个审核是由Camunda流程引擎驱动，主要完成短剧发布后的Ai审核任务、视频信息流&#x2F;画质流转码任务。这些任务为了稳定调度，还引入了<strong>xxl-job</strong>。还涉及到 AI大模型在审核方面的使用，以及腾讯云VOD系统的转码以及可靠通知流程</p>
+<ol>
+<li><p><strong>T</strong>：<strong>主要AI审核和对接腾讯云视频转码平台</strong></p>
+</li>
+<li><p><strong>A</strong>：</p>
+<ol start="2">
+<li><p>本地部署ollama，使用deepseekr1基本模型，基于提示词模板，进行结构化输出指定的json；</p>
+</li>
+<li><p>判断正向是否合法，负面是否不合法</p>
+<ol>
+<li>json结构：二分类：{negative: 0.7, positive:0.3},  {sad: 0.666, happy: 0.217, xxx}</li>
+</ol>
+</li>
+<li><p>为了实<strong>现稳定转码，和人工兜底处理</strong>。&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;引入了 xxl-job，将转码任务交给 xxl-job 调度给某个机器，并且设置失败重试规则。 这样的好处是，即使多次失败后，任务还在xxl-job中有保存。手动修复相关问题后还可以继续手工启动任务；（主要核心思路，xxl-job原生只支持在控制台提交定时任务。现在需要AI审核通过以后，自动提交转码任务。所以默认robot机器人账号登录xxl-job，触发一个一次性任务启动）</p>
+</li>
+<li><p>使用轮询机制，每10秒（*2）获取 vod 的转码结果消息。 只要看到转码成功的状态，提取信息流和画质流分别对应的转码结果，特别是画质流，要从结果中基于视频的 height 分辨出 各种分辨率视频对应的url地址</p>
+</li>
+</ol>
+</li>
+<li><p><strong>R</strong>：（可观测出的指标都可以描述）</p>
+<ol>
+<li>最终基于线上的Prometheus+Grafana的整个监控系统反应。视频转码任务的调度成功率（成功次数&#x2F;总次数）保持在 90% 以上。基本上3次以内重试，保证99% 都能转码成功。可能网络或者云厂商系统故障导致的 需要人工介入的比例下降很多。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>还做了App首页<strong>响应短剧数据请求接口的设计和开发</strong>；主要涉及到<strong>缓存</strong>的使用，使用之后大幅度提升性能。 </p>
+</li>
+<li><p>最后负责了用户<strong>交互系统</strong>的整个开发流程（短剧点赞、收藏、评论、评论点赞、播放记录、播放进度等…），特色：将<strong>用户交互行为系统（互动服务）<strong>抽取成事件模式，每一种用户行为事件，都由Kafka进行统一保存，内容服务、互动服务、用户服务等服务模块来消费Kafka消息。完成数据库数据和缓存数据的最终一致性。缓存进行特别的设计（数据只看缓存，数据库相当于备份）。以前都是先读缓存，缓存没有就查库。我们现在由于</strong>用户互动行为</strong>频率太高了，所以全部的操作都去缓存中操作，由数据库进行同步。整个的一致性同步是<strong>靠</strong> <strong>Kafka</strong> <strong>消息消费抵达，我们进行双写</strong>。</p>
+</li>
+</ol>
+<p>二、</p>
+<ol>
+<li><strong>S</strong>：为了应对视频类应用的用户高频行为操作场景（主要是播放进度、点赞、收藏等一些用户行为）<ol>
+<li>T：我们需要开发全用户事件感知系统</li>
+<li>A：<ol>
+<li>因为考虑到 播放进度需要前端每秒汇报一次，请求速率很高。并且记录用户的播放进度。引入kafka 进行血风田谷，并设计用户事件发送消息（UserEvent extends BaseEvent [唯一id，发送事件，用户]）。 用户的所有行为请求进来，直接封装为事件。发送给kafka；（基本信息的封装由kafkaTemplate的拦截器进行统一设置。）</li>
+<li>其他服务模块监听<strong>kafka消息</strong>，从而实现同步；<ol>
+<li><strong>Redis数据缓存系统</strong>：<strong>缓存优先模式</strong>（短剧信息、短剧点赞数量、短剧播放进度都直接查Redis，Redis没有再走回源逻辑即可）， 所有和用户对接的高频的增删改查，查redis即可； </li>
+<li>这些数过期时间为24h，考虑到 一旦数据过期要回源。MySQL由于自己同步速度慢，没有同步到数据，导致回源无数据，从而产生数据不一致问题。</li>
+<li>MySQL持久化系统：监听到消息以后。慢慢的进行数据保存；（Redis万一哪天没有数据，就回源MySQL查询）</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>R：实现了最终一致性MySQL目前和Redis数据差异基本在秒级（由于目前量还没有太大）；<strong>用户高频操作的缓存命中率：几乎100%；基本不回源</strong>。Redis 的线上故障时间（目前除了手动停机，Redis自己没停机过）。Redis 是 8核 32G 机器。 主从复制。无哨兵</li>
+</ol>
+</li>
+</ol>
 <p>面试问的大范围：</p>
 <ol>
 <li><p>流程引擎用法</p>
@@ -348,6 +400,7 @@
 <p>(腾讯云一堆事件、所有的视频上传、删除、修改， 启动任务流、<strong>任务流状态变化</strong>…) 我们主要感知到信息流和画质流的任务状态变化。通过知道 status &#x3D; FINISH 且 事件对应的 fileId &#x3D; 当前视频。就相当于拿到数据了</p>
 <p><strong>解完数据就无需再次轮询。就终止获取事件了</strong>。</p>
 <p><strong>VOD</strong>：视频点播；保存腾讯云转码后的视频url地址。能开启*CDN加速，让用户访问腾讯云最近的服务器获取到数据</p>
+<h1 id="难点使用-Camunda"><a href="#难点使用-Camunda" class="headerlink" title="难点使用 Camunda"></a>难点使用 Camunda</h1><p>参考话术：<br>	视频审核是一个多阶段的流程：<br>	AI审核–&gt;视频内容审核–&gt;人工审核–&gt;审核结果汇总<br>	使用 Camunda 的目的是：<br>	把复杂流程可视化<br>	状态和节点可追溯<br>	人工审核可以暂停&#x2F;回退<br>	多个审核结果汇总更清晰<br>	如果不用工作流，自己维护状态机会非常混乱。</p>
 <h2 id="2-App首页端（重点）"><a href="#2-App首页端（重点）" class="headerlink" title="2. App首页端（重点）"></a>2. App首页端（重点）</h2><p><strong>高性能接口（缓存、异步）、</strong> <strong>自定义切面</strong></p>
 <p>我们参与编写了几个核心的高性能接口，并进行对应压力测试，以满足要求（首页 95% 响应时间 150ms 以内， 99% 要求响应时间 300ms以内）</p>
 <h3 id="1-首页推荐短剧信息流："><a href="#1-首页推荐短剧信息流：" class="headerlink" title="1. 首页推荐短剧信息流："></a>1. 首页推荐短剧信息流：</h3><p><strong>特色redis zset数据 <strong>+前后端配合使用</strong>cursor分页</strong> <strong>+</strong> <strong>定时任务给缓存上数据</strong> <strong>+</strong> <strong>异步线程池</strong></p>
@@ -521,55 +574,9 @@
 <p>(1)  控制口播稿 3-7分钟</p>
 <p>(2)  提取点，就是面试官的拷打范围</p>
 <p>背稿子，背面试场景题</p>
-<h1 id="STAR话术（）"><a href="#STAR话术（）" class="headerlink" title="STAR话术（）"></a>STAR话术（）</h1><p><strong>STAR：</strong></p>
 <ol>
-<li><p><strong>S</strong>：需要开发开发完整的短剧上传-审核-转码-发布流程</p>
-<p>整个审核是由Camunda流程引擎驱动，主要完成短剧发布后的Ai审核任务、视频信息流&#x2F;画质流转码任务。这些任务为了稳定调度，还引入了<strong>xxl-job</strong>。还涉及到 AI大模型在审核方面的使用，以及腾讯云VOD系统的转码以及可靠通知流程</p>
-<ol>
-<li><p><strong>T</strong>：<strong>主要AI审核和对接腾讯云视频转码平台</strong></p>
-</li>
-<li><p><strong>A</strong>：</p>
-<ol start="2">
-<li><p>本地部署ollama，使用deepseekr1基本模型，基于提示词模板，进行结构化输出指定的json；</p>
-</li>
-<li><p>判断正向是否合法，负面是否不合法</p>
-<ol>
-<li>json结构：二分类：{negative: 0.7, positive:0.3},  {sad: 0.666, happy: 0.217, xxx}</li>
-</ol>
-</li>
-<li><p>为了实<strong>现稳定转码，和人工兜底处理</strong>。引入了 xxl-job，将转码任务交给 xxl-job 调度给某个机器，并且设置失败重试规则。 这样的好处是，即使多次失败后，任务还在xxl-job中有保存。手动修复相关问题后还可以继续手工启动任务；（主要核心思路，xxl-job原生只支持在控制台提交定时任务。现在需要AI审核通过以后，自动提交转码任务。所以默认robot机器人账号登录xxl-job，触发一个一次性任务启动）</p>
-</li>
-<li><p>使用轮询机制，每10秒（*2）获取 vod 的转码结果消息。 只要看到转码成功的状态，提取信息流和画质流分别对应的转码结果，特别是画质流，要从结果中基于视频的 height 分辨出 各种分辨率视频对应的url地址</p>
-</li>
-</ol>
-</li>
-<li><p><strong>R</strong>：（可观测出的指标都可以描述）</p>
-<ol>
-<li>最终基于线上的Prometheus+Grafana的整个监控系统反应。视频转码任务的调度成功率（成功次数&#x2F;总次数）保持在 90% 以上。基本上3次以内重试，保证99% 都能转码成功。可能网络或者云厂商系统故障导致的 需要人工介入的比例下降很多。</li>
-</ol>
-</li>
-</ol>
-</li>
-<li><p>还做了App首页<strong>响应短剧数据请求接口的设计和开发</strong>；主要涉及到<strong>缓存</strong>的使用，使用之后大幅度提升性能。 </p>
-</li>
-<li><p>最后负责了用户<strong>交互系统</strong>的整个开发流程（短剧点赞、收藏、评论、评论点赞、播放记录、播放进度等…），特色：将<strong>用户交互行为系统（互动服务）<strong>抽取成事件模式，每一种用户行为事件，都由Kafka进行统一保存，内容服务、互动服务、用户服务等服务模块来消费Kafka消息。完成数据库数据和缓存数据的最终一致性。缓存进行特别的设计（数据只看缓存，数据库相当于备份）。以前都是先读缓存，缓存没有就查库。我们现在由于</strong>用户互动行为</strong>频率太高了，所以全部的操作都去缓存中操作，由数据库进行同步。整个的一致性同步是<strong>靠</strong> <strong>Kafka</strong> <strong>消息消费抵达，我们进行双写</strong>。</p>
-</li>
-</ol>
-<p>二、</p>
-<ol>
-<li><strong>S</strong>：为了应对视频类应用的用户高频行为操作场景（主要是播放进度、点赞、收藏等一些用户行为）<ol>
-<li>T：我们需要开发全用户事件感知系统</li>
-<li>A：<ol>
-<li>因为考虑到 播放进度需要前端每秒汇报一次，请求速率很高。并且记录用户的播放进度。引入kafka 进行血风田谷，并设计用户事件发送消息（UserEvent extends BaseEvent [唯一id，发送事件，用户]）。 用户的所有行为请求进来，直接封装为事件。发送给kafka；（基本信息的封装由kafkaTemplate的拦截器进行统一设置。）</li>
-<li>其他服务模块监听<strong>kafka消息</strong>，从而实现同步；<ol>
-<li><strong>Redis数据缓存系统</strong>：<strong>缓存优先模式</strong>（短剧信息、短剧点赞数量、短剧播放进度都直接查Redis，Redis没有再走回源逻辑即可）， 所有和用户对接的高频的增删改查，查redis即可； </li>
-<li>这些数据没有过期时间，考虑到 一旦数据过期要回源。MySQL由于自己同步速度慢，没有同步到数据，导致回源无数据，从而产生数据不一致问题。</li>
-<li>MySQL持久化系统：监听到消息以后。慢慢的进行数据保存；（Redis万一哪天没有数据，就回源MySQL查询）</li>
-</ol>
-</li>
-</ol>
-</li>
-<li>R：实现了最终一致性MySQL目前和Redis数据差异基本在秒级（由于目前量还没有太大）；<strong>用户高频操作的缓存命中率：几乎100%；基本不回源</strong>。Redis 的线上故障时间（目前除了手动停机，Redis自己没停机过）。Redis 是 8核 32G 机器。 主从复制。无哨兵</li>
+<li><ol start="3">
+<li></li>
 </ol>
 </li>
 </ol>
@@ -660,8 +667,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/22/104%E6%B7%B1%E5%88%86%E9%A1%B5/" title="104深度分页">
-                        <span class="hidden-mobile">104深度分页</span>
+                      <a href="/2025/11/22/41Java%E5%9F%BA%E7%A1%80%E5%AF%B9%E8%B1%A1/" title="41Java对象基础">
+                        <span class="hidden-mobile">41Java对象基础</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

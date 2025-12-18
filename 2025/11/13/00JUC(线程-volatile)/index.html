@@ -30,8 +30,9 @@
 <meta property="og:image" content="http://example.com/img/thread-state-and-method-20230829143200.png">
 <meta property="og:image" content="http://example.com/img/thread-bring-some-problem-119223c9-83a9-42e1-9a0c-f9c706a1e793.png">
 <meta property="og:image" content="http://example.com/img/jmm-a610752d-ef73-47f2-b02c-6954eb3d62bf.png">
+<meta property="og:image" content="http://example.com/img/image-20251217195628580.png">
 <meta property="article:published_time" content="2025-11-12T17:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-19T13:05:06.991Z">
+<meta property="article:modified_time" content="2025-12-17T11:56:29.661Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
@@ -228,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5k 字
+          5.3k 字
         
       </span>
     
@@ -239,7 +240,7 @@
         
         
         
-          42 分钟
+          45 分钟
         
       </span>
     
@@ -487,7 +488,7 @@
 <p>注意，根据 JMM 的规定，<strong>线程对共享变量的所有操作都必须在自己的本地内存中进行，不能直接从主存中读取</strong>。</p>
 <h2 id="回答话术"><a href="#回答话术" class="headerlink" title="回答话术"></a>回答话术</h2><p><strong>JMM 是 Java 的多线程内存规则，通过 happens-before 保证可见性（volatile&#x2F;synchronized）、有序性（内存屏障）、原子性（Atomic类）。核心是让线程看到其他线程的最新修改。</strong></p>
 <p>Java 内存模型 (JMM) 是一个抽象的概念模型，它规定了线程如何通过主内存进行交互。而具体的“工作内存”与“主内存”之间的数据同步，其底层是依赖于硬件（CPU）的缓存一致性协议来完成的，其中最著名的是 MESI 协议</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">JMM</span><br><span class="hljs-keyword"></span>		了解: 在cpu与内存之间 存在 一个缓冲区 目的是为了匹配二者之间运行速度不一致的问题<br>		<span class="hljs-keyword">JMM是什么: </span><span class="hljs-keyword">java </span>memory model<br>			它规定了线程如何通过主内存进行交互 线程安全问题<br>			<span class="hljs-keyword">JMM是JVM中对于线程安全保障的一种规范(接口)</span><br><span class="hljs-keyword"></span>		<span class="hljs-keyword">JMM为什么-底层原理</span><br><span class="hljs-keyword"></span>			<span class="hljs-keyword">JMM保证三大特性 </span><br>				原子性:通过<span class="hljs-keyword">synchronized和Lock保证 </span>多线程并发操作不可分割<br>				可见性 MESI协议 基于硬件的一个一致性协议 主内存与线程的工作内存之间的一致性<br>				有序性 内存屏障 可以通过<span class="hljs-keyword">synchronize和volatile来实现禁止指令重排</span><br><span class="hljs-keyword"></span>		<span class="hljs-keyword">JMM如何使用(实现类)</span><br><span class="hljs-keyword"></span>			<span class="hljs-keyword">synchronized</span><br><span class="hljs-keyword"></span>			Lock<br>			volatile 中文翻译: 不稳定的<br></code></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">JMM</span><br><span class="hljs-keyword"></span>		了解: 在cpu与内存之间 存在 一个缓冲区 目的是为了匹配二者之间运行速度不一致的问题<br>		<span class="hljs-keyword">JMM是什么: </span><span class="hljs-keyword">java </span>memory model定义了 <span class="hljs-keyword">Java </span>程序中的变量、线程如何和主存以及工作内存进行交互的规则。<br>			它规定了线程如何通过主内存进行交互 线程安全问题<br>			<span class="hljs-keyword">JMM是JVM中对于线程安全保障的一种规范(接口)</span><br><span class="hljs-keyword"></span>		<span class="hljs-keyword">JMM为什么-底层原理</span><br><span class="hljs-keyword"></span>			<span class="hljs-keyword">JMM保证三大特性 </span><br>				原子性:通过<span class="hljs-keyword">synchronized和Lock保证 </span>多线程并发操作不可分割<br>				可见性 MESI协议 基于硬件的一个一致性协议 主内存与线程的工作内存之间的一致性<br>				有序性 内存屏障 可以通过<span class="hljs-keyword">synchronize和volatile来实现禁止指令重排</span><br><span class="hljs-keyword"></span>		<span class="hljs-keyword">JMM如何使用(实现类)</span><br><span class="hljs-keyword"></span>			<span class="hljs-keyword">synchronized</span><br><span class="hljs-keyword"></span>			Lock<br>			volatile 中文翻译: 不稳定的<br></code></pre></td></tr></table></figure>
 
 <h3 id="什么是共享变量？"><a href="#什么是共享变量？" class="headerlink" title="什么是共享变量？"></a>什么是共享变量？</h3><p>对于每一个线程来说，栈都是私有的，而堆是共有的。</p>
 <p>也就是说，在栈中的变量（局部变量、方法定义的参数、异常处理的参数）不会在线程之间共享，也就不会有内存可见性的问题，也不受内存模型的影响。而在堆中的变量是共享的，一般称之为共享变量。</p>
@@ -515,7 +516,8 @@
 <p><strong>指令重排可以保证串行语义一致，但是没有义务保证多线程间的语义也一致</strong>。所以在多线程下，指令重排序可能会导致一些问题。</p>
 <h2 id="happensbefore"><a href="#happensbefore" class="headerlink" title="happensbefore"></a>happensbefore</h2><p>happens-before 规则是 JMM 提供的强大的内存可见性保证，只要遵循 happens-before 规则，那么我们写的程序就能保证在 JMM 中具有强的内存可见性。</p>
 <p>总之，<strong>如果操作 A happens-before 操作 B，那么操作 A 在内存上所做的操作对操作 B 都是可见的，不管它们在不在一个线程。</strong></p>
-<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><pre><code class="hljs">volatile 不稳定的
+<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><p><img src="/./../img/image-20251217195628580.png" srcset="/img/loading.gif" lazyload alt="image-20251217195628580"></p>
+<pre><code class="hljs">volatile 不稳定的
 	volatile是什么
 		JMM规范的一种实现 即是一种轻量级的同步机制 所谓轻量的一种理解就是不保证原子性
 		只保证有序性和可见性
@@ -536,9 +538,9 @@
 <p>在 JVM 底层 volatile 是采用“内存屏障”来实现的。</p>
 <p>观察加入 volatile 关键字和没有加入 volatile 关键字时所生成的汇编代码就能发现，加入 volatile 关键字时，会多出一个 lock 前缀指令，lock 前缀指令实际上相当于一个内存屏障（也称内存栅栏），内存屏障会提供 3 个功能：</p>
 <ul>
-<li>它确保指令重排序时不会把其后面的指令排到内存屏障之前的位置，也不会把前面的指令排到内存屏障的后面；即在执行到内存屏障这句指令时，在它前面的操作已经全部完成；</li>
-<li>它会强制将对缓存的修改操作立即写入主存；</li>
-<li>如果是写操作，它会导致其他 CPU 中对应的缓存行无效。</li>
+<li><strong>它确保指令重排序时不会把其后面的指令排到内存屏障之前的位置，也不会把前面的指令排到内存屏障的后面；即在执行到内存屏障这句指令时，在它前面的操作已经全部完成；</strong></li>
+<li><strong>它会强制将对缓存的修改操作立即写入主存；</strong></li>
+<li><strong>如果是写操作，它会导致其他 CPU 中对应的缓存行无效。</strong></li>
 </ul>
 </li>
 </ul>
@@ -581,6 +583,7 @@
 <td align="left">多行代码的复合操作，需要保证原子性</td>
 </tr>
 </tbody></table>
+<h2 id="MESI（缓存一致性协议）"><a href="#MESI（缓存一致性协议）" class="headerlink" title="MESI（缓存一致性协议）"></a>MESI（缓存一致性协议）</h2><p>MESI是一种比较常用的缓存一致性协议，MESI表示缓存行的四种状态，分别是：<br>1、M(Modify) 表示共享数据只缓存在当前 CPU 缓存中，并且是被修改状态，也就是缓存的数据和主内存中的数据不一致<br>2、E(Exclusive) 表示缓存的独占状态，数据只缓存在当前CPU缓存中，并且没有被修改<br>3、S(Shared) 表示数据可能被多个 CPU 缓存，并且各个缓存中的数据和主内存数据一致<br>4、I(Invalid) 表示缓存已经失效<br>在 MESI 协议中，每个缓存的缓存控制器不仅知道自己的读写操作，而且也监听(snoop)其它CPU的读写操作。<br>对于 MESI 协议，从 CPU 读写角度来说会遵循以下原则：<br><strong>CPU读请求</strong>：缓存处于 M、E、S 状态都可以被读取，I 状态CPU 只能从主存中读取数据<br><strong>CPU写请求</strong>：缓存处于 M、E 状态才可以被写。对于S状态的写，需要将其他CPU中缓存行置为无效才行。</p>
 <p>end?</p>
 
                 
@@ -651,9 +654,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/13/01CAS,AQS,lock/" title="01CASAQSLOCK">
+                      <a href="/2025/11/13/0000%E9%9D%A2%E7%BB%8F/" title="实在智能">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">01CASAQSLOCK</span>
+                        <span class="hidden-mobile">实在智能</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

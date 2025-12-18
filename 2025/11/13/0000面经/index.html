@@ -19,22 +19,22 @@
   <meta name="author" content="無鎏雲">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Kafka 高可用机制详解123 Kafka 的高可用性通过多种设计实现，确保在节点故障或网络分区时仍能持续提供服务，同时保证数据的一致性和可靠性。 Kafka 的 副本机制 是高可用的核心。每个分区（Partition）都有多个副本（Replica），其中一个是 Leader 副本，负责处理所有读写请求，其余为 Follower 副本，负责从 Leader 同步数据。当 Leader 副本发生故">
+    <meta name="description" content="实在智能1.Integer和int的拆箱（nullPointer）（错误） 2.常见错误以及原因（concurrentmodeficationexpection）（ClassNotFound不能说） 3.用过什么数据库 4.MySQL的索引是什么（没有全文索引） 5.为什么B+树 6.B是什么（Balanced） 7.为什么能存千万级别数据（计算错误，指针14b，数据100b） 8。索引失效问题（">
 <meta property="og:type" content="article">
-<meta property="og:title" content="103kafka">
-<meta property="og:url" content="http://example.com/2025/11/25/103kafka/index.html">
+<meta property="og:title" content="实在智能">
+<meta property="og:url" content="http://example.com/2025/11/13/0000%E9%9D%A2%E7%BB%8F/index.html">
 <meta property="og:site_name" content="NoFlowCloud">
-<meta property="og:description" content="Kafka 高可用机制详解123 Kafka 的高可用性通过多种设计实现，确保在节点故障或网络分区时仍能持续提供服务，同时保证数据的一致性和可靠性。 Kafka 的 副本机制 是高可用的核心。每个分区（Partition）都有多个副本（Replica），其中一个是 Leader 副本，负责处理所有读写请求，其余为 Follower 副本，负责从 Leader 同步数据。当 Leader 副本发生故">
+<meta property="og:description" content="实在智能1.Integer和int的拆箱（nullPointer）（错误） 2.常见错误以及原因（concurrentmodeficationexpection）（ClassNotFound不能说） 3.用过什么数据库 4.MySQL的索引是什么（没有全文索引） 5.为什么B+树 6.B是什么（Balanced） 7.为什么能存千万级别数据（计算错误，指针14b，数据100b） 8。索引失效问题（">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-11-25T03:07:57.000Z">
-<meta property="article:modified_time" content="2025-12-04T09:42:04.510Z">
+<meta property="article:published_time" content="2025-11-12T17:07:57.000Z">
+<meta property="article:modified_time" content="2025-12-14T15:24:59.808Z">
 <meta property="article:author" content="無鎏雲">
-<meta property="article:tag" content="kcat">
+<meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>103kafka - NoFlowCloud</title>
+  <title>实在智能 - NoFlowCloud</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="103kafka"></span>
+            <span id="subtitle" data-typed-text="实在智能"></span>
           
         </div>
 
@@ -211,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-11-25 11:07" pubdate>
-          2025年11月25日 上午
+        <time datetime="2025-11-13 01:07" pubdate>
+          2025年11月13日 凌晨
         </time>
       </span>
     
@@ -223,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          507 字
+          132 字
         
       </span>
     
@@ -234,7 +234,7 @@
         
         
         
-          5 分钟
+          2 分钟
         
       </span>
     
@@ -271,20 +271,23 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">103kafka</h1>
+            <h1 id="seo-header">实在智能</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="Kafka-高可用机制详解"><a href="#Kafka-高可用机制详解" class="headerlink" title="Kafka 高可用机制详解"></a><a target="_blank" rel="noopener" href="https://blog.csdn.net/Aaaaaaatwl/article/details/139859673">Kafka 高可用机制详解</a></h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Aaaaaaatwl/article/details/139859673">1</a><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/848162">2</a><a target="_blank" rel="noopener" href="https://juejin.cn/post/7494562378153263143">3</a></p>
-<p>Kafka 的高可用性通过多种设计实现，确保在节点故障或网络分区时仍能持续提供服务，同时保证数据的一致性和可靠性。</p>
-<p>Kafka 的 <strong>副本机制</strong> 是高可用的核心。每个分区（Partition）都有多个副本（Replica），其中一个是 <strong>Leader 副本</strong>，负责处理所有读写请求，其余为 <strong>Follower 副本</strong>，负责从 Leader 同步数据。当 Leader 副本发生故障时，会从同步副本（ISR）中选举新的 Leader，确保服务不中断。</p>
-<p>Kafka 的 <strong>分区机制</strong> 提高了系统的扩展性和容错能力。一个主题（Topic）可以分为多个分区，分布在不同的 Broker 上，即使某个 Broker 宕机，也不会影响其他分区的正常运行。</p>
-<p>Kafka 使用 <strong>ISR（In-Sync Replicas）机制</strong> 来保证数据一致性。ISR 是与 Leader 保持同步的副本集合，只有在 ISR 中的副本才有资格被选为新的 Leader。未同步的副本会被移出 ISR，避免数据不一致。</p>
-<p><strong>Leader 选举</strong> 是 Kafka 高可用的关键。当 Leader 副本失效时，Kafka 会从 ISR 中选举新的 Leader。选举过程由 Controller 节点负责，Controller 是通过 ZooKeeper 或 KRaft 选举出来的，确保整个集群的协调和管理。</p>
-<p>Kafka 的 <strong>消费者组（Consumer Group）</strong> 提供了高可用的消费机制。消费者组中的消费者共同消费一个主题的分区数据，当某个消费者失效时，其分区会被重新分配给其他消费者，保证消费不中断。</p>
-<p>Kafka 的 <strong>重平衡机制</strong> 在消费者组发生变更时重新分配分区，确保高可用性和伸缩性。然而，重平衡期间消费者无法读取消息，可能导致短暂的不可用。</p>
-<p>通过以上机制，Kafka 实现了高可用性和高可靠性，能够在节点故障、网络分区等情况下保持服务稳定，同时确保数据的一致性和安全性。</p>
+                <h1 id="实在智能"><a href="#实在智能" class="headerlink" title="实在智能"></a>实在智能</h1><p>1.Integer和int的拆箱（nullPointer）（错误）</p>
+<p>2.常见错误以及原因（concurrentmodeficationexpection）（ClassNotFound不能说）</p>
+<p>3.用过什么数据库</p>
+<p>4.MySQL的索引是什么（没有全文索引）</p>
+<p>5.为什么B+树</p>
+<p>6.B是什么（Balanced）</p>
+<p>7.为什么能存千万级别数据（计算错误，指针14b，数据100b）</p>
+<p>8。索引失效问题（a，b，c）索引跳跃（紧张忘记了）</p>
+<p>9.为什么ICP？ICP是什么？（只能用于排序）（错误）</p>
+<p>10.深度分页问题（错误）</p>
+<p>11。结束</p>
+<p>end</p>
 
                 
               </div>
@@ -297,7 +300,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/kcat/" class="print-no-link">#kcat</a>
+        <a href="/tags/JUC/" class="print-no-link">#JUC</a>
       
     </div>
   
@@ -309,8 +312,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>103kafka</div>
-      <div>http://example.com/2025/11/25/103kafka/</div>
+      <div>实在智能</div>
+      <div>http://example.com/2025/11/13/0000面经/</div>
     </div>
     <div class="license-meta">
       
@@ -322,7 +325,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年11月25日</div>
+          <div>2025年11月13日</div>
         </div>
       
       
@@ -354,9 +357,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/12/01/43JavaIO/" title="">
+                      <a href="/2025/11/13/01CAS,AQS,lock/" title="01CASAQSLOCK">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile"></span>
+                        <span class="hidden-mobile">01CASAQSLOCK</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -364,8 +367,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/25/46SpringBoot/" title="45Springboot">
-                        <span class="hidden-mobile">45Springboot</span>
+                      <a href="/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-volatile)/" title="00JUC入门">
+                        <span class="hidden-mobile">00JUC入门</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

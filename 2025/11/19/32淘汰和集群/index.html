@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/img/1755608176574-48655767-e379-45dc-af22-16f66d923ff4.webp">
 <meta property="og:image" content="http://example.com/img/1755622631933-39eeac25-ba87-45a2-9757-0843e29bc4d2.webp">
 <meta property="article:published_time" content="2025-11-19T06:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-26T06:55:13.346Z">
+<meta property="article:modified_time" content="2025-12-17T06:44:26.903Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.3k 字
+          4.8k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          28 分钟
+          41 分钟
         
       </span>
     
@@ -301,6 +301,29 @@
 <p><img src="/./../img/1755608176574-48655767-e379-45dc-af22-16f66d923ff4.webp" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <h2 id="Redis缓存失效会不会立即删除-为什么"><a href="#Redis缓存失效会不会立即删除-为什么" class="headerlink" title="Redis缓存失效会不会立即删除,为什么?"></a>Redis缓存失效会不会立即删除,为什么?</h2><p>不会,Redis的缓存删除策略是惰性删除+定期删除混合使用为了</p>
 <p><strong>防止缓存短时间大量失效而造成的批量删除场景,会占用大量CPU资源进而影响Redis的响应时间和吞吐量,</strong></p>
+<h3 id="LRU-算法和-LFU-算法有什么区别？"><a href="#LRU-算法和-LFU-算法有什么区别？" class="headerlink" title="LRU 算法和 LFU 算法有什么区别？"></a>LRU 算法和 LFU 算法有什么区别？</h3><blockquote>
+<p>什么是 LRU 算法？</p>
+</blockquote>
+<p><strong>LRU</strong> 全称是 Least Recently Used 翻译为<strong>最近最少使用</strong>，会选择淘汰最近最少使用的数据。</p>
+<p>传统 LRU 算法的实现是基于「链表」结构，链表中的元素按照操作顺序从前往后排列，最新操作的键会被移动到表头，当需要内存淘汰时，只需要删除链表尾部的元素即可，因为链表尾部的元素就代表最久未被使用的元素。</p>
+<p>Redis 并没有使用这样的方式实现 LRU 算法，因为传统的 LRU 算法存在两个问题：</p>
+<ul>
+<li>需要用链表管理所有的缓存数据，这会带来额外的空间开销；</li>
+<li>当有数据被访问时，需要在链表上把该数据移动到头端，如果有大量数据被访问，就会带来很多链表移动操作，会很耗时，进而会降低 Redis 缓存性能。</li>
+</ul>
+<blockquote>
+<p>Redis 是如何实现 LRU 算法的？</p>
+</blockquote>
+<p>Redis 实现的是一种<strong>近似 LRU 算法</strong>，目的是为了更</p>
+<h3 id="如何设计一个缓存策略，可以动态缓存热点数据呢？"><a href="#如何设计一个缓存策略，可以动态缓存热点数据呢？" class="headerlink" title="如何设计一个缓存策略，可以动态缓存热点数据呢？"></a>如何设计一个缓存策略，可以动态缓存热点数据呢？</h3><p>由于数据存储受限，系统并不是将所有数据都需要存放到缓存中的，而<strong>只是将其中一部分热点数据缓存起来</strong>，所以我们要设计一个热点数据动态缓存的策略。</p>
+<p>热点数据动态缓存的策略总体思路：<strong>通过数据最新访问时间来做排名，并过滤掉不常访问的数据，只留下经常访问的数据</strong>。</p>
+<p>以电商平台场景中的例子，现在要求只缓存用户经常访问的 Top 1000 的商品。具体细节如下：</p>
+<ul>
+<li>先通过缓存系统做一个排序队列（比如存放 1000 个商品），系统会根据商品的访问时间，更新队列信息，越是最近访问的商品排名越靠前；</li>
+<li>同时系统会定期过滤掉队列中排名最后的 200 个商品，然后再从数据库中随机读取出 200 个商品加入队列中；</li>
+<li>这样当请求每次到达的时候，会先从队列中获取商品 ID，如果命中，就根据 ID 再从另一个缓存数据结构中读取实际的商品信息，并返回。</li>
+</ul>
+<p>在 Redis 中可以用 zadd 方法和 zrange 方法来完成排序队列和获取 200 个商品的操作。</p>
 <h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><h1 id="主从"><a href="#主从" class="headerlink" title="主从"></a>主从</h1><h3 id="Redis主从同步中的增量和完全同步怎么实现？"><a href="#Redis主从同步中的增量和完全同步怎么实现？" class="headerlink" title="#Redis主从同步中的增量和完全同步怎么实现？"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/interview/redis.html#redis%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%B8%AD%E7%9A%84%E5%A2%9E%E9%87%8F%E5%92%8C%E5%AE%8C%E5%85%A8%E5%90%8C%E6%AD%A5%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0">#</a>Redis主从同步中的增量和完全同步怎么实现？</h3><blockquote>
 <p>完全同步</p>
 </blockquote>
@@ -522,6 +545,36 @@
 <td>1 个 Sentinel 就触发选举 → 网络抖动即脑裂</td>
 </tr>
 </tbody></table>
+<h1 id="红锁"><a href="#红锁" class="headerlink" title="红锁"></a>红锁</h1><ul>
+<li><strong>Redis 主从复制模式中的数据是异步复制的，这样导致分布式锁的不可靠性</strong>。如果在 Redis 主节点获取到锁后，在没有同步到其他节点时，Redis 主节点宕机了，此时新的 Redis 主节点依然可以获取锁，所以多个应用服务就可以同时获取到锁。</li>
+</ul>
+<blockquote>
+<p>Redis 如何解决集群情况下分布式锁的可靠性？</p>
+</blockquote>
+<p>为了保证集群环境下分布式锁的可靠性，Redis 官方已经设计了一个分布式锁算法 Redlock（红锁）。</p>
+<p>它是基于<strong>多个 Redis 节点</strong>的分布式锁，即使有节点发生了故障，锁变量仍然是存在的，客户端还是可以完成锁操作。官方推荐是至少部署 5 个 Redis 节点，而且都是主节点，它们之间没有任何关系，都是一个个孤立的节点。</p>
+<p>Redlock 算法的基本思路，<strong>是让客户端和多个独立的 Redis 节点依次请求申请加锁，如果客户端能够和半数以上的节点成功地完成加锁操作，那么我们就认为，客户端成功地获得分布式锁，否则加锁失败</strong>。</p>
+<p>这样一来，即使有某个 Redis 节点发生故障，因为锁的数据在其他节点上也有保存，所以客户端仍然可以正常地进行锁操作，锁的数据也不会丢失。</p>
+<p>Redlock 算法加锁三个过程：</p>
+<ul>
+<li><p>第一步是，客户端获取当前时间（t1）。</p>
+</li>
+<li><p>第二步是，客户端按顺序依次向 N 个 Redis 节点执行加锁操作：</p>
+<ul>
+<li>加锁操作使用 SET 命令，带上 NX，EX&#x2F;PX 选项，以及带上客户端的唯一标识。</li>
+<li>如果某个 Redis 节点发生故障了，为了保证在这种情况下，Redlock 算法能够继续运行，我们需要给「加锁操作」设置一个超时时间（不是对「锁」设置超时时间，而是对「加锁操作」设置超时时间），加锁操作的超时时间需要远远地小于锁的过期时间，一般也就是设置为几十毫秒。</li>
+</ul>
+</li>
+<li><p>第三步是，一旦客户端从超过半数（大于等于 N&#x2F;2+1）的 Redis 节点上成功获取到了锁，就再次获取当前时间（t2），然后计算计算整个加锁过程的总耗时（t2-t1）。如果 t2-t1 &lt; 锁的过期时间，此时，认为客户端加锁成功，否则认为加锁失败。</p>
+<h2 id="加锁成功"><a href="#加锁成功" class="headerlink" title="加锁成功"></a>加锁成功</h2></li>
+</ul>
+<p>可以看到，加锁成功要同时满足两个条件**（<em>简述：如果有超过半数的 Redis 节点成功的获取到了锁，并且总耗时没有超过锁的有效时间，那么就是加锁成功</em>）：**</p>
+<ul>
+<li>条件一：客户端从超过半数（大于等于 N&#x2F;2+1）的 Redis 节点上成功获取到了锁；</li>
+<li>条件二：客户端从大多数节点获取锁的总耗时（t2-t1）小于锁设置的过期时间。</li>
+</ul>
+<p>加锁成功后，客户端需要重新计算这把锁的有效时间，计算的结果是「锁最初设置的过期时间」减去「客户端从大多数节点获取锁的总耗时（t2-t1）」。如果计算的结果已经来不及完成共享数据的操作了，我们可以释放锁，以免出现还没完成数据操作，锁就过期了的情况。</p>
+<p>加锁失败后，客户端向<strong>所有 Redis 节点发起释放锁的操作</strong>，释放锁的操作和在单节点上释放锁的操作一样，只要执行释放锁的 Lua 脚本就可以了。</p>
 <p>end</p>
 
                 

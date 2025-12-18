@@ -27,9 +27,16 @@
 <meta property="og:description" content="隐式锁(synchronized)java中的锁包含了内部锁和显示锁。内部锁是通过synchronized关键字实现的 ;显示锁是通过Lock接口来进行实现。 synchronized概述 特点： 1、synchronized关键字可以用来修饰方法(静态和非静态)和代码块。 2、被synchronized修饰的方法被称之为同步方法，被synchronized修饰的代码块被称之同步代码块。 3、同步">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/image-20251112220823274.png">
+<meta property="og:image" content="http://example.com/img/3230688-20231101142443012-1772700968.png">
+<meta property="og:image" content="http://example.com/img/3230688-20231101142508587-1722367516.png">
+<meta property="og:image" content="http://example.com/img/3230688-20231101142544543-1353049648.png">
+<meta property="og:image" content="http://example.com/img/3230688-20231101142620113-1396564306.png">
+<meta property="og:image" content="http://example.com/img/3230688-20231101142724469-1226844103.png">
+<meta property="og:image" content="http://example.com/img/image-20251217195322785.png">
 <meta property="og:image" content="http://example.com/img/other-bukfsdjavassmtjstd-b2ded433-defd-4535-b767-fd2e5be0b5b9.png">
+<meta property="og:image" content="http://example.com/img/68f9b53206328c02b14f0e49">
 <meta property="article:published_time" content="2025-11-13T01:07:57.000Z">
-<meta property="article:modified_time" content="2025-11-27T01:41:24.842Z">
+<meta property="article:modified_time" content="2025-12-17T13:16:14.146Z">
 <meta property="article:author" content="無鎏雲">
 <meta property="article:tag" content="JUC">
 <meta name="twitter:card" content="summary_large_image">
@@ -226,7 +233,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          9.2k 字
+          11k 字
         
       </span>
     
@@ -237,7 +244,7 @@
         
         
         
-          77 分钟
+          89 分钟
         
       </span>
     
@@ -297,7 +304,8 @@
 <p>Java虚拟机包含了一个很实用的命令javap，该命令可以反编译已经编译过的Java Class文件，输出该类文件的详细信息。-c，该选项可以输出类中的所有方法以及字节码信息</p>
 <p>其中:  monitor就是监视器的含义</p>
 <p><img src="/./../img/image-20251112220823274.png" srcset="/img/loading.gif" lazyload alt="image-20251112220823274"></p>
-<p>在字节码层面由 <code>monitorenter</code> &#x2F; <code>monitorexit</code> 指令实现。Javac 会生成一个保护区域（try&#x2F;finally 风格）的结构：正常路径在结束时 <code>monitorexit</code>，异常路径通过异常处理器也会执行 <code>monitorexit</code>，保证锁总是释放，随后重新抛出异常。当执行 <code>monitorenter</code>指令时，线程试图获取锁也就是获取 <code>monitor</code>(monitor对象存在于每个Java对象的<strong>对象头</strong>中，synchronized 锁便是通过这种方式获取锁的，也是为什么Java中任意对象可以作为锁的原因) 的持有权。</p>
+<p>在字节码层面由 <code>monitorenter</code> &#x2F; <code>monitorexit</code> 指令实现。Javac 会生成一个保护区域（try&#x2F;finally 风格）的结构：</p>
+<p>正常路径在结束时 <code>monitorexit</code>，异常路径通过异常处理器也会执行 <code>monitorexit</code>，保证锁总是释放，随后重新抛出异常。当执行 <code>monitorenter</code>指令时，线程试图获取锁也就是获取 <code>monitor</code>(monitor对象存在于每个Java对象的<strong>对象头</strong>中，synchronized 锁便是通过这种方式获取锁的，也是为什么Java中任意对象可以作为锁的原因) 的持有权。</p>
 <h2 id="sync到底锁什么？四种锁？"><a href="#sync到底锁什么？四种锁？" class="headerlink" title="sync到底锁什么？四种锁？"></a>sync到底锁什么？四种锁？</h2><p>在 JDK 1.6 以前，所有的锁都是”重量级“锁，因为使用的是操作系统的互斥锁，当一个线程持有锁时，其他试图进入synchronized块的线程将被阻塞，直到锁被释放。涉及到了线程上下文切换和用户态与内核态的切换，因此效率较低。</p>
 <p>这也是为什么很多开发者会认为 synchronized 性能很差的原因。</p>
 <p>那为了减少获得锁和释放锁带来的性能消耗，JDK 1.6 引入了“偏向锁”和“轻量级锁” 的概念，对 synchronized 做了一次重大的升级，升级后的 synchronized 性能可以说上了一个新台阶。</p>
@@ -363,15 +371,33 @@
 <h3 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h3><p>重量级锁依赖于操作系统的互斥锁（mutex，用于保证任何给定时间内，只有一个线程可以执行某一段特定的代码段） 实现，而操作系统中线程间状态的转换需要相对较长的时间，所以重量级锁效率很低，但被阻塞的线程不会消耗 CPU。</p>
 <h2 id="锁的升级流程"><a href="#锁的升级流程" class="headerlink" title="锁的升级流程"></a>锁的升级流程</h2><p>具体的锁升级的过程是：<strong>无锁-&gt;偏向锁-&gt;轻量级锁-&gt;重量级锁</strong>。</p>
 <ul>
-<li><strong>无锁</strong>：这是没有开启偏向锁的时候的状态，在JDK1.6之后偏向锁的默认开启的，但是有一个偏向延迟，需要在JVM启动之后的多少秒之后才能开启，这个可以通过JVM参数进行设置，同时是否开启偏向锁也可以通过JVM参数设置。</li>
-<li><strong>偏向锁</strong>：这个是在偏向锁开启之后的锁的状态，如果还没有一个线程拿到这个锁的话，这个状态叫做匿名偏向，当一个线程拿到偏向锁的时候，下次想要竞争锁只需要拿线程ID跟MarkWord当中存储的线程ID进行比较，如果线程ID相同则直接获取锁（相当于锁偏向于这个线程），不需要进行CAS操作和将线程挂起的操作。</li>
-<li><strong>轻量级锁</strong>：在这个状态下线程主要是通过CAS操作实现的。将对象的MarkWord存储到线程的虚拟机栈上，然后通过CAS将对象的MarkWord的内容设置为指向Displaced Mark Word的指针，如果设置成功则获取锁。在线程出临界区的时候，也需要使用CAS，如果使用CAS替换成功则同步成功，如果失败表示有其他线程在获取锁，那么就需要在释放锁之后将被挂起的线程唤醒。</li>
-<li><strong>重量级锁</strong>：当有两个以上的线程获取锁的时候轻量级锁就会升级为重量级锁，因为CAS如果没有成功的话始终都在自旋，进行while循环操作，这是非常消耗CPU的，但是在升级为重量级锁之后，线程会被操作系统调度然后挂起，这可以节约CPU资源。</li>
+<li><strong>无锁</strong>：这是没有开启偏向锁的时候的状态，在JDK1.6之后偏向锁的默认开启的，但是有一个偏向延迟，需要在JVM启动之后的多少（4）秒之后才能开启，这个可以通过JVM参数进行设置，同时是否开启偏向锁也可以通过JVM参数设置。当JVM启动后，一个共享资源对象直到有线程第一个访问时，这段时间内是处于无锁状态，对象头的Markword里偏向锁标识位是0，锁标识位是01。</li>
+<li><strong>偏向锁</strong>：这个是在偏向锁开启之后的锁的状态，如果还没有一个线程拿到这个锁的话，这个状态叫做匿名偏向，当一个共享资源首次被某个线程访问时，锁就会从无锁状态升级到偏向锁状态，偏向锁会在Markword的偏向线程ID里存储当前线程的操作系统线程ID，偏向锁标识位是1，锁标识位是01。当一个线程拿到偏向锁的时候，下次想要竞争锁只需要拿线程ID跟MarkWord当中存储的线程ID进行比较，如果线程ID相同则直接获取锁（相当于锁偏向于这个线程），不需要进行CAS操作和将线程挂起的操作。</li>
+<li><strong>轻量级锁</strong>：当第二个线程尝试获取偏向锁失败时，偏向锁会升级为轻量级锁，此时，JVM会使用CAS自旋操作来尝试获取锁，如果成功则进入临界区域，否则升级为重量级锁。在这个状态下线程主要是通过CAS操作实现的。轻量级锁是在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，尝试拷贝锁对象头的Markword到栈帧的Lock Record，若拷贝成功，JVM将使用CAS操作尝试将对象头的Markword更新为指向Lock Record的指针，并将Lock Record里的owner指针指向对象头的Markword。若拷贝失败,若当前只有一个等待线程，则可通过自旋继续尝试，</li>
+<li><strong>重量级锁</strong>： 当自旋超过一定的次数，或者一个线程在持有锁，一个线程在自旋，又有第三个线程来访问时，轻量级锁就会膨胀为重量级锁。，因为CAS如果没有成功的话始终都在自旋，进行while循环操作，这是非常消耗CPU的，但是在升级为重量级锁之后，线程会被操作系统调度然后挂起，这可以节约CPU资源。底层是通过操作系统的mutex lock来实现的，每个对象指向一个monitor对象，这个monitor对象在堆中与锁是关联的，通过monitorenter指令插入到同步代码块在编译后的开始位置，monitorexit指令插入到同步代码块的结束处和异常处，这两个指令配对出现。JVM的线程和操作系统的线程是对应的，重量级锁的Markword里存储的指针是这个monitor对象的地址，操作系统来控制内核态中的线程的阻塞和恢复，从而达到JVM线程的阻塞和恢复，涉及内核态和用户态的切换，影响性能，所以叫重量级锁。</li>
 </ul>
 <p>综上，偏向锁通过对比Mark Word解决加锁问题，避免执行CAS操作。而轻量级锁是通过用CAS操作和自旋来解决加锁问题，避免线程阻塞和唤醒而影响性能。重量级锁是将除了拥有锁的线程以外的线程都阻塞。</p>
+<h3 id="锁升级过程"><a href="#锁升级过程" class="headerlink" title="锁升级过程"></a>锁升级过程</h3><ol>
+<li>当JVM启动后，一个共享资源对象直到有线程第一个访问时，这段时间内是处于无锁状态，对象头的Markword里偏向锁标识位是0，锁标识位是01。</li>
+</ol>
+<p><img src="/./../img/3230688-20231101142443012-1772700968.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>当一个共享资源首次被某个线程访问时，锁就会从无锁状态升级到偏向锁状态，偏向锁会在Markword的偏向线程ID里存储当前线程的操作系统线程ID，偏向锁标识位是1，锁标识位是01。此后如果当前线程再次进入临界区域时，只比较这个偏向线程ID即可，这种情况是在只有一个线程访问的情况下，不再需要操作系统的重量级锁来切换上下文，提供程序的访问效率。<br>另外需要注意的是，由于硬件资源的不断升级，获取锁的成本随之下降，jdk15版本后默认关闭了偏向锁。<br>如果未开启偏向锁（或者在JVM偏向锁延迟时间之前）有线程访问共享资源则直接由无锁升级为轻量级锁，请看第3步。<br><img src="/./../img/3230688-20231101142508587-1722367516.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li>如果未开启偏向锁（或者在JVM偏向锁延迟时间之前），有线程访问共享资源则直接由无锁升级为轻量级锁，开启偏向线程锁后，并且当前共享资源锁已经是偏向锁时，再有第二个线程访问共享资源锁时，此时锁可能升级为轻量级锁，也可能还是偏向锁状态，因为这取决于线程间的竞争情况，如有没有竞争，那么偏向锁的效率更高（因为频繁的锁竞争会导致偏向锁的撤销和升级到轻量级锁），继续保持偏向锁。如果有竞争，则锁状态会从偏向锁升级到轻量级锁，这种情况下轻量级锁效率会更高。</li>
+</ol>
+<p>当第二个线程尝试获取偏向锁失败时，偏向锁会升级为轻量级锁，此时，JVM会使用CAS自旋操作来尝试获取锁，如果成功则进入临界区域，否则升级为重量级锁。<br>轻量级锁是在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，尝试拷贝锁对象头的Markword到栈帧的Lock Record，若拷贝成功，JVM将使用CAS操作尝试将对象头的Markword更新为指向Lock Record的指针，并将Lock Record里的owner指针指向对象头的Markword。若拷贝失败,若当前只有一个等待线程，则可通过自旋继续尝试， 当自旋超过一定的次数，或者一个线程在持有锁，一个线程在自旋，又有第三个线程来访问时，轻量级锁就会膨胀为重量级锁。<br><img src="/./../img/3230688-20231101142544543-1353049648.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li>当轻量级锁获取锁失败时，说明有竞争存在，轻量级锁会升级为重量级锁，此时，JVM会将线程阻塞，直到获取到锁后才能进入临界区域，底层是通过操作系统的mutex lock来实现的，每个对象指向一个monitor对象，这个monitor对象在堆中与锁是关联的，通过monitorenter指令插入到同步代码块在编译后的开始位置，monitorexit指令插入到同步代码块的结束处和异常处，这两个指令配对出现。JVM的线程和操作系统的线程是对应的，重量级锁的Markword里存储的指针是这个monitor对象的地址，操作系统来控制内核态中的线程的阻塞和恢复，从而达到JVM线程的阻塞和恢复，涉及内核态和用户态的切换，影响性能，所以叫重量级锁。</li>
+</ol>
+<p><img src="/./../img/3230688-20231101142620113-1396564306.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>锁升级简要步骤如下所示<br><img src="/./../img/3230688-20231101142724469-1226844103.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<blockquote>
+<p>注意：图中无锁到偏向锁这不是升级，是在偏向锁打开后，对象默认是偏向状态，没有从无锁升级到偏向锁的过程。偏向锁未开启，会直接从无锁升级到轻量级锁，偏向锁开启时，会从偏向锁升级到轻量级锁。</p>
+</blockquote>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/crazymakercircle/article/details/146029082">深入理解Java锁升级（图解+史上最全）：无锁 → 偏向锁 → 轻量级锁 → 重量级锁-CSDN博客</a></p>
 <h1 id="话术"><a href="#话术" class="headerlink" title="话术"></a>话术</h1><h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>在JVM中，synchronized是基于进入和退出<strong>Monitor对象</strong>来实现的，无论是显式同步还是隐式同步。对于方法级的同步，它是隐式的，即无需通过字节码指令来控制，它实现在方法调用和返回操作中。JVM可以从方法常量池中的方法表结构中的<strong>ACC_SYNCHRONIZED</strong>访问标志来区分一个方法是否为同步方法。当方法调用时，调用指令会检查方法的ACC_SYNCHRONIZED访问标志是否被设置，如果设置了，执行线程将先持有Monitor，然后执行方法，最后在方法完成时释放Monitor。</p>
 <p>对于代码块的同步，它是利用<strong>monitorenter</strong>和<strong>monitorexit</strong>这两个字节码指令实现的。这些指令分别位于同步代码块的开始和结束位置。当JVM执行到monitorenter指令时，当前线程会尝试获取Monitor对象的所有权，如果获取成功，就会执行同步代码块，然后通过monitorexit指令释放Monitor对象</p>
+<p><img src="/./../img/image-20251217195322785.png" srcset="/img/loading.gif" lazyload alt="image-20251217195322785"></p>
 <h2 id="ReentrantLock-和-synchronized-区别"><a href="#ReentrantLock-和-synchronized-区别" class="headerlink" title="ReentrantLock 和 synchronized 区别"></a>ReentrantLock 和 synchronized 区别</h2><p>（1）synchronized是独占锁，加锁和解锁的过程自动进行，易于操作，但不够灵活。ReentrantLock也是独占锁，加锁和解锁的过程需要手动进行，不易操作，但非常灵活。</p>
 <p>（2）synchronized可重入，因为加锁和解锁自动进行，不必担心最后是否释放锁；ReentrantLock也可重入，但加锁和解锁需要手动进行，且次数需一样，否则其他线程无法获得锁。</p>
 <p>（3）synchronized不可响应中断，一个线程获取不到锁就一直等着；ReentrantLock可以响应中断。</p>
@@ -410,7 +436,7 @@
 <p>Unsafe类是CAS的核心类，提供<strong>硬件级别的原子操作</strong>（目前所有CPU基本都支持硬件级别的CAS操作）。</p>
 <h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p><strong>开销大</strong>：在并发量比较高的情况下，如果反复尝试更新某个变量，却又一直更新不成功，会给CPU带来较大的压力（自旋）</p>
 <p><strong>ABA问题</strong>：当变量从A修改为B再修改回A时，变量值等于期望值A，但是无法判断是否修改，CAS操作在ABA修改后依然成功。（ABA 问题的解决思路是在变量前面追加上<strong>版本号或者时间戳</strong>。从 JDK 1.5 开始，JDK 的 atomic 包里提供了一个类<code>AtomicStampedReference</code>类来解决 ABA 问题。）</p>
-<p><strong>不能保证代码块的原子性</strong>：CAS机制所保证的只是一个变量的原子性操作，而不能保证整个代码块（多个共享变量）的原子性。</p>
+<p>CAS机制所保证的只是一个变量的原子性操作，而不能保证整个代码块（多个共享变量）的原子性。</p>
 <h1 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h1><h3 id="1-AQS-的作用是什么？"><a href="#1-AQS-的作用是什么？" class="headerlink" title="1. AQS 的作用是什么？"></a>1. AQS 的作用是什么？</h3><p>AQS 是一个用于构建锁和同步器的框架，它通过 <strong>FIFO 双向队列</strong> 管理等待线程，并通过 <strong><code>volatile int state</code></strong> 变量实现资源状态的原子操作。开发者只需重写少量方法，即可自定义同步工具。</p>
 <h3 id="2-AQS-的底层结构"><a href="#2-AQS-的底层结构" class="headerlink" title="2. AQS 的底层结构"></a>2. AQS 的底层结构</h3><h4 id="1-资源状态state"><a href="#1-资源状态state" class="headerlink" title="(1) 资源状态state"></a>(1) 资源状态<code>state</code></h4><ul>
 <li><strong>操作方式</strong>：<ul>
@@ -536,6 +562,7 @@
 <li>在线程获取锁的时候，如果已经获取锁的线程是当前线程的话则直接再次获取成功；</li>
 <li>由于锁会被获取 n 次，那么只有锁在被释放同样的 n 次之后，该锁才算是完全释放成功。</li>
 </ol>
+<p><img src="/./../img/68f9b53206328c02b14f0e49" srcset="/img/loading.gif" lazyload alt="img"></p>
 <h3 id="Reen公平锁和非公平锁源码区别"><a href="#Reen公平锁和非公平锁源码区别" class="headerlink" title="Reen公平锁和非公平锁源码区别"></a>Reen公平锁和非公平锁源码区别</h3><p>公平锁代码的逻辑与 nonfairTryAcquire 基本上一致，唯一的不同在于增加了 hasQueuedPredecessors 的逻辑判断，从方法名就可以知道该方法用来判断当前节点在同步队列中是否有前驱节点的，如果有前驱节点，说明有线程比当前线程更早的请求资源，根据公平性，当前线程请求资源失败。如果当前节点没有前驱节点，才有做后面逻辑判断的必要性。</p>
 <h2 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h2><p>ReentrantReadWriteLock 是 Java 的一种读写锁，它允许多个读线程同时访问，但只允许一个写线程访问，或者阻塞所有的读写线程。这种锁的设计可以提高性能，特别是在数据结构中，读操作的数量远远超过写操作的情况下。</p>
 <p>读写锁的实现主要是通过重写 <a target="_blank" rel="noopener" href="https://javabetter.cn/thread/aqs.html">AQS</a> 的 tryAcquire 方法和 tryRelease 方法实现的，读锁和写锁的获取和释放都是通过这两个方法实现的。</p>
@@ -641,9 +668,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/11/13/02Condition%E5%92%8Csupport/" title="02Condition和support">
+                      <a href="/2025/11/13/02Condition%E5%92%8Csupport/" title="02各种问题">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">02Condition和support</span>
+                        <span class="hidden-mobile">02各种问题</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -651,8 +678,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/11/13/00JUC(%E7%BA%BF%E7%A8%8B-volatile)/" title="00JUC入门">
-                        <span class="hidden-mobile">00JUC入门</span>
+                      <a href="/2025/11/13/0000%E9%9D%A2%E7%BB%8F/" title="实在智能">
+                        <span class="hidden-mobile">实在智能</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
